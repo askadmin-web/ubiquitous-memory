@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cathy Rudolph — Implementation Manager</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f7f6f3;
+    --text-primary: #1a1a18;
+    --text-secondary: #4a4a46;
+    --text-tertiary: #888780;
+    --border: rgba(0,0,0,0.12);
+    --border-hover: rgba(0,0,0,0.22);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+
+  body.dark {
+    --bg: #1e1e1c;
+    --bg-secondary: #2a2a27;
+    --text-primary: #f0ede6;
+    --text-secondary: #b0ada5;
+    --text-tertiary: #6e6c67;
+    --border: rgba(255,255,255,0.1);
+    --border-hover: rgba(255,255,255,0.2);
+  }
+  body.dark .badge-ventured { background: #0c447c; color: #b5d4f4; }
+  body.dark .badge-inres    { background: #085041; color: #9fe1cb; }
+  body.dark .badge-adr      { background: #3c3489; color: #cecbf6; }
+
+  .theme-toggle {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s, color 0.15s;
+    font-family: var(--font-sans);
+    z-index: 100;
+  }
+  .theme-toggle:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+  }
+  .theme-toggle i { font-size: 15px; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text-primary);
+    padding: 3rem 1.5rem;
+    line-height: 1.5;
+  }
+
+  .resume {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* ── Header ── */
+  .r-name {
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+  }
+
+  .r-contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px 16px;
+    margin: 7px 0 5px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .r-contact a {
+    color: var(--text-secondary);
+    text-decoration: none;
+  }
+
+  .r-contact a:hover {
+    color: var(--text-primary);
+    text-decoration: underline;
+  }
+
+  .r-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 10px 0 3px;
+  }
+
+  .r-subtitle {
+    font-size: 13px;
+    color: var(--text-tertiary);
+  }
+
+  /* ── Divider ── */
+  hr {
+    border: none;
+    border-top: 0.5px solid var(--border);
+    margin: 18px 0;
+  }
+
+  /* ── Summary ── */
+  .r-summary {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* ── Section label ── */
+  .section-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 12px;
+  }
+
+  /* ── Skill accordion ── */
+  .skill-row {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    margin-bottom: 6px;
+    overflow: hidden;
+  }
+
+  .skill-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    cursor: pointer;
+    background: var(--bg);
+    border: none;
+    width: 100%;
+    text-align: left;
+    gap: 12px;
+    transition: background 0.15s;
+  }
+
+  .skill-trigger:hover {
+    background: var(--bg-secondary);
+  }
+
+  .skill-trigger.open {
+    background: var(--bg-secondary);
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .skill-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .skill-desc {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: 3px;
+    display: none;
+  }
+
+  .skill-trigger.open .skill-desc {
+    display: block;
+  }
+
+  .skill-chevron {
+    font-size: 16px;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+
+  .skill-trigger.open .skill-chevron {
+    transform: rotate(180deg);
+  }
+
+  .skill-evidence {
+    display: none;
+    padding: 14px;
+    background: var(--bg);
+  }
+
+  .skill-evidence.open {
+    display: block;
+  }
+
+  .evidence-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 11px;
+  }
+
+  .evidence-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .badge-ventured { background: #E6F1FB; color: #0C447C; }
+  .badge-inres    { background: #E1F5EE; color: #085041; }
+  .badge-adr      { background: #EEEDFE; color: #3C3489; }
+
+  .evidence-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+
+  /* ── Experience ── */
+  .exp-role {
+    margin-bottom: 22px;
+  }
+
+  .exp-role:last-child {
+    margin-bottom: 0;
+  }
+
+  .exp-org {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .exp-org-meta {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-bottom: 2px;
+  }
+
+  .exp-jobtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+
+  .exp-bullets {
+    list-style: none;
+    padding: 0;
+  }
+
+  .exp-bullets li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    padding-left: 14px;
+    position: relative;
+    margin-bottom: 6px;
+  }
+
+  .exp-bullets li::before {
+    content: "–";
+    position: absolute;
+    left: 0;
+    color: var(--text-tertiary);
+  }
+
+  /* ── Education / Tech ── */
+  .edu-row,
+  .tech-row {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* ── Certs ── */
+  .cert-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .cert-list li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding-left: 14px;
+    position: relative;
+    margin-bottom: 4px;
+  }
+
+  .cert-list li::before {
+    content: "–";
+    position: absolute;
+    left: 0;
+    color: var(--text-tertiary);
+  }
+
+  /* ── Accessibility ── */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ── Print ── */
+  @media print {
+    body { padding: 1.5rem; }
+    .skill-evidence { display: block !important; }
+    .skill-desc { display: block !important; }
+    .skill-chevron { display: none; }
+    .skill-trigger { background: none !important; border-bottom: 0.5px solid #ccc; }
+  }
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+  <i class="ti ti-sun" id="theme-icon" aria-hidden="true"></i>
+  <span id="theme-label">Light</span>
+</button>
+
+<div class="resume">
+  <h1 class="sr-only">Interactive resume — Cathy Rudolph, Implementation Manager</h1>
+
+  <div class="r-name">Cathy Rudolph</div>
+  <div class="r-contact">
+    <span>Stoughton, MA</span>
+    <a href="mailto:cathy.rudolph@academicskills.net">cathy.rudolph@academicskills.net</a>
+    <span>617-538-8974</span>
+    <a href="https://linkedin.com/in/cathy-rudolph-450225370" target="_blank">linkedin.com/in/cathy-rudolph-450225370</a>
+  </div>
+  <div class="r-title">Implementation Manager</div>
+  <div class="r-subtitle">End-to-End SaaS Implementation &nbsp;&middot;&nbsp; Workflow Translation &nbsp;&middot;&nbsp; Onboarding &nbsp;&middot;&nbsp; API Integrations &nbsp;&middot;&nbsp; Change Management</div>
+
+  <hr>
+
+  <p class="r-summary">180+ implementations across B2B SaaS and low-code platforms. 72,000+ users. $2B in annual client revenue protected. From kickoff through go-live through sustained adoption — building the playbooks, enablement assets, and stakeholder frameworks that make onboarding repeatable and scalable.</p>
+
+  <hr>
+
+  <div class="section-label">Click any skill&#8217;s down arrow to show/hide the evidence</div>
+  <div id="skills-list"></div>
+
+  <hr>
+
+  <div class="section-label">Professional experience</div>
+
+  <div class="exp-role">
+    <div class="exp-org">VenturEd Solutions</div>
+    <div class="exp-org-meta">K-12 Education Technology &nbsp;&middot;&nbsp; 2018–2025</div>
+    <div class="exp-jobtitle">Implementation Manager</div>
+    <ul class="exp-bullets">
+      <li>Owned end-to-end onboarding for 30+ enterprise SaaS implementations, managing 6+ simultaneously — discovery, account setup, configuration, data migration, training, and go-live — supporting ~12,000 users and $300M+ in annual client revenue.</li>
+      <li>Built and drove mutual action plans tailored to each client's readiness, constraints, and activation goals, cutting time-to-activation by ~one-third through documented, repeatable onboarding practices.</li>
+      <li>Partnered cross-functionally with Product, Sales, and Customer Success — turning implementation feedback into statistical reporting, playbooks, and roadmap input.</li>
+      <li>Led API integrations and ETL automations between SaaS and legacy systems, resolving data mapping errors, field mismatches, and duplication through post-migration QA — cutting manual data work ~80% with 100% continuity.</li>
+    </ul>
+  </div>
+
+  <div class="exp-role">
+    <div class="exp-org">inRESONANCE</div>
+    <div class="exp-org-meta">Education Nonprofit Technology &nbsp;&middot;&nbsp; 2009–2018</div>
+    <div class="exp-jobtitle">Senior Implementation Specialist</div>
+    <ul class="exp-bullets">
+      <li>Managed full implementation lifecycle for 150+ institutions from discovery through go-live — 60,000+ users, $1.5B in annual revenue, 400-school portfolio.</li>
+      <li>Led on-site and remote working sessions capturing process requirements and institutional knowledge, cutting time-to-value by ~20%.</li>
+      <li>Conducted onsite and remote training for client teams across diverse technical environments, guiding non-technical end users and administrators through new workflows.</li>
+      <li>Turned recurring issues and feature requests into playbooks, configuration guidelines, and product enhancements — in collaboration with Product and Support.</li>
+    </ul>
+  </div>
+
+  <div class="exp-role">
+    <div class="exp-org">BioTechnica International / Genex Corporation</div>
+    <div class="exp-org-meta">Biotechnology Research &nbsp;&middot;&nbsp; 1980–1991</div>
+    <div class="exp-jobtitle">Senior Research Associate</div>
+    <ul class="exp-bullets">
+      <li>Cloning and expression systems for human interferons, human serum albumin, and bovine growth hormone in a zero-defect, protocol-driven laboratory environment, executed with precise workflow process and rigorous documentation.</li>
+      <li>Co-authored scientific publications and contributed to patent filing documentation for protein expression research.</li>
+    </ul>
+  </div>
+
+  <div class="exp-role">
+    <div class="exp-org">Applied Delivery Research</div>
+    <div class="exp-org-meta">2025–present</div>
+    <ul class="exp-bullets">
+      <li>Data pipeline prototyping — used Structify.ai to organize complex operational datasets into analysis-ready structures for non-technical stakeholders.</li>
+      <li>Implementation pattern analysis — identified repeatable delivery patterns across SMB-to-enterprise timelines to improve time-to-value.</li>
+      <li>Delivery planning frameworks — used generative AI tools to analyze implementation variables, model engagement risk scenarios, and develop repeatable scope and timeline frameworks for enterprise SaaS deployments.</li>
+      <li>Change management tooling — prototyped prompt-driven tools that implementation teams could use to support stakeholder adoption during workflow transitions.</li>
+    </ul>
+  </div>
+
+  <hr>
+
+  <div class="section-label">Education</div>
+  <p class="edu-row">University of Iowa — MS Microbiology &nbsp;&nbsp;|&nbsp;&nbsp; Rice University — BA Biology</p>
+
+  <hr>
+
+  <div class="section-label">Technical proficiencies</div>
+  <p class="tech-row">Jira &middot; Teamwork &middot; Trello &middot; SQL &middot; Excel &middot; ETL &middot; API integrations &middot; Salesforce &middot; data migration &middot; CSV data handling &middot; workflow automation &middot; agile delivery methods &middot; Structify &middot; Perplexity &middot; Gemini &middot; Claude</p>
+
+  <hr>
+
+  <div class="section-label">Certifications</div>
+  <ul class="cert-list">
+    <li>Generative AI — LinkedIn Learning, Sept 2025</li>
+    <li>SQL Essential Training — LinkedIn Learning, Sept 2025</li>
+    <li>Data Analysis &amp; Visualization Foundations — IBM, Aug 2025</li>
+    <li>Excel Essentials for Data Analytics — Coursera, July 2025</li>
+  </ul>
+</div>
+
+<script>
+const toggleBtn   = document.getElementById('theme-toggle');
+const themeIcon   = document.getElementById('theme-icon');
+const themeLabel  = document.getElementById('theme-label');
+
+function applyTheme(dark) {
+  document.body.classList.toggle('dark', dark);
+  themeIcon.className  = dark ? 'ti ti-moon' : 'ti ti-sun';
+  themeLabel.textContent = dark ? 'Dark' : 'Light';
+  localStorage.setItem('theme', dark ? 'dark' : 'light');
+}
+
+const saved = localStorage.getItem('theme');
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+applyTheme(saved ? saved === 'dark' : prefersDark);
+
+toggleBtn.addEventListener('click', () => {
+  applyTheme(!document.body.classList.contains('dark'));
+});
+
+const skills = [
+  {
+    label: "End-to-end implementation ownership",
+    desc: "180+ go-lives across B2B SaaS and low-code platforms — sales handoff through account management handoff",
+    evidence: [
+      { co: "VenturEd", cls: "badge-ventured", text: "Owned end-to-end onboarding for 30+ enterprise SaaS implementations, managing 6+ simultaneously — discovery, account setup, configuration, data migration, training, and go-live — supporting ~12,000 users and $300M+ in annual client revenue." },
+      { co: "inRESONANCE", cls: "badge-inres", text: "Managed full implementation lifecycle for 150+ institutions from discovery through go-live — 60,000+ users, $1.5B in annual revenue, 400-school portfolio." }
+    ]
+  },
+  {
+    label: "Concurrent project management",
+    desc: "Detailed plans, milestone trackers, and risk logs across 6+ simultaneous implementations",
+    evidence: [
+      { co: "VenturEd", cls: "badge-ventured", text: "Owned end-to-end onboarding for 30+ enterprise SaaS implementations, managing 6+ simultaneously — discovery, account setup, configuration, data migration, training, and go-live." },
+      { co: "VenturEd", cls: "badge-ventured", text: "Built and drove mutual action plans tailored to each client's readiness, constraints, and activation goals, cutting time-to-activation by ~one-third through documented, repeatable onboarding practices." }
+    ]
+  },
+  {
+    label: "Workflow translation",
+    desc: "Captures real-world operational processes, maps them to system configuration, validates against client goals",
+    evidence: [
+      { co: "inRESONANCE", cls: "badge-inres", text: "Led on-site and remote working sessions capturing process requirements and institutional knowledge, cutting time-to-value by ~20%." },
+      { co: "VenturEd", cls: "badge-ventured", text: "Built and drove mutual action plans tailored to each client's readiness, constraints, and activation goals, cutting time-to-activation by ~one-third through documented, repeatable onboarding practices." }
+    ]
+  },
+  {
+    label: "Change management",
+    desc: "Drives adoption in resistant organizations; structured stakeholder communication and direct conversations",
+    evidence: [
+      { co: "VenturEd", cls: "badge-ventured", text: "Partnered cross-functionally with Product, Sales, and Customer Success — turning implementation feedback into statistical reporting, playbooks, and roadmap input." },
+      { co: "inRESONANCE", cls: "badge-inres", text: "Turned recurring issues and feature requests into playbooks, configuration guidelines, and product enhancements — in collaboration with Product and Support." }
+    ]
+  },
+  {
+    label: "Data migration & QA",
+    desc: "CSV mapping, error resolution, and post-migration validation coordinated with engineering",
+    evidence: [
+      { co: "VenturEd", cls: "badge-ventured", text: "Led API integrations and ETL automations between SaaS and legacy systems, resolving data mapping errors, field mismatches, and duplication through post-migration QA — cutting manual data work ~80% with 100% continuity." }
+    ]
+  },
+  {
+    label: "AI-enabled delivery analysis",
+    desc: "Applied AI tooling to surface repeatable patterns; time-to-value frameworks for enterprise SaaS",
+    evidence: [
+      { co: "Applied Delivery Research", cls: "badge-adr", text: "Used Structify.ai to organize complex operational datasets into analysis-ready structures for non-technical stakeholders." },
+      { co: "Applied Delivery Research", cls: "badge-adr", text: "Identified repeatable delivery patterns across SMB-to-enterprise timelines to improve time-to-value." },
+      { co: "Applied Delivery Research", cls: "badge-adr", text: "Used generative AI tools to analyze implementation variables, model engagement risk scenarios, and develop repeatable scope and timeline frameworks for enterprise SaaS deployments." },
+      { co: "Applied Delivery Research", cls: "badge-adr", text: "Prototyped prompt-driven tools that implementation teams could use to support stakeholder adoption during workflow transitions." }
+    ]
+  },
+  {
+    label: "Training & enablement",
+    desc: "Role-specific workshops for technical and non-technical audiences; go-live readiness",
+    evidence: [
+      { co: "inRESONANCE", cls: "badge-inres", text: "Conducted onsite and remote training for client teams across diverse technical environments, guiding non-technical end users and administrators through new workflows." },
+      { co: "VenturEd", cls: "badge-ventured", text: "Owned end-to-end onboarding for 30+ enterprise SaaS implementations — supporting ~12,000 users across discovery, configuration, data migration, training, and go-live." }
+    ]
+  }
+];
+
+const container = document.getElementById('skills-list');
+
+skills.forEach(skill => {
+  const row = document.createElement('div');
+  row.className = 'skill-row';
+
+  const btn = document.createElement('button');
+  btn.className = 'skill-trigger';
+  btn.setAttribute('aria-expanded', 'false');
+  btn.innerHTML = `
+    <div>
+      <div class="skill-name">${skill.label}</div>
+      <div class="skill-desc">${skill.desc}</div>
+    </div>
+    <i class="ti ti-chevron-down skill-chevron" aria-hidden="true"></i>
+  `;
+
+  const panel = document.createElement('div');
+  panel.className = 'skill-evidence';
+  panel.innerHTML = skill.evidence.map(e => `
+    <div class="evidence-item">
+      <span class="badge ${e.cls}">${e.co}</span>
+      <span class="evidence-text">${e.text}</span>
+    </div>
+  `).join('');
+
+  btn.addEventListener('click', () => {
+    const isOpen = btn.classList.contains('open');
+    btn.classList.toggle('open', !isOpen);
+    panel.classList.toggle('open', !isOpen);
+    btn.setAttribute('aria-expanded', String(!isOpen));
+  });
+
+  row.appendChild(btn);
+  row.appendChild(panel);
+  container.appendChild(row);
+});
+</script>
+</body>
+</html>
