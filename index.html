@@ -1,1 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cathy Rudolph — Portfolio</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f7f6f3;
+    --text-primary: #1a1a18;
+    --text-secondary: #4a4a46;
+    --text-tertiary: #888780;
+    --border: rgba(0,0,0,0.12);
+    --border-hover: rgba(0,0,0,0.22);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+
+  body.dark {
+    --bg: #1e1e1c;
+    --bg-secondary: #2a2a27;
+    --text-primary: #f0ede6;
+    --text-secondary: #b0ada5;
+    --text-tertiary: #6e6c67;
+    --border: rgba(255,255,255,0.1);
+    --border-hover: rgba(255,255,255,0.2);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  .site-nav {
+    display: flex;
+    align-items: center;
+    border-bottom: 0.5px solid var(--border);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .nav-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+  }
+
+  .nav-link {
+    display: inline-block;
+    padding: 14px 16px;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+    text-decoration: none;
+    transition: color 0.15s;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .nav-link:hover { color: var(--text-primary); }
+
+  .nav-link.active {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 16px; right: 16px;
+    height: 2px;
+    background: var(--text-primary);
+    border-radius: 1px 1px 0 0;
+  }
+
+  .nav-link.soon {
+    cursor: default;
+    color: var(--text-tertiary);
+  }
+
+  .nav-link.soon:hover { color: var(--text-tertiary); }
+
+  .nav-link.soon .tooltip {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text-primary);
+    color: var(--bg);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .nav-link.soon:hover .tooltip { display: block; }
+
+  .nav-spacer { flex: 1; }
+
+  .theme-toggle {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s, color 0.15s;
+    font-family: var(--font-sans);
+    margin: 8px 0;
+  }
+
+  .theme-toggle:hover { background: var(--bg-secondary); color: var(--text-primary); }
+  .theme-toggle i { font-size: 15px; }
+
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+  }
+
+  .page-name {
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+
+  .page-tagline {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 55ch;
+    margin-bottom: 0.4rem;
+  }
+
+  .page-location {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    margin-bottom: 2.5rem;
+  }
+
+  hr { border: none; border-top: 0.5px solid var(--border); margin: 18px 0; }
+
+  .section-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 14px;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .card {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    text-decoration: none;
+    color: inherit;
+    background: var(--bg);
+    transition: background 0.15s, border-color 0.15s;
+    display: block;
+  }
+
+  .card:hover { background: var(--bg-secondary); border-color: var(--border-hover); }
+
+  .card.soon { cursor: default; opacity: 0.55; }
+  .card.soon:hover { background: var(--bg); border-color: var(--border); }
+
+  .card-icon { font-size: 20px; color: var(--text-tertiary); margin-bottom: 10px; }
+  .card-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 5px; }
+  .card-desc { font-size: 12px; color: var(--text-tertiary); line-height: 1.6; }
+
+  .card-badge {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 10.5px;
+    font-weight: 500;
+    padding: 2px 9px;
+    border-radius: 20px;
+    background: var(--bg-secondary);
+    color: var(--text-tertiary);
+    border: 0.5px solid var(--border);
+  }
+
+  .card-badge.live { background: #E1F5EE; color: #085041; border-color: transparent; }
+  body.dark .card-badge.live { background: #085041; color: #9fe1cb; }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-link active">Welcome</a>
+    <a href="resume.html" class="nav-link">Resume</a>
+    <span class="nav-link soon" tabindex="0">
+      How It Was Built
+      <span class="tooltip" role="tooltip">Coming soon</span>
+    </span>
+    <div class="nav-spacer"></div>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+      <i class="ti ti-sun" id="theme-icon" aria-hidden="true"></i>
+      <span id="theme-label">Light</span>
+    </button>
+  </div>
+</nav>
+
+<main class="page">
+  <h1 class="sr-only">Cathy Rudolph — Portfolio</h1>
+  <div class="page-name">Cathy Rudolph</div>
+  <p class="page-tagline">Implementation Manager · 16+ years delivering enterprise SaaS at scale. Fully remote.</p>
+  <p class="page-location">Stoughton, MA</p>
+
+  <hr>
+
+  <div class="section-label">Portfolio</div>
+  <div class="cards">
+
+    <a href="resume.html" class="card">
+      <div class="card-icon"><i class="ti ti-file-text" aria-hidden="true"></i></div>
+      <div class="card-title">Interactive Resume</div>
+      <div class="card-desc">Skills with supporting evidence, full work history, certifications.</div>
+      <span class="card-badge live">Live</span>
+    </a>
+
+    <div class="card soon">
+      <div class="card-icon"><i class="ti ti-tool" aria-hidden="true"></i></div>
+      <div class="card-title">How It Was Built</div>
+      <div class="card-desc">AI-enabled workflow and value-added delivery frameworks in practice.</div>
+      <span class="card-badge">Coming soon</span>
+    </div>
+
+  </div>
+</main>
+
+<script>
+const toggleBtn  = document.getElementById('theme-toggle');
+const themeIcon  = document.getElementById('theme-icon');
+const themeLabel = document.getElementById('theme-label');
+
+function applyTheme(dark) {
+  document.body.classList.toggle('dark', dark);
+  themeIcon.className = dark ? 'ti ti-moon' : 'ti ti-sun';
+  themeLabel.textContent = dark ? 'Dark' : 'Light';
+  localStorage.setItem('theme', dark ? 'dark' : 'light');
+}
+
+const saved = localStorage.getItem('theme');
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+applyTheme(saved ? saved === 'dark' : prefersDark);
+
+toggleBtn.addEventListener('click', () => {
+  applyTheme(!document.body.classList.contains('dark'));
+});
+</script>
+</body>
+</html>
 
