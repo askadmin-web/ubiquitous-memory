@@ -312,6 +312,76 @@
     color: var(--text-tertiary);
   }
 
+  /* ── Nav ── */
+  .site-nav {
+    border-bottom: 0.5px solid var(--border);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .nav-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+  }
+
+  .nav-link {
+    display: inline-block;
+    padding: 14px 16px;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+    text-decoration: none;
+    transition: color 0.15s;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .nav-link:hover { color: var(--text-primary); }
+
+  .nav-link.active {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 16px; right: 16px;
+    height: 2px;
+    background: var(--text-primary);
+    border-radius: 1px 1px 0 0;
+  }
+
+  .nav-link.soon {
+    cursor: default;
+    color: var(--text-tertiary);
+  }
+
+  .nav-link.soon:hover { color: var(--text-tertiary); }
+
+  .nav-link.soon .tooltip {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text-primary);
+    color: var(--bg);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .nav-link.soon:hover .tooltip { display: block; }
+
   /* ── Accessibility ── */
   .sr-only {
     position: absolute;
@@ -336,6 +406,18 @@
 </style>
 </head>
 <body>
+
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-link">Welcome</a>
+    <a href="resume.html" class="nav-link active">Resume</a>
+    <span class="nav-link soon" tabindex="0">
+      How It Was Built
+      <span class="tooltip" role="tooltip">Coming soon</span>
+    </span>
+  </div>
+</nav>
+
 <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
   <i class="ti ti-sun" id="theme-icon" aria-hidden="true"></i>
   <span id="theme-label">Light</span>
