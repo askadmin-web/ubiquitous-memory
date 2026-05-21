@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cathy Rudolph — Implementation Framework</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f7f6f3;
+    --text-primary: #1a1a18;
+    --text-secondary: #4a4a46;
+    --text-tertiary: #888780;
+    --border: rgba(0,0,0,0.12);
+    --border-hover: rgba(0,0,0,0.22);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --accent: #0D9488;
+    --accent-bg: rgba(13, 148, 136, 0.08);
+  }
+
+  body.dark {
+    --bg: #1e1e1c;
+    --bg-secondary: #2a2a27;
+    --text-primary: #f0ede6;
+    --text-secondary: #b0ada5;
+    --text-tertiary: #6e6c67;
+    --border: rgba(255,255,255,0.1);
+    --border-hover: rgba(255,255,255,0.2);
+    --accent: #C084FC;
+    --accent-bg: rgba(192, 132, 252, 0.12);
+  }
+
+  /* ── Theme toggle ── */
+  .theme-toggle {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s, color 0.15s;
+    font-family: var(--font-sans);
+    z-index: 100;
+  }
+  .theme-toggle:hover { background: var(--bg-secondary); color: var(--text-primary); }
+  .theme-toggle i { font-size: 15px; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text-primary);
+    padding: 1.5rem 1.5rem;
+    line-height: 1.5;
+  }
+
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding-top: 2rem;
+  }
+
+  /* ── Nav ── */
+  .site-nav {
+    border-bottom: 0.5px solid var(--border);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .nav-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+  }
+
+  .nav-link {
+    display: inline-block;
+    padding: 14px 16px;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+    text-decoration: none;
+    transition: color 0.15s;
+    white-space: nowrap;
+    position: relative;
+  }
+  .nav-link:hover { color: var(--text-primary); }
+  .nav-link.active {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 16px; right: 16px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 1px 1px 0 0;
+  }
+  .nav-link.soon {
+    cursor: default;
+    color: var(--text-tertiary);
+  }
+  .nav-link.soon:hover { color: var(--text-tertiary); }
+  .nav-link.soon .tooltip {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text-primary);
+    color: var(--bg);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .nav-link.soon:hover .tooltip { display: block; }
+
+  /* ── Shared ── */
+  hr {
+    border: none;
+    border-top: 0.5px solid var(--border);
+    margin: 18px 0;
+  }
+
+  .section-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 12px;
+  }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+
+  /* ── Page header ── */
+  .page-name {
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+  }
+
+  .page-tagline {
+    font-size: 15px;
+    color: var(--text-tertiary);
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  .page-intro {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-top: 14px;
+  }
+
+  /* ── Comparison cards ── */
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 500px) {
+    .comparison-grid { grid-template-columns: 1fr; }
+  }
+
+  .comparison-card {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+  }
+
+  .comparison-card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+
+  .comparison-card-meta {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-bottom: 10px;
+  }
+
+  .comparison-steps {
+    list-style: none;
+    padding: 0;
+    counter-reset: step-count;
+  }
+
+  .comparison-steps li {
+    counter-increment: step-count;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    padding-left: 22px;
+    position: relative;
+    margin-bottom: 4px;
+  }
+
+  .comparison-steps li::before {
+    content: counter(step-count);
+    position: absolute;
+    left: 0;
+    top: 1px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    width: 15px;
+    text-align: right;
+  }
+
+  .step-note {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    margin-left: 3px;
+  }
+
+  /* ── Phase navigator ── */
+  .phase-nav {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  @media (max-width: 520px) {
+    .phase-nav { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .phase-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    padding: 10px 12px;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg);
+    cursor: pointer;
+    font-family: var(--font-sans);
+    transition: background 0.15s, border-color 0.15s;
+    text-align: left;
+  }
+
+  .phase-btn:hover {
+    background: var(--bg-secondary);
+    border-color: var(--border-hover);
+  }
+
+  .phase-btn.active {
+    background: var(--accent-bg);
+    border-color: var(--accent);
+  }
+
+  .phase-num {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .phase-btn-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+
+  .parallel-pill {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--accent);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 1px 7px;
+    margin-top: 2px;
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  /* ── Phase content panel ── */
+  .phase-panel {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px 22px;
+    background: var(--bg);
+    min-height: 220px;
+  }
+
+  .phase-panel-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .phase-panel-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .phase-panel-tagline {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    font-style: italic;
+  }
+
+  .phase-items {
+    list-style: none;
+    padding: 0;
+  }
+
+  .phase-items li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    padding-left: 14px;
+    position: relative;
+    margin-bottom: 10px;
+  }
+
+  .phase-items li:last-child { margin-bottom: 0; }
+
+  .phase-items li::before {
+    content: "–";
+    position: absolute;
+    left: 0;
+    color: var(--text-tertiary);
+  }
+
+  .item-label {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-link">Welcome</a>
+    <a href="resume.html" class="nav-link">Resume</a>
+    <a href="implementation.html" class="nav-link active">Implementation</a>
+    <span class="nav-link soon" tabindex="0">
+      How It Was Built
+      <span class="tooltip" role="tooltip">Coming soon</span>
+    </span>
+  </div>
+</nav>
+
+<button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+  <i class="ti ti-sun" id="theme-icon" aria-hidden="true"></i>
+  <span id="theme-label">Light</span>
+</button>
+
+<div class="page">
+
+  <h1 class="sr-only">Implementation Framework — Cathy Rudolph</h1>
+
+  <div class="page-name">How I Run Implementations</div>
+  <div class="page-tagline">The platform changes. The discipline doesn't.</div>
+  <p class="page-intro">180+ implementations across two platforms and two very different client environments — one a low-code system serving K–12 institutions and nonprofits, one an enterprise B2B SaaS platform. The operational shape of each looked different. The discipline underneath was the same.</p>
+
+  <hr>
+
+  <div class="section-label">Two delivery shapes — same discipline</div>
+  <div class="comparison-grid">
+    <div class="comparison-card">
+      <div class="comparison-card-title">Enterprise B2B SaaS</div>
+      <div class="comparison-card-meta">30+ implementations</div>
+      <ol class="comparison-steps">
+        <li>Sales Kickoff</li>
+        <li>Implementer / CSM meeting</li>
+        <li>Data Discussion</li>
+        <li>Data Receipt <span class="step-note">(client or scripted export)</span></li>
+        <li>Data Conversion</li>
+        <li>Load into Testing / Client Review</li>
+        <li>Client changes made</li>
+        <li>Load into Production</li>
+        <li>Deliver to Client and Train</li>
+        <li>Post-install messaging and handoff to CSM</li>
+      </ol>
+    </div>
+    <div class="comparison-card">
+      <div class="comparison-card-title">inRESONANCE (FileMaker)</div>
+      <div class="comparison-card-meta">Education nonprofit technology &nbsp;·&nbsp; 150+ implementations &nbsp;·&nbsp; 8-week cycle</div>
+      <ol class="comparison-steps">
+        <li>Discovery, Client Relations <span class="step-note">2 wks</span></li>
+        <li>Data Receipt <span class="step-note">2 wks</span></li>
+        <li>Contingency <span class="step-note">1 wk</span></li>
+        <li>Data Conversion <span class="step-note">1 wk</span></li>
+        <li>Onsite: Travel, Install &amp; Train <span class="step-note">1 wk</span></li>
+        <li>Post-install wrap-up and handoff <span class="step-note">1 wk</span></li>
+      </ol>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="section-label">The framework — click a phase to explore</div>
+
+  <div class="phase-nav" id="phase-nav" role="tablist" aria-label="Implementation phases"></div>
+  <div class="phase-panel" id="phase-panel" role="tabpanel"></div>
+
+</div>
+
+<script>
+// ── Theme ──
+const toggleBtn  = document.getElementById('theme-toggle');
+const themeIcon  = document.getElementById('theme-icon');
+const themeLabel = document.getElementById('theme-label');
+
+function applyTheme(dark) {
+  document.body.classList.toggle('dark', dark);
+  themeIcon.className    = dark ? 'ti ti-moon' : 'ti ti-sun';
+  themeLabel.textContent = dark ? 'Dark' : 'Light';
+  localStorage.setItem('theme', dark ? 'dark' : 'light');
+}
+
+const saved = localStorage.getItem('theme');
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+applyTheme(saved ? saved === 'dark' : prefersDark);
+toggleBtn.addEventListener('click', () => applyTheme(!document.body.classList.contains('dark')));
+
+// ── Phase data ──
+const phases = [
+  {
+    id: 1,
+    title: "Kickoff & Discovery",
+    parallel: false,
+    tagline: "See what actually exists before committing to a plan.",
+    items: [
+      {
+        label: "Introductions",
+        text: "Sales, implementer, and client team — contacts, bios, roles. Who owns what is established before a single decision is made."
+      },
+      {
+        label: "Purchase review",
+        text: "What was sold, what extras were included, what the client believes they're getting. Expectations gaps surface here, not at go-live."
+      },
+      {
+        label: "Data show-and-tell",
+        text: "See the actual data before committing to a data plan. Not a description of the data — the data itself."
+      },
+      {
+        label: "Five data problem categories",
+        text: "Bad data. Corrupt data. No access. Resistance. Legacy formats with no common keys. Identified at kickoff — not discovered at Week 8."
+      }
+    ]
+  },
+  {
+    id: 2,
+    title: "Data Acquisition",
+    parallel: false,
+    tagline: "Chain of custody from the first file.",
+    items: [
+      {
+        label: "Receive export",
+        text: "File delivery or system tap. A copy is sequestered immediately as the original baseline — the implementer holds it. This is the chain of custody and the reference for any future dispute about what the data looked like on arrival."
+      },
+      {
+        label: "The baseline is not a description",
+        text: "It is the data. Not a summary, not a screenshot, not a count of records. The actual data, before anything touches it."
+      },
+      {
+        label: "Baseline discipline",
+        text: "Before and after are both documented. If there is ever a question about what changed, the answer is in the baseline — not in anyone's memory."
+      }
+    ]
+  },
+  {
+    id: 3,
+    title: "Data Conversion & Validation",
+    parallel: false,
+    tagline: "Only clean, validated data reaches production.",
+    items: [
+      {
+        label: "ETL",
+        text: "Clean, correct, and reformat data to align with target database field requirements. The sequestered baseline is the reference throughout — not memory, not assumptions."
+      },
+      {
+        label: "Data inspection",
+        text: "Direct visibility into what arrived and what changed. Not inferred from a summary report — the actual field-level state of the data, before and after conversion."
+      },
+      {
+        label: "Validation gate",
+        text: "Converted data is reviewed before any production load proceeds. If something is wrong, root cause is identified and corrected here. A required checkpoint — not a failure condition."
+      },
+      {
+        label: "Purge/repull contingency",
+        text: "If the full load is systemically bad, the plan is to clear and reload. Trigger criteria are defined at kickoff — not improvised under pressure."
+      }
+    ]
+  },
+  {
+    id: 4,
+    title: "Configuration & Setup",
+    parallel: true,
+    parallelNote: "Parallel from Week 1",
+    tagline: "This track doesn't wait for data. That's the point.",
+    items: [
+      {
+        label: "Environment commissioned",
+        text: "User accounts, org-specific settings, roles, and privileges configured. The system is stood up while data work proceeds in parallel."
+      },
+      {
+        label: "Demo session",
+        text: "Log in, set passwords, admin tasks — no data required. Clients build familiarity before their data arrives. Workflow design questions surface here, not under go-live pressure."
+      },
+      {
+        label: "Why parallel matters",
+        text: "Sequencing Configuration after Data Acquisition is a choice — a slow one. Running them in parallel is how compressed timelines stay achievable without cutting corners."
+      }
+    ]
+  },
+  {
+    id: 5,
+    title: "Go-Live & Handoff",
+    parallel: false,
+    tagline: "Go-live is not a technical event.",
+    items: [
+      {
+        label: "What go-live actually means",
+        text: "The moment the client designates the new system as the single source of truth and stops running any parallel system. Not a deployment. A decision."
+      },
+      {
+        label: "Three handoff types",
+        text: "Enthusiastic clients: close fast. Struggling clients: reassure and train. Reluctant clients: the acceptance criteria defined at kickoff are the basis for sign-off. Scope creep starts here if they aren't enforced."
+      },
+      {
+        label: "Two systems simultaneously",
+        text: "Data divergence. A failed implementation wearing a go-live costume. The switchover must be complete."
+      },
+      {
+        label: "CSM handoff",
+        text: "The support relationship is established before the implementer exits. The client is not abandoned at go-live."
+      }
+    ]
+  },
+  {
+    id: 6,
+    title: "Change Management",
+    parallel: true,
+    parallelNote: "Parallel throughout — not a phase",
+    tagline: "No question is trivial. Every support request is a change management moment.",
+    items: [
+      {
+        label: "Starts at Discovery",
+        text: "Runs through handoff. Change management is a posture, not a phase. It doesn't begin when resistance appears."
+      },
+      {
+        label: "Mindset shifts",
+        text: "\"The tool is too hard\" → better home for our data. Familiar ≠ good. Training is not a punishment. These reframes happen in every conversation, not just in training sessions."
+      },
+      {
+        label: "Month 2",
+        text: "Clients who were enthusiastic at kickoff lose momentum when the work gets hard. Active re-engagement at this stage is part of the delivery plan, not a surprise."
+      },
+      {
+        label: "Internal politics",
+        text: "Cannot be fixed by the implementer. Surface the question, document the owner, move on."
+      }
+    ]
+  }
+];
+
+// ── Render ──
+const navEl   = document.getElementById('phase-nav');
+const panelEl = document.getElementById('phase-panel');
+let activeIdx = 0;
+
+function renderNav() {
+  navEl.innerHTML = '';
+  phases.forEach((phase, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'phase-btn' + (i === activeIdx ? ' active' : '');
+    btn.setAttribute('role', 'tab');
+    btn.setAttribute('aria-selected', i === activeIdx ? 'true' : 'false');
+    btn.setAttribute('aria-controls', 'phase-panel');
+    btn.innerHTML =
+      '<span class="phase-num">Phase ' + phase.id + '</span>' +
+      '<span class="phase-btn-title">' + phase.title + '</span>' +
+      (phase.parallel ? '<span class="parallel-pill">' + phase.parallelNote + '</span>' : '');
+    btn.addEventListener('click', () => { activeIdx = i; renderNav(); renderPanel(); });
+    navEl.appendChild(btn);
+  });
+}
+
+function renderPanel() {
+  const phase = phases[activeIdx];
+  const pillHTML = phase.parallel
+    ? ' <span class="parallel-pill" style="font-size:10px;">' + phase.parallelNote + '</span>'
+    : '';
+  panelEl.innerHTML =
+    '<div class="phase-panel-header">' +
+      '<div class="phase-panel-title">Phase ' + phase.id + ': ' + phase.title + pillHTML + '</div>' +
+      '<div class="phase-panel-tagline">' + phase.tagline + '</div>' +
+    '</div>' +
+    '<ul class="phase-items">' +
+      phase.items.map(function(item) {
+        return '<li><span class="item-label">' + item.label + ':</span> ' + item.text + '</li>';
+      }).join('') +
+    '</ul>';
+}
+
+renderNav();
+renderPanel();
+</script>
+</body>
+</html>
