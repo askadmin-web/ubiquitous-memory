@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cathy Rudolph — Global Reach</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f7f6f3;
+    --text-primary: #1a1a18;
+    --text-secondary: #4a4a46;
+    --text-tertiary: #888780;
+    --border: rgba(0,0,0,0.12);
+    --border-hover: rgba(0,0,0,0.22);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+
+  body.dark {
+    --bg: #1e1e1c;
+    --bg-secondary: #2a2a27;
+    --text-primary: #f0ede6;
+    --text-secondary: #b0ada5;
+    --text-tertiary: #6e6c67;
+    --border: rgba(255,255,255,0.1);
+    --border-hover: rgba(255,255,255,0.2);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  .site-nav {
+    display: flex;
+    align-items: center;
+    border-bottom: 0.5px solid var(--border);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .nav-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+  }
+
+  .nav-link {
+    display: inline-block;
+    padding: 14px 16px;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+    text-decoration: none;
+    transition: color 0.15s;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .nav-link:hover { color: var(--text-primary); }
+
+  .nav-link.active {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 16px; right: 16px;
+    height: 2px;
+    background: var(--text-primary);
+    border-radius: 1px 1px 0 0;
+  }
+
+  .nav-link.soon {
+    cursor: default;
+    color: var(--text-tertiary);
+  }
+
+  .nav-link.soon:hover { color: var(--text-tertiary); }
+
+  .nav-spacer { flex: 1; }
+
+  .theme-toggle {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s, color 0.15s;
+    font-family: var(--font-sans);
+    margin: 8px 0;
+  }
+
+  .theme-toggle:hover { background: var(--bg-secondary); color: var(--text-primary); }
+  .theme-toggle i { font-size: 15px; }
+
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+  }
+
+  .page-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+    margin-bottom: 6px;
+  }
+
+  .page-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+  }
+
+  hr { border: none; border-top: 0.5px solid var(--border); margin: 1.5rem 0; }
+
+  .stat-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat { font-size: 13px; color: var(--text-tertiary); }
+  .stat strong { color: var(--text-primary); font-weight: 600; }
+
+  #map-container {
+    position: relative;
+    width: 100%;
+    background: var(--bg-secondary);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+  }
+
+  #map { display: block; width: 100%; height: auto; }
+
+  .country-path {
+    stroke-width: 0.4px;
+    transition: fill 0.2s;
+  }
+
+  body:not(.dark) .country-path { fill: #e8e5df; stroke: #ccc9c0; }
+  body.dark .country-path { fill: #2e2e2e; stroke: #444; }
+
+  .dot { cursor: pointer; transition: r 0.12s; }
+  .dot:hover { r: 7px; }
+
+  #tooltip {
+    position: fixed;
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 6px 11px;
+    font-size: 13px;
+    color: var(--text-primary);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.12s;
+    white-space: nowrap;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .legend-pip {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .us-note {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    margin-bottom: 2rem;
+    font-style: italic;
+  }
+
+  .section-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 12px;
+  }
+
+  .city-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 0 2rem;
+  }
+
+  .city-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 7px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .city-item .city-name { color: var(--text-primary); font-weight: 500; }
+  .city-item .country-name { margin-left: auto; font-size: 12px; color: var(--text-tertiary); }
+
+  .footnote {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    margin-top: 2rem;
+    font-style: italic;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-link">Welcome</a>
+    <a href="resume.html" class="nav-link">Resume</a>
+    <a href="implementation.html" class="nav-link">Implementation</a>
+    <a href="global-reach.html" class="nav-link active">Global Reach</a>
+    <span class="nav-link soon" tabindex="0">How It Was Built</span>
+    <div class="nav-spacer"></div>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+      <i class="ti ti-sun" id="theme-icon" aria-hidden="true"></i>
+      <span id="theme-label">Light</span>
+    </button>
+  </div>
+</nav>
+
+<main class="page">
+  <h1 class="page-title">Global reach of onsite implementations</h1>
+  <p class="page-subtitle">inRESONANCE · 2009–2018 · 4 regions · 14 countries · 16 cities</p>
+
+  <hr>
+
+  <div class="stat-row">
+    <div class="stat"><strong>NAMER</strong> — 2 cities, 1 country</div>
+    <div class="stat"><strong>LATAM</strong> — 1 city, 1 country</div>
+    <div class="stat"><strong>EMEA</strong> — 8 cities, 8 countries</div>
+    <div class="stat"><strong>APAC</strong> — 5 cities, 4 countries</div>
+  </div>
+
+  <div id="map-container">
+    <svg id="map" viewBox="0 0 900 480" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+
+  <div id="tooltip"></div>
+
+  <div class="legend" id="legend"></div>
+  <p class="us-note">U.S. deployments are not represented here; the domestic inRESONANCE portfolio was extensive.</p>
+
+  <hr>
+
+  <div class="section-label">All locations</div>
+  <div class="city-grid" id="city-grid"></div>
+
+  <p class="footnote">All implementations were onsite. Travel coordinated independently. Client environments ranged from US-accredited independent schools to international institutions operating in local regulatory and cultural contexts.</p>
+</main>
+
+<script src="https://unpkg.com/d3@7/dist/d3.min.js"></script>
+<script src="https://unpkg.com/topojson-client@3/dist/topojson-client.min.js"></script>
+<script>
+const REGIONS = {
+  NAMER: { label: "NAMER — North America",               color: "#185FA5" },
+  LATAM: { label: "LATAM — Latin America",               color: "#0F6E56" },
+  EMEA:  { label: "EMEA — Europe, Middle East & Africa", color: "#993C1D" },
+  APAC:  { label: "APAC — Asia-Pacific",                 color: "#534AB7" }
+};
+
+const CITIES = [
+  { city: "Toronto",               country: "Canada",      region: "NAMER", lat: 43.65,  lng: -79.38 },
+  { city: "Victoria",              country: "Canada",      region: "NAMER", lat: 48.43,  lng: -123.37 },
+  { city: "Santiago",              country: "Chile",       region: "LATAM", lat: -33.45, lng: -70.67 },
+  { city: "London",                country: "UK",          region: "EMEA",  lat: 51.51,  lng: -0.13 },
+  { city: "Brussels",              country: "Belgium",     region: "EMEA",  lat: 50.85,  lng: 4.35 },
+  { city: "Saint-Germain-en-Laye", country: "France",      region: "EMEA",  lat: 48.90,  lng: 2.09 },
+  { city: "Karlovy Vary",          country: "Czechia",     region: "EMEA",  lat: 50.23,  lng: 12.87 },
+  { city: "Madaba",                country: "Jordan",      region: "EMEA",  lat: 31.72,  lng: 35.79 },
+  { city: "Dubai",                 country: "UAE",         region: "EMEA",  lat: 25.20,  lng: 55.27 },
+  { city: "Büyükçekmece",         country: "Turkey",      region: "EMEA",  lat: 41.02,  lng: 28.58 },
+  { city: "Kathmandu",             country: "Nepal",       region: "APAC",  lat: 27.71,  lng: 85.32 },
+  { city: "Seoul",                 country: "South Korea", region: "APAC",  lat: 37.57,  lng: 126.98 },
+  { city: "Okinawa",               country: "Japan",       region: "APAC",  lat: 26.50,  lng: 127.93 },
+  { city: "Beijing",               country: "China",       region: "APAC",  lat: 39.91,  lng: 116.39 },
+  { city: "Shanghai",              country: "China",       region: "APAC",  lat: 31.23,  lng: 121.47 },
+  { city: "Hong Kong",             country: "Hong Kong",   region: "APAC",  lat: 22.32,  lng: 114.17 }
+];
+
+const svg = d3.select("#map");
+const tooltip = document.getElementById("tooltip");
+
+const projection = d3.geoNaturalEarth1()
+  .scale(153)
+  .translate([450, 245]);
+
+const path = d3.geoPath().projection(projection);
+
+fetch("https://unpkg.com/world-atlas@2/countries-110m.json")
+  .then(r => r.json())
+  .then(world => {
+    const countries = topojson.feature(world, world.objects.countries);
+    svg.append("g")
+      .selectAll("path")
+      .data(countries.features)
+      .join("path")
+      .attr("class", "country-path")
+      .attr("d", path);
+
+    svg.append("g")
+      .selectAll("circle")
+      .data(CITIES)
+      .join("circle")
+      .attr("class", "dot")
+      .attr("cx", d => projection([d.lng, d.lat])[0])
+      .attr("cy", d => projection([d.lng, d.lat])[1])
+      .attr("r", 5)
+      .attr("fill", d => REGIONS[d.region].color)
+      .attr("stroke", "#fff")
+      .attr("stroke-width", 1.5)
+      .attr("opacity", 0.9)
+      .on("mousemove", (event, d) => {
+        tooltip.style.opacity = "1";
+        tooltip.textContent = `${d.city}, ${d.country}`;
+        tooltip.style.left = (event.clientX + 14) + "px";
+        tooltip.style.top  = (event.clientY - 36) + "px";
+      })
+      .on("mouseleave", () => { tooltip.style.opacity = "0"; });
+  })
+  .catch(() => {
+    svg.append("text")
+      .attr("x", 450).attr("y", 240)
+      .attr("text-anchor", "middle")
+      .attr("font-size", "14")
+      .attr("fill", "#888")
+      .text("Map data unavailable — check network connection");
+  });
+
+const legend = document.getElementById("legend");
+Object.entries(REGIONS).forEach(([, val]) => {
+  const item = document.createElement("div");
+  item.className = "legend-item";
+  item.innerHTML = `<span class="legend-pip" style="background:${val.color}"></span>${val.label}`;
+  legend.appendChild(item);
+});
+
+const grid = document.getElementById("city-grid");
+const order = ["NAMER","LATAM","EMEA","APAC"];
+[...CITIES]
+  .sort((a,b) => order.indexOf(a.region) - order.indexOf(b.region) || a.country.localeCompare(b.country))
+  .forEach(d => {
+    const item = document.createElement("div");
+    item.className = "city-item";
+    item.innerHTML = `
+      <span class="legend-pip" style="background:${REGIONS[d.region].color}"></span>
+      <span class="city-name">${d.city}</span>
+      <span class="country-name">${d.country}</span>`;
+    grid.appendChild(item);
+  });
+
+const toggleBtn  = document.getElementById("theme-toggle");
+const themeIcon  = document.getElementById("theme-icon");
+const themeLabel = document.getElementById("theme-label");
+
+function applyTheme(dark) {
+  document.body.classList.toggle("dark", dark);
+  themeIcon.className = dark ? "ti ti-moon" : "ti ti-sun";
+  themeLabel.textContent = dark ? "Dark" : "Light";
+  localStorage.setItem("theme", dark ? "dark" : "light");
+}
+
+const saved = localStorage.getItem("theme");
+const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+applyTheme(saved ? saved === "dark" : prefersDark);
+
+toggleBtn.addEventListener("click", () => {
+  applyTheme(!document.body.classList.contains("dark"));
+});
+</script>
+</body>
+</html>

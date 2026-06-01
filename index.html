@@ -86,30 +86,6 @@
     border-radius: 1px 1px 0 0;
   }
 
-  .nav-link.soon {
-    cursor: default;
-    color: var(--text-tertiary);
-  }
-
-  .nav-link.soon:hover { color: var(--text-tertiary); }
-
-  .nav-link.soon .tooltip {
-    display: none;
-    position: absolute;
-    top: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--text-primary);
-    color: var(--bg);
-    font-size: 11px;
-    padding: 4px 10px;
-    border-radius: 4px;
-    white-space: nowrap;
-    pointer-events: none;
-  }
-
-  .nav-link.soon:hover .tooltip { display: block; }
-
   .nav-spacer { flex: 1; }
 
   .theme-toggle {
@@ -172,7 +148,14 @@
 
   .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .cards-row2 {
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 12px;
   }
 
@@ -188,9 +171,6 @@
   }
 
   .card:hover { background: var(--bg-secondary); border-color: var(--border-hover); }
-
-  .card.soon { cursor: default; opacity: 0.55; }
-  .card.soon:hover { background: var(--bg); border-color: var(--border); }
 
   .card-icon { font-size: 20px; color: var(--text-tertiary); margin-bottom: 10px; }
   .card-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 5px; }
@@ -216,6 +196,11 @@
     padding: 0; margin: -1px; overflow: hidden;
     clip: rect(0,0,0,0); white-space: nowrap; border: 0;
   }
+
+  @media (max-width: 560px) {
+    .cards { grid-template-columns: 1fr; }
+    .cards-row2 { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
@@ -224,11 +209,9 @@
   <div class="nav-inner">
     <a href="index.html" class="nav-link active">Welcome</a>
     <a href="resume.html" class="nav-link">Resume</a>
+    <a href="global-reach.html" class="nav-link">Global Reach</a>
     <a href="implementation.html" class="nav-link">Implementation</a>
-    <span class="nav-link soon" tabindex="0">
-      How It Was Built
-      <span class="tooltip" role="tooltip">Coming soon</span>
-    </span>
+    <a href="built-resume.html" class="nav-link">How It Was Built</a>
     <div class="nav-spacer"></div>
     <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
       <i class="ti ti-sun" id="theme-icon" aria-hidden="true"></i>
@@ -246,6 +229,8 @@
   <hr>
 
   <div class="section-label">Portfolio</div>
+
+  <!-- Row 1: Resume | Global Reach | Implementation Framework -->
   <div class="cards">
 
     <a href="resume.html" class="card">
@@ -255,21 +240,34 @@
       <span class="card-badge live">Live</span>
     </a>
 
-   <a href="implementation.html" class="card">
-  <div class="card-icon"><i class="ti ti-sitemap" aria-hidden="true"></i></div>
-  <div class="card-title">Implementation Framework</div>
-  <div class="card-desc">How I run implementations — two delivery shapes, six-phase framework.</div>
-  <span class="card-badge live">Live</span>
-</a>
-   
-    <div class="card soon">
-      <div class="card-icon"><i class="ti ti-tool" aria-hidden="true"></i></div>
-      <div class="card-title">How It Was Built</div>
-      <div class="card-desc">AI-enabled workflow and value-added delivery frameworks in practice.</div>
-      <span class="card-badge">Coming soon</span>
-    </div>
+    <a href="global-reach.html" class="card">
+      <div class="card-icon"><i class="ti ti-map-pin" aria-hidden="true"></i></div>
+      <div class="card-title">Global Reach</div>
+      <div class="card-desc">Onsite implementations across 4 regions, 14 countries, 16 cities.</div>
+      <span class="card-badge live">Live</span>
+    </a>
+
+    <a href="implementation.html" class="card">
+      <div class="card-icon"><i class="ti ti-sitemap" aria-hidden="true"></i></div>
+      <div class="card-title">Implementation Framework</div>
+      <div class="card-desc">How I run implementations — two delivery shapes, six-phase framework.</div>
+      <span class="card-badge live">Live</span>
+    </a>
 
   </div>
+
+  <!-- Row 2: How It Was Built: Resume Process with AI -->
+  <div class="cards-row2">
+
+    <a href="built-resume.html" class="card">
+      <div class="card-icon"><i class="ti ti-tool" aria-hidden="true"></i></div>
+      <div class="card-title">How It Was Built: Resume Process with AI</div>
+      <div class="card-desc">Discovering judicious addition of AI-enabled workflow and value-added delivery framework. Manual process vs. AI-assisted — nine steps, every decision point documented.</div>
+      <span class="card-badge live">Live</span>
+    </a>
+
+  </div>
+
 </main>
 
 <script>
