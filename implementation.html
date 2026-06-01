@@ -218,6 +218,123 @@
     margin-left: 3px;
   }
 
+  /* ── Gantt ── */
+  .gantt-wrap {
+    overflow-x: auto;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    background: var(--bg);
+  }
+
+  .gantt-note {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+
+  .gantt-table {
+    width: 100%;
+    min-width: 520px;
+    border-collapse: collapse;
+  }
+
+  .gantt-header th {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    padding: 0 0 8px;
+    text-align: center;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .gantt-header th.label-col { text-align: left; width: 190px; }
+
+  .gantt-row td {
+    padding: 4px 0;
+    vertical-align: middle;
+  }
+
+  .gantt-row td.label-col {
+    font-size: 12px;
+    color: var(--text-secondary);
+    padding-right: 12px;
+    white-space: nowrap;
+  }
+
+  .gantt-row td.label-col .phase-tag {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    display: block;
+  }
+
+  .gantt-row td.week-col {
+    padding: 2px 1px;
+  }
+
+  .gantt-bar {
+    height: 20px;
+    border-radius: 3px;
+    width: 100%;
+  }
+
+  .gantt-bar.primary  { background: var(--accent); opacity: 0.85; }
+  .gantt-bar.parallel { background: var(--accent); opacity: 0.35; }
+  .gantt-bar.empty    { background: transparent; }
+
+  .gantt-bar[data-tip] {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .gantt-bar[data-tip]::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text-primary);
+    color: var(--bg);
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 10;
+  }
+
+  .gantt-bar[data-tip]:hover::after { opacity: 1; }
+
+  .gantt-legend {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .gantt-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+
+  .gantt-legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .swatch-primary  { background: var(--accent); opacity: 0.85; }
+  .swatch-parallel { background: var(--accent); opacity: 0.35; }
+
   .phase-nav {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -399,6 +516,39 @@
 
   <hr>
 
+  <div class="section-label">8-week delivery timeline — inRESONANCE</div>
+  <div class="gantt-wrap">
+    <p class="gantt-note">Hover any bar for detail. Parallel tracks ran continuously alongside the primary sequence.</p>
+    <table class="gantt-table" id="gantt-table">
+      <thead class="gantt-header">
+        <tr>
+          <th class="label-col">Phase</th>
+          <th>Wk 1</th>
+          <th>Wk 2</th>
+          <th>Wk 3</th>
+          <th>Wk 4</th>
+          <th>Wk 5</th>
+          <th>Wk 6</th>
+          <th>Wk 7</th>
+          <th>Wk 8</th>
+        </tr>
+      </thead>
+      <tbody id="gantt-body"></tbody>
+    </table>
+    <div class="gantt-legend">
+      <div class="gantt-legend-item">
+        <div class="gantt-legend-swatch swatch-primary"></div>
+        Primary sequence
+      </div>
+      <div class="gantt-legend-item">
+        <div class="gantt-legend-swatch swatch-parallel"></div>
+        Parallel track — ran throughout
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
   <div class="section-label">The framework — click a phase to explore</div>
 
   <div class="phase-nav" id="phase-nav" role="tablist" aria-label="Implementation phases"></div>
@@ -521,6 +671,53 @@ function renderPanel() {
       }).join('') +
     '</ul>';
 }
+
+// ── Gantt ──
+const ganttRows = [
+  { label: "Discovery & Client Relations", tag: "Phase 1", type: "primary",  start: 1, end: 2, tip: "Phase 1: See what actually exists before committing to a plan" },
+  { label: "Data Receipt",                 tag: "Phase 2", type: "primary",  start: 3, end: 4, tip: "Phase 2: Chain of custody from the first file" },
+  { label: "Contingency",                  tag: "",        type: "primary",  start: 5, end: 5, tip: "Built-in buffer — data problems surface here, not at go-live" },
+  { label: "Data Conversion",              tag: "Phase 3", type: "primary",  start: 6, end: 6, tip: "Phase 3: Only clean, validated data reaches production" },
+  { label: "Onsite: Install & Train",      tag: "Phase 5", type: "primary",  start: 7, end: 7, tip: "Phase 5: Go-live is not a technical event" },
+  { label: "Post-install & Handoff",       tag: "Phase 5", type: "primary",  start: 8, end: 8, tip: "Phase 5: Client is not abandoned at go-live" },
+  { label: "Configuration & Setup",        tag: "Phase 4 — parallel", type: "parallel", start: 1, end: 7, tip: "Phase 4: Ran from Week 1 — doesn't wait for data. Click Phase 4 below to explore." },
+  { label: "Change Management",            tag: "Phase 6 — parallel", type: "parallel", start: 1, end: 8, tip: "Phase 6: A posture, not a phase. Runs throughout. Click Phase 6 below to explore." }
+];
+
+const ganttBody = document.getElementById('gantt-body');
+
+ganttRows.forEach((row, idx) => {
+  // Insert a spacer before the parallel tracks
+  if (idx === 6) {
+    const spacer = document.createElement('tr');
+    spacer.innerHTML = `<td colspan="9" style="padding:4px 0;"><div style="border-top:0.5px solid var(--border);margin:2px 0;"></div></td>`;
+    ganttBody.appendChild(spacer);
+  }
+
+  const tr = document.createElement('tr');
+  tr.className = 'gantt-row';
+
+  const labelTd = document.createElement('td');
+  labelTd.className = 'label-col';
+  labelTd.innerHTML = row.label + (row.tag ? `<span class="phase-tag">${row.tag}</span>` : '');
+  tr.appendChild(labelTd);
+
+  for (let w = 1; w <= 8; w++) {
+    const td = document.createElement('td');
+    td.className = 'week-col';
+    const div = document.createElement('div');
+    if (w >= row.start && w <= row.end) {
+      div.className = `gantt-bar ${row.type}`;
+      if (row.tip) div.setAttribute('data-tip', row.tip);
+    } else {
+      div.className = 'gantt-bar empty';
+    }
+    td.appendChild(div);
+    tr.appendChild(td);
+  }
+
+  ganttBody.appendChild(tr);
+});
 
 renderNav();
 renderPanel();
