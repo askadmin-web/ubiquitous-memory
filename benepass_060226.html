@@ -126,6 +126,15 @@
     gap: 0;
     max-width: 1400px;
     margin: 0 auto;
+    align-items: start;
+  }
+
+  /* Left column sticky */
+  .col-jd {
+    position: sticky;
+    top: 48px; /* height of nav */
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
   }
 
   /* COLUMN HEADERS — no bottom border; alignment handled by section rules inside body */
@@ -217,6 +226,7 @@
   .col-jd .col-body {
     background: #fff;
     border-right: 1px solid var(--border);
+    padding-bottom: 3rem;
   }
 
   .col-resume .col-body { background: var(--gray-50); }
