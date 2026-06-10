@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odyssey — Screening Call Prep | Cathy Rudolph</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0f1117;
+    --bg2:       #181b24;
+    --bg3:       #1e2130;
+    --border:    #2a2e3d;
+    --border2:   #353a4f;
+    --text:      #e8eaf0;
+    --text2:     #8b90a4;
+    --text3:     #555c72;
+    --amber:     #e8a838;
+    --amber-bg:  #2a2210;
+    --teal:      #3ecfb2;
+    --teal-bg:   #0e2520;
+    --green:     #4ade80;
+    --green-bg:  #0d2318;
+    --red:       #f87171;
+    --red-bg:    #250f0f;
+    --radius:    8px;
+    --radius-lg: 12px;
+    --mono:      'IBM Plex Mono', monospace;
+    --sans:      'IBM Plex Sans', system-ui, sans-serif;
+  }
+
+  html { font-size: 16px; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  .shell {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 6px;
+  }
+  .header-title {
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -.01em;
+  }
+  .header-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    text-align: right;
+    line-height: 1.9;
+    flex-shrink: 0;
+  }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.75rem;
+    overflow-x: auto;
+  }
+  .tab {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 9px 18px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: var(--text3);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color .15s, border-color .15s;
+    white-space: nowrap;
+  }
+  .tab:hover { color: var(--text2); }
+  .tab.active { color: var(--amber); border-bottom: 2px solid var(--amber); }
+
+  /* ── Sections ── */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── Company snapshot ── */
+  .snapshot-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .75rem;
+    margin-bottom: 1.5rem;
+  }
+  @media (max-width: 540px) { .snapshot-grid { grid-template-columns: 1fr; } }
+
+  .snapshot-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+  }
+  .snapshot-card-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 5px;
+  }
+  .snapshot-card-value {
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .snapshot-card-value strong { color: var(--teal); font-weight: 500; }
+
+  .risk-card {
+    background: var(--red-bg);
+    border: 1px solid #3a1515;
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .risk-card-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 6px;
+  }
+  .risk-card p {
+    font-size: 13.5px;
+    color: var(--text2);
+    line-height: 1.7;
+    margin-bottom: .5rem;
+  }
+  .risk-card p:last-child { margin-bottom: 0; }
+  .risk-card em { color: var(--text); font-style: italic; }
+
+  .reframe-card {
+    background: var(--teal-bg);
+    border: 1px solid #1a3d35;
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .reframe-card-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 6px;
+  }
+  .reframe-card p {
+    font-size: 13.5px;
+    color: var(--text2);
+    line-height: 1.7;
+    margin-bottom: 0;
+  }
+  .reframe-card em { color: var(--text); font-style: italic; }
+
+  /* ── Opening statement ── */
+  .practice-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--text2);
+    background: none;
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 6px 14px;
+    cursor: pointer;
+    margin-bottom: 1.25rem;
+    transition: border-color .15s, color .15s;
+    display: block;
+  }
+  .practice-btn:hover { border-color: var(--amber); color: var(--amber); }
+
+  .statement-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 1.75rem;
+    font-size: 14.5px;
+    line-height: 1.8;
+  }
+  .statement-box p { margin-bottom: .9rem; }
+  .statement-box p:last-child { margin-bottom: 0; }
+
+  .hl-amber {
+    background: var(--amber-bg);
+    color: var(--amber);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+  .hl-teal {
+    background: var(--teal-bg);
+    color: var(--teal);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .practice-placeholder {
+    background: var(--bg2);
+    border: 1px dashed var(--border2);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    color: var(--text3);
+    font-size: 14px;
+  }
+
+  /* ── Accordion ── */
+  .divider {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+    margin: 1.25rem 0 .75rem;
+  }
+  .divider:first-of-type { margin-top: 0; }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .counter {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+  }
+  .ctrl-row { display: flex; gap: .5rem; }
+  .ctrl-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .04em;
+    color: var(--text2);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: border-color .15s, color .15s;
+  }
+  .ctrl-btn:hover { border-color: var(--border2); color: var(--text); }
+
+  .qa-item {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: .55rem;
+    overflow: hidden;
+    transition: border-color .15s;
+  }
+  .qa-item:hover { border-color: var(--border2); }
+  .qa-item.open { border-color: var(--border2); }
+
+  .qa-q {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: .9rem 1.1rem;
+    cursor: pointer;
+    background: var(--bg2);
+    user-select: none;
+    transition: background .12s;
+  }
+  .qa-q:hover { background: var(--bg3); }
+  .qa-item.open .qa-q { background: var(--bg3); }
+
+  .qa-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px 7px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    line-height: 1.6;
+    white-space: nowrap;
+  }
+  .qa-tag.motivation { color: var(--amber); border-color: #3a2c0a; background: var(--amber-bg); }
+  .qa-tag.depth      { color: var(--teal);  border-color: #1a3d35; background: var(--teal-bg); }
+  .qa-tag.fit        { color: #a78bfa;      border-color: #2d1f4a; background: #1a1230; }
+  .qa-tag.ask        { color: var(--green); border-color: #1a3d25; background: var(--green-bg); }
+
+  .qa-q-text {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.45;
+    flex: 1;
+  }
+
+  .chevron {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    color: var(--text3);
+    margin-top: 2px;
+    transition: transform .2s;
+  }
+  .qa-item.open .chevron { transform: rotate(180deg); }
+
+  .qa-a {
+    display: none;
+    padding: .85rem 1.1rem 1.1rem;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: var(--text2);
+  }
+  .qa-item.open .qa-a { display: block; }
+  .qa-a p { margin-bottom: .65rem; }
+  .qa-a p:last-child { margin-bottom: 0; }
+  .qa-a em { color: var(--text); font-style: italic; }
+  .qa-a strong { color: var(--text); font-weight: 500; }
+
+  .answer-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 5px;
+    margin-top: .5rem;
+  }
+  .story-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 5px;
+    margin-top: .85rem;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 3rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5rem;
+  }
+  .footer-note {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: .05em;
+  }
+  .salary-pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--amber-bg);
+    color: var(--amber);
+    border: 1px solid #3a2c0a;
+    border-radius: var(--radius);
+    padding: 4px 12px;
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header class="header">
+    <div>
+      <div class="header-eyebrow">Screening call prep</div>
+      <div class="header-title">Odyssey — Victoria Wright</div>
+    </div>
+    <div class="header-meta">
+      Wednesday morning<br>
+      Recruiter · Talent<br>
+      Candidate: Cathy Rudolph
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab active" role="tab" onclick="showSection('snapshot', this)">Company</button>
+    <button class="tab" role="tab" onclick="showSection('opener', this)">60-second opener</button>
+    <button class="tab" role="tab" onclick="showSection('incoming', this)">Her questions</button>
+    <button class="tab" role="tab" onclick="showSection('yours', this)">Your questions</button>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════
+       COMPANY SNAPSHOT
+  ═══════════════════════════════════════════ -->
+  <div id="snapshot" class="section active">
+
+    <div class="snapshot-grid">
+      <div class="snapshot-card">
+        <div class="snapshot-card-label">What they do</div>
+        <div class="snapshot-card-value">Civic infrastructure for state ESA programs. Not just software — they run the entire pipeline: application intake, identity verification, vendor marketplace, payment processing, fraud monitoring, family support.</div>
+      </div>
+      <div class="snapshot-card">
+        <div class="snapshot-card-label">Scale (verifiable)</div>
+        <div class="snapshot-card-value"><strong>140,000+ students</strong> · <strong>$400M+</strong> in state funding processed · <strong>6 states</strong>: Iowa, Georgia, Louisiana, Utah, Wyoming, Texas (launching now)</div>
+      </div>
+      <div class="snapshot-card">
+        <div class="snapshot-card-label">Funding</div>
+        <div class="snapshot-card-value">Series A · <strong>~$10M</strong> · led by Tusk Venture Partners, with a16z and Bling Capital participating. Announced May 2024.</div>
+      </div>
+      <div class="snapshot-card">
+        <div class="snapshot-card-label">Texas TEFA — current state</div>
+        <div class="snapshot-card-value">Applications for 2026–27 already closed. Record-setting demand. Funding awards in April. This is live and in motion — their biggest reference account.</div>
+      </div>
+      <div class="snapshot-card">
+        <div class="snapshot-card-label">Your framing opener</div>
+        <div class="snapshot-card-value">"My understanding is that Odyssey is effectively civic infrastructure for ESA programs — you're not just shipping software, you're operating the whole pipeline from state disbursement through family and vendor experience."</div>
+      </div>
+      <div class="snapshot-card">
+        <div class="snapshot-card-label">What excites you</div>
+        <div class="snapshot-card-value">"Genuine civic impact combined with hard implementation problems: multi-stakeholder state programs, large application windows, payments, compliance — and the requirement that it all work from day one."</div>
+      </div>
+    </div>
+
+    <div class="risk-card">
+      <div class="risk-card-label">Political / legal risk — know it, don't fear it</div>
+      <p>ESA programs are contested. Wyoming's program was temporarily blocked by a court injunction in late 2025 (injunction later lifted). Iowa's state auditor was denied records during a routine audit. Arizona (not an Odyssey state) has 34% of examined purchases flagged. This terrain is real.</p>
+      <p>Odyssey built their business on navigating this. They know. Don't volunteer concern in the screening call — it reads as ambivalence about the mission. If it comes up, frame it as the environment where repeatable implementation frameworks matter most.</p>
+      <p>If you want to signal you did real research, this is the safe version: <em>"ESA programs are operating in contested legislative environments in several states — Wyoming had a temporary injunction last year. How does Odyssey think about program continuity and implementation workload when a state program hits a legal or legislative disruption?"</em></p>
+    </div>
+
+    <div class="reframe-card">
+      <div class="reframe-card-label">The one gap — government agency experience</div>
+      <p>The JD flags it as "strong plus." Your honest answer: <em>"My experience has been on the vendor and implementation side — I haven't sat inside a government agency. But the implementations at inRESONANCE were contractually bound to institutional procurement cycles and compliance requirements, and the discipline of managing to an external governance structure is transferable."</em> Don't oversell. Don't hide it either.</p>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       60-SECOND OPENER
+  ═══════════════════════════════════════════ -->
+  <div id="opener" class="section">
+
+    <button class="practice-btn" onclick="togglePractice()" id="practiceBtn">&#9632;&nbsp; Hide for practice</button>
+
+    <div id="statementContent">
+      <div class="statement-box">
+        <p>I've spent 16 years leading full-lifecycle software implementations — <span class="hl-amber">180+ total</span>: 150+ K-12 institutional go-lives and 30+ enterprise SaaS deployments. The common thread is that I've always worked in environments where go-live failures have real downstream consequences for real people.</p>
+        <p>At inRESONANCE I owned implementations for 150+ schools — including on-site work in China and Jordan. At VenturEd I ran 30+ enterprise SaaS deployments, managing 6 simultaneously, with a focus on building the playbooks and frameworks that made each one repeatable rather than bespoke.</p>
+        <p><span class="hl-teal">That maps directly to how I see Odyssey's work.</span> You're building something that has to function correctly from day one — public money, families depending on it, state agencies watching. That's the kind of environment where I've operated, and it's the kind of work I want to do.</p>
+      </div>
+    </div>
+
+    <div id="statementHidden" style="display:none">
+      <div class="practice-placeholder">Statement hidden — deliver from memory, then reveal.</div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       HER QUESTIONS
+  ═══════════════════════════════════════════ -->
+  <div id="incoming" class="section">
+
+    <div class="toolbar">
+      <span class="counter" id="inCount">0 of 8 open</span>
+      <div class="ctrl-row">
+        <button class="ctrl-btn" onclick="setAll('in', true)">Expand all</button>
+        <button class="ctrl-btn" onclick="setAll('in', false)">Collapse all</button>
+      </div>
+    </div>
+
+    <div class="divider">Mission and motivation</div>
+
+    <div class="qa-item" data-group="in" onclick="toggle(this, 'inCount', 'in')">
+      <div class="qa-q">
+        <span class="qa-tag motivation">motivation</span>
+        <span class="qa-q-text">"What about Odyssey and this mission resonates with you?"</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="qa-a">
+        <div class="answer-label">Answer direction</div>
+        <p>Don't perform enthusiasm. The honest answer: 16 years in K-12 means you've seen what happens when families hit bureaucratic or funding barriers. Odyssey is building the infrastructure that removes those barriers. That's a real thing, and you understand the institutional complexity on both sides of it.</p>
+        <p>Tie it to your direct experience: schools you worked with were often constrained by exactly the kinds of funding and access problems ESA programs are designed to solve.</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-group="in" onclick="toggle(this, 'inCount', 'in')">
+      <div class="qa-q">
+        <span class="qa-tag motivation">motivation</span>
+        <span class="qa-q-text">"How do you think about school choice and ESA programs?"</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="qa-a">
+        <div class="answer-label">Answer direction</div>
+        <p>Stay grounded, not political. The honest professional frame: <em>"I understand these programs are debated. My orientation is that when the law exists and families have access to funds, the system that delivers those funds needs to work. That's the problem I'm here to solve."</em></p>
+        <p>Don't be drawn into a policy position. This is an implementation conversation, not a policy one.</p>
+      </div>
+    </div>
+
+    <div class="divider">Implementation depth</div>
+
+    <div class="qa-item" data-group="in" onclick="toggle(this, 'inCount', 'in')">
+      <div class="qa-q">
+        <span class="qa-tag depth">depth</span>
+        <span class="qa-q-text">"Tell me about a complex, multi-month implementation you owned end-to-end."</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="qa-a">
+        <div class="answer-label">Answer direction</div>
+        <p>Pick a VenturEd enterprise implementation with multiple stakeholder groups, a data migration component, and a visible go-live. Emphasize the concurrent load (6 simultaneously), your use of a documented mutual action plan, and what you did when something went off-plan.</p>
+        <div class="story-label">Backup story</div>
+        <p>The Archivist story fits here if the question drifts toward "what happened when reality diverged from the brief" — discovered at sandbox review, took the work home, delivered clean version Monday, didn't bill for it. Ownership without drama.</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-group="in" onclick="toggle(this, 'inCount', 'in')">
+      <div class="qa-q">
+        <span class="qa-tag depth">depth</span>
+        <span class="qa-q-text">"What do you do when reality at go-live doesn't match the brief?"</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="qa-a">
+        <div class="answer-label">Answer direction</div>
+        <p>The China training story. Administration had created a loss-of-face situation by excluding Mandarin-speaking teaching staff. You asked two questions: translators on staff? Extra laptops? Restructured training using bilingual participants as bridges. Ran three extra hours. Finished to applause.</p>
+        <p>Frame: <em>"The brief was wrong when I arrived. The question wasn't whether to complain about it — it was what resources were actually in the room."</em></p>
+      </div>
+    </div>
+
+    <div class="divider">Technical and operational fit</div>
+
+    <div class="qa-item" data-group="in" onclick="toggle(this, 'inCount', 'in')">
+      <div class="qa-q">
+        <span class="qa-tag fit">fit</span>
+        <span class="qa-q-text">"How comfortable are you with APIs, webhooks, and using SQL or Excel to investigate data?"</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="qa-a">
+        <div class="answer-label">Answer direction</div>
+        <p>Accurate answer: configured API integrations and ETL automations at VenturEd between SaaS and legacy systems — data mapping errors, field mismatches, deduplication. Used SQL and Excel to debug issues and report to stakeholders. Not an engineer, but comfortable enough to be the implementation layer between technical and non-technical teams.</p>
+        <p>Don't claim anything you can't demonstrate. The resume says it accurately.</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-group="in" onclick="toggle(this, 'inCount', 'in')">
+      <div class="qa-q">
+        <span class="qa-tag fit">fit</span>
+        <span class="qa-q-text">"We're still building many of our own internal processes — how do you handle that?"</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="qa-a">
+        <div class="answer-label">Answer direction</div>
+        <p>This is direct experience. At inRESONANCE the deployment framework didn't exist when you arrived — you built it and used it 150+ times. At VenturEd you built the mutual action plan templates and onboarding documentation that made each new implementation start from a higher baseline.</p>
+        <p><em>"I'm most useful in environments where the playbook is still being written. The second implementation should be easier than the first."</em></p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-group="in" onclick="toggle(this, 'inCount', 'in')">
+      <div class="qa-q">
+        <span class="qa-tag fit">fit</span>
+        <span class="qa-q-text">"How do you manage conflicting priorities between state clients, product/engineering, and end users?"</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="qa-a">
+        <div class="answer-label">Answer direction</div>
+        <p>Use the RavennaConnect story as structure: development deprioritized a promised feature, client at risk. You built an API workaround, management was displeased, client was retained. The frame is: <em>you broker trade-offs by keeping the client's functional need as the fixed point and finding the path that gets there — even when the original path is gone.</em></p>
+        <div class="story-label">Also usable</div>
+        <p>PS1/Pluralistic School — 20-year relationship maintained through acquisition and platform migration despite sales overpromising. Long-term stewardship, honest advocacy.</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-group="in" onclick="toggle(this, 'inCount', 'in')">
+      <div class="qa-q">
+        <span class="qa-tag fit">fit</span>
+        <span class="qa-q-text">"What kind of environment works best for you?"</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="qa-a">
+        <div class="answer-label">Answer direction</div>
+        <p>High ownership, ambiguity tolerance, cross-functional work. You're fine without a rigid process as long as there's a clear decision-maker when escalation is needed. You've worked in startup and post-acquisition environments — both require figuring out what the process is while you're using it.</p>
+        <p>Don't oversell your tolerance for chaos. It's fine to say you still need baseline alignment on client commitments.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       YOUR QUESTIONS
+  ═══════════════════════════════════════════ -->
+  <div id="yours" class="section">
+
+    <div class="toolbar">
+      <span class="counter" id="outCount">0 of 5 open</span>
+      <div class="ctrl-row">
+        <button class="ctrl-btn" onclick="setAll('out', true)">Expand all</button>
+        <button class="ctrl-btn" onclick="setAll('out', false)">Collapse all</button>
+      </div>
+    </div>
+
+    <div class="divider">Strategic and operational</div>
+
+    <div class="qa-item" data-group="out" onclick="toggle(this, 'outCount', 'out')">
+      <div class="qa-q">
+        <span class="qa-tag ask">ask</span>
+        <span class="qa-q-text">"Texas TEFA just launched with record demand. Where does implementation focus sit right now — scaling that program or bringing new states online?"</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="qa-a">
+        <p>Shows you did real research. Opens a conversation about what the role actually involves day-to-day. Her answer tells you whether this is a scale-and-stabilize role or a new-program-launch role — that's material to your evaluation.</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-group="out" onclick="toggle(this, 'outCount', 'out')">
+      <div class="qa-q">
+        <span class="qa-tag ask">ask</span>
+        <span class="qa-q-text">"How does Odyssey think about configurable platform vs. bespoke builds — when every state has its own statutory requirements, where does that tension live?"</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="qa-a">
+        <p>This is the product tension at the heart of their business. Asking it shows you understand the operational challenge. Her answer also tells you how mature their platform thinking is — are they solving this systematically or firefighting it state by state?</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-group="out" onclick="toggle(this, 'outCount', 'out')">
+      <div class="qa-q">
+        <span class="qa-tag ask">ask</span>
+        <span class="qa-q-text">"For a new state, what does a typical timeline look like from contract to first family transactions — and where do implementations tend to get stuck?"</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="qa-a">
+        <p>Practical implementation intelligence. Also a good signal question — if she can't answer this, it's a data point about org maturity. If she can, you learn where your experience maps most directly.</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-group="out" onclick="toggle(this, 'outCount', 'out')">
+      <div class="qa-q">
+        <span class="qa-tag ask">ask</span>
+        <span class="qa-q-text">"What does success look like for someone in this role in the first 6–12 months?"</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="qa-a">
+        <p>Standard but essential. Forces a concrete answer about what they actually need. Also useful for calibrating whether they've defined this role clearly or are still figuring it out.</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-group="out" onclick="toggle(this, 'outCount', 'out')">
+      <div class="qa-q">
+        <span class="qa-tag ask">ask</span>
+        <span class="qa-q-text">"Is there anything in my background I can expand on while we're on the phone?"</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="qa-a">
+        <p>Ask this last. If government agency experience comes up — and it might, given the JD flags it — this is where you address it directly: your experience has been on the vendor and implementation side, not inside a government agency. The transferable element is managing to external governance structures and institutional procurement cycles. Don't oversell it. State it and move on.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <span class="footer-note">Ashby ATS · applied May 28, 2026 · recruiter: Victoria Wright · band: $130K–$160K</span>
+    <span class="salary-pill">anchor: $150K+</span>
+  </footer>
+
+</div>
+
+<script>
+  function showSection(id, btn) {
+    document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+    document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function toggle(el, counterId, group) {
+    el.classList.toggle('open');
+    updateCount(counterId, group);
+  }
+
+  function setAll(group, open) {
+    var counterId = group === 'in' ? 'inCount' : 'outCount';
+    document.querySelectorAll('[data-group="' + group + '"]').forEach(function(el) {
+      open ? el.classList.add('open') : el.classList.remove('open');
+    });
+    updateCount(counterId, group);
+  }
+
+  function updateCount(counterId, group) {
+    var open  = document.querySelectorAll('[data-group="' + group + '"].open').length;
+    var total = document.querySelectorAll('[data-group="' + group + '"]').length;
+    document.getElementById(counterId).textContent = open + ' of ' + total + ' open';
+  }
+
+  var practiceMode = false;
+  function togglePractice() {
+    practiceMode = !practiceMode;
+    document.getElementById('statementContent').style.display = practiceMode ? 'none' : 'block';
+    document.getElementById('statementHidden').style.display  = practiceMode ? 'block' : 'none';
+    document.getElementById('practiceBtn').textContent = practiceMode ? '▶  Reveal statement' : '■  Hide for practice';
+  }
+</script>
+</body>
+</html>
