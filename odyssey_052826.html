@@ -11,6 +11,14 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-QVZ0K1D563');
+
+  // Capture ?ref= parameter
+  const refParam = new URLSearchParams(window.location.search).get('ref');
+  if (refParam) {
+    gtag('event', 'page_view', {
+      'ref': refParam
+    });
+  }
 </script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
 <style>
