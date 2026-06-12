@@ -8,6 +8,14 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-QVZ0K1D563');
+
+  // Capture ?ref= parameter
+  const refParam = new URLSearchParams(window.location.search).get('ref');
+  if (refParam) {
+    gtag('event', 'page_view', {
+      'ref': refParam
+    });
+  }
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
