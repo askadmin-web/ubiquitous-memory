@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cathy Rudolph — Stitch Implementation Program Manager</title>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QVZ0K1D563"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-QVZ0K1D563');
+</script>
+<!-- Cathy Rudolph, June 12, 2026 -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal-50: #E1F5EE;
+    --teal-100: #9FE1CB;
+    --teal-400: #1D9E75;
+    --teal-600: #0F6E56;
+    --teal-800: #085041;
+    --gray-50: #F8F7F4;
+    --gray-100: #EEECEA;
+    --gray-200: #D3D1C7;
+    --gray-400: #888780;
+    --gray-600: #5F5E5A;
+    --gray-800: #2C2C2A;
+    --text-primary: #1a1a18;
+    --text-secondary: #5F5E5A;
+    --text-tertiary: #888780;
+    --border: #D3D1C7;
+    --font-sans: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+
+  html { font-size: 15px; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--gray-50);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 48px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  nav a {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    padding: 4px 0;
+    border-bottom: 1.5px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  nav a:hover { color: var(--teal-600); border-bottom-color: var(--teal-400); }
+
+  nav a.current {
+    color: var(--text-primary);
+    border-bottom-color: var(--teal-400);
+    font-weight: 500;
+  }
+
+  nav .nav-sep { color: var(--gray-200); font-family: var(--font-mono); font-size: 12px; }
+
+  /* PAGE HEADER */
+  .page-header {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .page-header p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .page-header p strong { color: var(--text-primary); font-weight: 500; }
+
+  .legend {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    margin-left: auto;
+  }
+
+  .legend-swatch {
+    width: 28px;
+    height: 10px;
+    background: var(--teal-50);
+    border-left: 3px solid var(--teal-400);
+    border-radius: 1px;
+  }
+
+  /* MAIN COLUMNS */
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: start;
+  }
+
+  /* Left column sticky */
+  .col-jd {
+    position: sticky;
+    top: 48px; /* height of nav */
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+  }
+
+  /* COLUMN HEADERS — no bottom border; alignment handled by section rules inside body */
+  .col-header {
+    padding: 1.75rem 2rem 1.5rem;
+  }
+
+  .col-jd .col-header {
+    background: #fff;
+    border-right: 1px solid var(--border);
+  }
+
+  .col-resume .col-header { background: var(--gray-50); }
+
+  .col-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 0.6rem;
+  }
+
+  /* JD header */
+  .jd-company {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+
+  .jd-role {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--teal-600);
+    margin-bottom: 0.75rem;
+  }
+
+  .jd-synopsis {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* Resume header */
+  .resume-name {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+  }
+
+  .resume-contact {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-bottom: 1px;
+  }
+
+  .resume-contact a { color: var(--teal-600); text-decoration: none; }
+  .resume-contact a:hover { text-decoration: underline; }
+
+  .resume-role-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal-600);
+    margin: 0.75rem 0 0.4rem;
+  }
+
+  .resume-summary {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* COLUMN BODY */
+  .col-body { padding: 0 2rem 2rem; }
+
+  .col-jd .col-body {
+    background: #fff;
+    border-right: 1px solid var(--border);
+    padding-bottom: 3rem;
+  }
+
+  .col-resume .col-body { background: var(--gray-50); }
+
+  /* JD section labels — first one carries the top rule to align with Pro Experience rule */
+  .jd-section-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin: 1.25rem 0 0.6rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .jd-section-title.first {
+    margin-top: 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* JD items — Safari-safe hover */
+  .jd-item {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 6px 10px 6px 12px;
+    margin-bottom: 3px;
+    border-radius: 3px;
+    border-left: 3px solid transparent;
+    cursor: default;
+    pointer-events: all;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+    line-height: 1.55;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .jd-item:hover {
+    background: var(--teal-50);
+    border-left-color: var(--teal-400);
+    color: var(--teal-800);
+  }
+
+  .jd-item.no-match { opacity: 0.55; }
+
+  .jd-item.no-match:hover {
+    background: var(--gray-100);
+    border-left-color: var(--gray-200);
+    color: var(--text-secondary);
+  }
+
+  .no-match-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-tertiary);
+    margin-left: 6px;
+  }
+
+  /* Inline phrase target — for partial-match JD lines where only a phrase is wired */
+  .jd-phrase {
+    cursor: default;
+    border-radius: 3px;
+    padding: 0 3px;
+    margin: 0 -1px;
+    border-bottom: 1.5px dotted var(--gray-200);
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .jd-phrase:hover {
+    background: var(--teal-50);
+    color: var(--teal-800);
+    border-bottom-color: var(--teal-400);
+  }
+
+  /* A jd-item that hosts a phrase target should not itself react to hover */
+  .jd-item.has-phrase { cursor: default; }
+  .jd-item.has-phrase:hover {
+    background: transparent;
+    border-left-color: transparent;
+    color: var(--text-secondary);
+  }
+
+  /* Resume sections */
+  .resume-section { margin-bottom: 1.25rem; }
+
+  .resume-section-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .resume-employer { margin-bottom: 1rem; }
+
+  .employer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1px;
+  }
+
+  .employer-name {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-primary);
+    padding: 2px 4px 2px 10px;
+    border-left: 3px solid transparent;
+    border-radius: 3px;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+  }
+
+  .employer-dates {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+
+  .employer-sector {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-bottom: 4px;
+    font-style: italic;
+    padding-left: 10px;
+  }
+
+  .employer-role {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    padding-left: 10px;
+  }
+
+  .resume-bullet, .resume-inline {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 5px 8px 5px 10px;
+    margin-bottom: 3px;
+    border-radius: 3px;
+    border-left: 3px solid transparent;
+    line-height: 1.55;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+  }
+
+  .resume-bullet.highlight,
+  .resume-inline.highlight,
+  .employer-name.highlight {
+    background: var(--teal-50);
+    border-left-color: var(--teal-400);
+    color: var(--teal-800);
+  }
+
+  /* FOOTER */
+  footer {
+    background: #fff;
+    border-top: 1px solid var(--border);
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  footer a { color: var(--teal-600); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  footer .sep { color: var(--gray-200); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://askadmin-web.github.io/ubiquitous-memory">Portfolio</a>
+  <span class="nav-sep">/</span>
+  <a href="#" class="current">Stitch · Implementation Program Manager</a>
+</nav>
+
+<div class="page-header">
+  <p>This page was prepared for the Implementation Program Manager position at Stitch. On the left: the role requirements, trimmed to signal. On the right: my resume as submitted. <strong>Hover any requirement</strong> to see where it lands.</p>
+  <div class="legend">
+    <div class="legend-swatch"></div>
+    match highlighted on hover
+  </div>
+</div>
+
+<div class="columns">
+
+  <!-- LEFT COLUMN -->
+  <div class="col-jd">
+
+    <div class="col-header">
+      <div class="col-eyebrow">Role · Stitch</div>
+      <div class="jd-company">Stitch</div>
+      <div class="jd-role">Implementation Program Manager · U.S. Remote</div>
+      <div class="jd-synopsis">Braze martech consultancy. Drive day-to-day execution of end-to-end Braze implementations for enterprise and high-growth clients. Own the integrated project plan across workstreams; partner with a Launch Practice Leader who holds strategy and executive relationships. Coordinate Solution Architects, Technical Architects, and client engineering through go-live.</div>
+    </div>
+
+    <div class="col-body">
+
+      <div class="jd-section-title first">What You'll Do</div>
+
+      <div class="jd-item" data-targets="skill-delivery bullet-v1 bullet-ir1">Manage day-to-day execution for implementation projects, from kickoff through go-live and early adoption</div>
+      <div class="jd-item" data-targets="skill-planning bullet-v2">Own the integrated project plan: milestones, dependencies, and risks across workstreams covering data, integrations, channel configuration, and campaign enablement</div>
+      <div class="jd-item" data-targets="skill-stakeholder bullet-v4">Partner with a Senior Implementation Lead / Launch Practice Leader who owns overall strategy and executive relationships, ensuring your delivery plan supports the roadmap</div>
+      <div class="jd-item" data-targets="skill-stakeholder bullet-ir2 bullet-v4">Facilitate working sessions and status meetings with client stakeholders to clarify requirements, track progress, and resolve blockers</div>
+      <div class="jd-item" data-targets="skill-technical bullet-v3 bullet-v1">Coordinate closely with Solution Architects, Technical Architects, and client engineering teams to keep integrations, data flows, and QA on track</div>
+      <div class="jd-item" data-targets="skill-golive bullet-v1">Support critical go-live readiness activities, including test planning, QA coordination, and launch runbooks</div>
+      <div class="jd-item no-match">Maintain project documentation including RAID logs, decision logs, status reports <span class="no-match-tag">— no direct match (RAID logs)</span></div>
+      <div class="jd-item" data-targets="skill-planning bullet-v4">Escalate risks and issues early, propose mitigation options, and drive decisions with support from senior leaders</div>
+      <div class="jd-item" data-targets="skill-playbooks bullet-ir4">Contribute feedback and lessons learned into implementation playbooks, templates, and best practices</div>
+      <div class="jd-item no-match">Manage time to meet billable utilization targets of 36+ hours per week <span class="no-match-tag">— no direct match</span></div>
+      <div class="jd-item no-match">Travel up to 20–25% for kickoffs, onsite workshops, and key milestones <span class="no-match-tag">— within tolerance</span></div>
+
+      <div class="jd-section-title">What You Bring</div>
+
+      <div class="jd-item has-phrase">Experience managing cross-functional implementation or rollout projects with a defined go-live date (martech, CDP, CRM, or <span class="jd-phrase" data-targets="employer-ventured bullet-v1">adjacent SaaS</span>)</div>
+      <div class="jd-item no-match">Familiarity with Braze or a comparable tier-one customer engagement platform (Adobe, Salesforce Marketing Cloud, Iterable) <span class="no-match-tag">— no direct match</span></div>
+      <div class="jd-item" data-targets="skill-planning bullet-v2 bullet-v1">Strong project/program management: building and maintaining plans, driving accountability across teams, managing scope, timelines, and risks</div>
+      <div class="jd-item" data-targets="skill-stakeholder bullet-v4 bullet-ir2">Stakeholder management; comfortable running client meetings, clarifying expectations, and communicating tradeoffs</div>
+      <div class="jd-item no-match">Connect technical implementation details (events, attributes, segments, channels) to marketing outcomes and use cases <span class="no-match-tag">— no direct match</span></div>
+
+      <div class="jd-section-title">Requirements</div>
+
+      <div class="jd-item has-phrase">5–7+ years in martech, CRM, customer engagement, or <span class="jd-phrase" data-targets="employer-ventured bullet-v1">related SaaS implementation</span> roles</div>
+      <div class="jd-item" data-targets="skill-delivery bullet-v1 bullet-ir1">Demonstrated experience leading or coordinating multi-stakeholder implementation projects from kickoff to go-live</div>
+      <div class="jd-item" data-targets="skill-stakeholder bullet-v4">Executive communication comfort — summarize project status and risks succinctly for senior stakeholders</div>
+      <div class="jd-item no-match">Experience with Braze or comparable platform strongly preferred; Braze certifications a plus <span class="no-match-tag">— no direct match</span></div>
+      <div class="jd-item no-match">Prior consulting or professional services experience a plus <span class="no-match-tag">— no direct match</span></div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="col-resume">
+
+    <div class="col-header">
+      <div class="col-eyebrow">Resume as submitted · June 12, 2026</div>
+      <div class="resume-name">Cathy Rudolph</div>
+      <div class="resume-contact">Stoughton, MA &nbsp;·&nbsp; cathy.rudolph@academicskills.net &nbsp;·&nbsp; <a href="https://linkedin.com/in/cathy-rudolph-450225370">linkedin.com/in/cathy-rudolph-450225370</a></div>
+      <div class="resume-contact"><a href="https://askadmin-web.github.io/ubiquitous-memory">askadmin-web.github.io/ubiquitous-memory</a></div>
+      <div class="resume-role-title">Implementation Program Manager</div>
+      <div class="resume-summary">Integrated Project Plans · Go-Live Readiness · Data &amp; Integrations · Stakeholder Facilitation · Martech Delivery — 180+ implementations across B2B SaaS and low-code platforms. 72,000+ users. $2B in annual client revenue protected. Runs the integrated project plan from kickoff through go-live — milestones, dependencies, risk logs, QA coordination, and the launch readiness work that takes clients live cleanly across multiple workstreams.</div>
+    </div>
+
+    <div class="col-body">
+
+      <div class="resume-section">
+        <div class="resume-section-label">Key Skills</div>
+        <div class="resume-bullet" id="skill-delivery">Integrated delivery execution — runs implementation projects from kickoff through go-live and early adoption; 180+ go-lives across B2B SaaS and low-code platforms</div>
+        <div class="resume-bullet" id="skill-planning">Project planning &amp; risk management — integrated plans, milestone trackers, dependency mapping, and risk and decision logs across 6 standard / 10–12 peak concurrent implementations</div>
+        <div class="resume-bullet" id="skill-stakeholder">Stakeholder facilitation — leads working sessions and status meetings to clarify requirements, track progress, and resolve blockers with client teams</div>
+        <div class="resume-bullet" id="skill-technical">Technical coordination — partners with solution architects, technical teams, and client engineering to keep data flows, integrations, and QA on track</div>
+        <div class="resume-bullet" id="skill-golive">Go-live readiness — test planning, deliverability and QA coordination, and launch runbooks across multiple workstreams</div>
+        <div class="resume-bullet" id="skill-playbooks">Playbooks &amp; enablement — turns recurring delivery patterns into playbooks, templates, and role-specific training for technical and non-technical audiences</div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-label">Professional Experience</div>
+
+        <div class="resume-employer">
+          <div class="employer-header">
+            <span class="employer-name" id="employer-ventured">VenturEd Solutions</span>
+            <span class="employer-dates">2018–2025</span>
+          </div>
+          <div class="employer-sector">K-12 Education Technology</div>
+          <div class="employer-role">Implementation Manager</div>
+          <div class="resume-bullet" id="bullet-v1">Owned end-to-end onboarding for 30+ enterprise SaaS implementations, managing ~6 standard and 10–12 at peak — discovery, account setup, configuration, data migration, training, and go-live — supporting ~12,000 users and $300M+ in annual client revenue.</div>
+          <div class="resume-bullet" id="bullet-v2">Built and ran integrated project plans tailored to each client's readiness and activation goals — milestones, dependencies, and status reporting — cutting time-to-activation by ~one-third through documented, repeatable delivery practices.</div>
+          <div class="resume-bullet" id="bullet-v3">Partnered cross-functionally with Product, Sales, and Customer Success — turning implementation feedback into statistical reporting, playbooks, and roadmap input.</div>
+          <div class="resume-bullet" id="bullet-v4">Coordinated data integrations and migrations between SaaS and legacy systems with engineering — resolving mapping errors and field mismatches through post-migration QA, cutting manual data work ~80% with 100% continuity.</div>
+        </div>
+
+        <div class="resume-employer">
+          <div class="employer-header">
+            <span class="employer-name" id="employer-inresonance">inRESONANCE</span>
+            <span class="employer-dates">2009–2018</span>
+          </div>
+          <div class="employer-sector">Education Nonprofit Technology</div>
+          <div class="employer-role">Senior Implementation Specialist</div>
+          <div class="resume-bullet" id="bullet-ir1">Managed full implementation lifecycle for 150+ institutions from discovery through go-live — 60,000+ users, $1.5B in annual revenue, 400-school portfolio.</div>
+          <div class="resume-bullet" id="bullet-ir2">Facilitated on-site and remote working sessions capturing process requirements and institutional knowledge, cutting time-to-value by ~20%.</div>
+          <div class="resume-bullet" id="bullet-ir3">Conducted onsite and remote training for client teams across diverse technical and international environments — including on-site implementations in China and Jordan — guiding non-technical end users and administrators through new workflows.</div>
+          <div class="resume-bullet" id="bullet-ir4">Turned recurring issues and feature requests into playbooks, configuration guidelines, and product enhancements — in collaboration with Product and Support.</div>
+        </div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-label">Applied Delivery Research · 2025–present</div>
+        <div class="resume-bullet">Data pipeline prototyping — used Structify.ai to organize complex operational datasets into analysis-ready structures for non-technical stakeholders.</div>
+        <div class="resume-bullet">Implementation pattern analysis — identified repeatable delivery patterns across SMB-to-enterprise timelines to improve time-to-value.</div>
+        <div class="resume-bullet">Delivery planning frameworks — used generative AI tools to analyze implementation variables, model engagement risk scenarios, and develop repeatable scope and timeline frameworks for enterprise SaaS deployments.</div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-label">Education</div>
+        <div class="resume-inline" id="edu-line">University of Iowa — MS Microbiology &nbsp;·&nbsp; Rice University — BA Biology</div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-label">Technical Proficiencies</div>
+        <div class="resume-inline" id="tech-prof">Jira, Teamwork, Trello, SQL, Excel, ETL, API integrations, Salesforce, data migration, CSV data handling, workflow automation, agile delivery methods, Structify, Perplexity, Gemini, Claude</div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-label">Certifications</div>
+        <div class="resume-inline">Generative AI (LinkedIn Learning, Sept 2025) &nbsp;·&nbsp; SQL Essential Training (LinkedIn Learning, Sept 2025) &nbsp;·&nbsp; Data Analysis & Visualization Foundations (IBM, Aug 2025) &nbsp;·&nbsp; Excel Essentials for Data Analytics (Coursera, July 2025)</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>Cathy Rudolph</span>
+  <span class="sep">·</span>
+  <a href="mailto:cathy.rudolph@academicskills.net">cathy.rudolph@academicskills.net</a>
+  <span class="sep">·</span>
+  <a href="https://linkedin.com/in/cathy-rudolph-450225370">linkedin.com/in/cathy-rudolph-450225370</a>
+</footer>
+
+<script>
+  const jdItems = document.querySelectorAll('.jd-item[data-targets], .jd-phrase[data-targets]');
+
+  jdItems.forEach(item => {
+    const targetIds = item.dataset.targets.trim().split(/\s+/);
+
+    const activate = () => {
+      targetIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('highlight');
+      });
+    };
+
+    const deactivate = () => {
+      targetIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('highlight');
+      });
+    };
+
+    // Standard events
+    item.addEventListener('mouseenter', activate);
+    item.addEventListener('mouseleave', deactivate);
+
+    // Safari fallback: mouseover/mouseout on the element itself
+    item.addEventListener('mouseover', activate);
+    item.addEventListener('mouseout', deactivate);
+  });
+</script>
+</body>
+</html>
