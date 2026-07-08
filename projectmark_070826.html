@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cathy Rudolph — ProjectMark Enterprise Implementation Specialist</title>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QVZ0K1D563"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-QVZ0K1D563');
+  // ?ref= capture — tag the visit source for outreach attribution
+  (function () {
+    var ref = new URLSearchParams(window.location.search).get('ref');
+    if (ref) gtag('event', 'page_view', { ref_source: ref });
+  })();
+</script>
+<!-- Cathy Rudolph, July 8, 2026 -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal-50: #E1F5EE;
+    --teal-100: #9FE1CB;
+    --teal-400: #1D9E75;
+    --teal-600: #0F6E56;
+    --teal-800: #085041;
+    --gray-50: #F8F7F4;
+    --gray-100: #EEECEA;
+    --gray-200: #D3D1C7;
+    --gray-400: #888780;
+    --gray-600: #5F5E5A;
+    --gray-800: #2C2C2A;
+    --text-primary: #1a1a18;
+    --text-secondary: #5F5E5A;
+    --text-tertiary: #888780;
+    --border: #D3D1C7;
+    --font-sans: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --bloom: 0.9s;
+  }
+
+  html { font-size: 15px; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--gray-50);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 48px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  nav a {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    padding: 4px 0;
+    border-bottom: 1.5px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  nav a:hover { color: var(--teal-600); border-bottom-color: var(--teal-400); }
+
+  nav a.current {
+    color: var(--text-primary);
+    border-bottom-color: var(--teal-400);
+    font-weight: 500;
+  }
+
+  nav .nav-sep { color: var(--gray-200); font-family: var(--font-mono); font-size: 12px; }
+
+  /* PAGE HEADER */
+  .page-header {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .page-header p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .page-header p strong { color: var(--text-primary); font-weight: 500; }
+
+  .legend {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    margin-left: auto;
+  }
+
+  .legend-swatch {
+    width: 28px;
+    height: 10px;
+    background: var(--teal-50);
+    border-left: 3px solid var(--teal-400);
+    border-radius: 1px;
+  }
+
+  /* MAIN COLUMNS */
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: start;
+  }
+
+  /* Left column sticky */
+  .col-jd {
+    position: sticky;
+    top: 48px; /* height of nav */
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+  }
+
+  /* COLUMN HEADERS — no bottom border; alignment handled by section rules inside body */
+  .col-header {
+    padding: 1.75rem 2rem 1.5rem;
+  }
+
+  .col-jd .col-header {
+    background: #fff;
+    border-right: 1px solid var(--border);
+  }
+
+  .col-resume .col-header { background: var(--gray-50); }
+
+  .col-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 0.6rem;
+  }
+
+  /* JD header */
+  .jd-company {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+
+  .jd-role {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--teal-600);
+    margin-bottom: 0.75rem;
+  }
+
+  .jd-synopsis {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* Resume header */
+  .resume-name {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+  }
+
+  .resume-contact {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-bottom: 1px;
+  }
+
+  .resume-contact a { color: var(--teal-600); text-decoration: none; }
+  .resume-contact a:hover { text-decoration: underline; }
+
+  .resume-role-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal-600);
+    margin: 0.75rem 0 0.4rem;
+  }
+
+  .resume-summary {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* COLUMN BODY */
+  .col-body { padding: 0 2rem 2rem; }
+
+  .col-jd .col-body {
+    background: #fff;
+    border-right: 1px solid var(--border);
+    padding-bottom: 3rem;
+  }
+
+  .col-resume .col-body { background: var(--gray-50); }
+
+  /* JD section labels — first one carries the top rule to align with Pro Experience rule */
+  .jd-section-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin: 1.25rem 0 0.6rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .jd-section-title.first {
+    margin-top: 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* JD items — Safari-safe hover */
+  .jd-item {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 6px 10px 6px 12px;
+    margin-bottom: 3px;
+    border-radius: 3px;
+    border-left: 3px solid transparent;
+    cursor: default;
+    pointer-events: all;
+    transition: background-color 0.12s, border-color 0.12s, color 0.12s;
+    line-height: 1.55;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .jd-item:hover {
+    background: var(--teal-50);
+    border-left-color: var(--teal-400);
+    color: var(--teal-800);
+  }
+
+  .jd-item.no-match { opacity: 0.55; }
+
+  .jd-item.no-match:hover {
+    background: var(--gray-100);
+    border-left-color: var(--gray-200);
+    color: var(--text-secondary);
+  }
+
+  .no-match-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-tertiary);
+    margin-left: 6px;
+  }
+
+  /* Resume sections */
+  .resume-section { margin-bottom: 1.25rem; }
+
+  .resume-section-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .resume-employer { margin-bottom: 1rem; }
+
+  .employer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1px;
+  }
+
+  .employer-name {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-primary);
+    padding: 2px 4px 2px 10px;
+    border-left: 3px solid transparent;
+    border-radius: 3px;
+    background-color: transparent;
+    transition: background-color 0.12s, border-color 0.12s, color 0.12s;
+  }
+
+  .employer-dates {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+
+  .employer-sector {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-bottom: 4px;
+    font-style: italic;
+    padding-left: 10px;
+  }
+
+  .employer-role {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    padding-left: 10px;
+  }
+
+  .resume-bullet, .resume-inline {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 5px 8px 5px 10px;
+    margin-bottom: 3px;
+    border-radius: 3px;
+    border-left: 3px solid transparent;
+    line-height: 1.55;
+    background-color: transparent;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  /* Locked state — held after click; teal blooms in from the resting (transparent)
+     background over var(--bloom). Safari-safe: animates background-color, not the
+     shorthand. */
+  .resume-bullet.locked,
+  .resume-inline.locked,
+  .employer-name.locked {
+    background-color: var(--teal-50);
+    border-left-color: var(--teal-600);
+    border-left-width: 3px;
+    color: var(--teal-800);
+    box-shadow: inset 0 0 0 1px var(--teal-100);
+    transition: background-color var(--bloom) cubic-bezier(0.22, 0.61, 0.36, 1),
+                border-color var(--bloom) cubic-bezier(0.22, 0.61, 0.36, 1),
+                color var(--bloom) cubic-bezier(0.22, 0.61, 0.36, 1),
+                box-shadow var(--bloom) cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  /* Anchor bullet within a lock — subtle marker so the viewer sees what was scrolled to */
+  .resume-bullet.locked-anchor,
+  .resume-inline.locked-anchor {
+    background-color: var(--teal-50);
+    border-left-color: var(--teal-600);
+    border-left-width: 3px;
+    color: var(--teal-800);
+    box-shadow: inset 0 0 0 1px var(--teal-100);
+  }
+
+  /* Pulse flash — transient feedback when a clicked anchor is already centered
+     (no scroll to announce the click). Brighter teal kicks in, then settles to
+     the resting locked state. Animates background-color (Safari-safe), reflow-free. */
+  @keyframes pulse-flash {
+    0%   { background-color: var(--teal-50); }
+    35%  { background-color: var(--teal-100); }
+    100% { background-color: var(--teal-50); }
+  }
+  .resume-bullet.pulse,
+  .resume-inline.pulse,
+  .employer-name.pulse {
+    animation: pulse-flash 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  /* JD item currently locked */
+  .jd-item.locked {
+    background: var(--teal-50);
+    border-left-color: var(--teal-600);
+    color: var(--teal-800);
+    cursor: pointer;
+  }
+
+  .jd-item { cursor: pointer; }
+
+  /* FOOTER */
+  footer {
+    background: #fff;
+    border-top: 1px solid var(--border);
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  footer a { color: var(--teal-600); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  footer .sep { color: var(--gray-200); }
+  .resume-subtitle {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://askadmin-web.github.io/ubiquitous-memory">Portfolio</a>
+  <span class="nav-sep">/</span>
+  <a href="#" class="current">ProjectMark · Enterprise Implementation Specialist</a>
+</nav>
+
+<div class="page-header">
+  <p>This page was prepared for the Enterprise Implementation Specialist position at ProjectMark. On the left: the role requirements, trimmed to signal. On the right: my resume as submitted. <strong>Click any requirement</strong> to jump the resume to where it lands. Click again, or click an empty space, to release.</p>
+  <div class="legend">
+    <div class="legend-swatch"></div>
+    match highlighted on click
+  </div>
+</div>
+
+<div class="columns">
+
+  <!-- LEFT COLUMN -->
+  <div class="col-jd">
+
+    <div class="col-header">
+      <div class="col-eyebrow">Role · ProjectMark</div>
+      <div class="jd-company">ProjectMark</div>
+      <div class="jd-role">Enterprise Implementation Specialist · Remote</div>
+      <div class="jd-synopsis">AI-native CRM built for the construction industry — bid pipeline, contact management, revenue and backlog reporting in one platform, with Bolt, an AI assistant, at its center. This role owns the technical onboarding experience for the most strategic accounts end to end: turning messy, unstructured client data into a clean, migration-ready model, configuring the platform around each firm's workflows, and driving adoption from kickoff through go-live — AI-first at every step.</div>
+    </div>
+
+    <div class="col-body">
+
+      <div class="jd-section-title first">Key Responsibilities</div>
+
+      <div class="jd-item" data-targets="skill-e2e bullet-v1 bullet-ir1">Lead end-to-end implementation for enterprise accounts — scoping, data migration, configuration, training, and launch</div>
+      <div class="jd-item" data-targets="skill-dataqa bullet-v2 bullet-ir1">Own data quality from intake to import — profile, clean, QA, deduplicate, and validate; consolidate unstructured sources into a single unified, migration-ready structure</div>
+      <div class="jd-item" data-targets="skill-e2e bullet-v1">Build and maintain detailed implementation schedules and project plans, tracking every milestone and time-to-value target to its deadline</div>
+      <div class="jd-item" data-targets="skill-lowcode bullet-ir2">Configure the platform to each client's workflows — pipeline and opportunity management, analytics, reports, dashboards, user permissions, and provisioning</div>
+      <div class="jd-item" data-targets="skill-lowcode bullet-ir2 tech-prof">Design and configure automated workflows in low-code/no-code environments</div>
+      <div class="jd-item" data-targets="adr-3 skill-ai">Guide clients through Bolt and AI-powered workflow setup so they unlock intelligent features from day one</div>
+      <div class="jd-item" data-targets="skill-training bullet-ir3 bullet-v4">Design and deliver tailored training programs and implementation documentation — SOPs, playbooks, templates, and guides — for diverse user groups</div>
+      <div class="jd-item" data-targets="skill-e2e bullet-v1">Serve as the primary technical point of contact throughout the onboarding lifecycle</div>
+      <div class="jd-item" data-targets="skill-atrisk bullet-v3">Proactively identify and resolve blockers before clients feel them; manage at-risk onboardings to recovery</div>
+      <div class="jd-item" data-targets="bullet-v4 bullet-ir4">Partner selectively with Customer Success, Product, and Engineering — surfacing feedback while resolving the large majority of issues independently</div>
+      <div class="jd-item" data-targets="skill-playbooks bullet-ir4 bullet-v4">Develop and maintain implementation playbooks, templates, and SOPs that scale with the business</div>
+      <div class="jd-item no-match">Support solution scoping during the sales cycle for complex enterprise deals<span class="no-match-tag">— no direct match</span></div>
+
+      <div class="jd-section-title">What They're Looking For</div>
+
+      <div class="jd-item" data-targets="adr-1 adr-2 adr-3 skill-ai">AI-First Mindset — reach for AI by default to QA data, accelerate configuration, generate documentation; teach clients to do the same</div>
+      <div class="jd-item" data-targets="skill-dataqa bullet-v2 bullet-ir1 tech-prof">Data QA Expertise — transform unstructured, inconsistent data from many sources into a clean, validated, unified structure ready for migration</div>
+      <div class="jd-item" data-targets="skill-e2e bullet-v1 bullet-v3">Project Management &amp; Drive — own your book of onboardings end to end; build the schedule, hold the deadlines, chase outcomes</div>
+      <div class="jd-item" data-targets="bullet-ir1 tech-prof">CRM &amp; Technical Fluency — comfortable in data tools, APIs, and AI-enabled environments without needing a manual</div>
+      <div class="jd-item" data-targets="skill-training bullet-ir3">Communication — simplify complexity for a VP and go deep on configuration with an IT admin in the same day</div>
+      <div class="jd-item" data-targets="bullet-ir2 skill-e2e">Adaptability — every firm is different; flex quickly and build solutions that stick</div>
+      <div class="jd-item" data-targets="skill-atrisk bullet-v3">Proactive Problem-Solving — identify blockers before clients feel them and drive resolutions fast</div>
+
+      <div class="jd-section-title">Preferred Qualifications</div>
+
+      <div class="jd-item" data-targets="skill-e2e bullet-v1 bullet-ir1">5+ years in SaaS implementation, solutions engineering, or technical onboarding</div>
+      <div class="jd-item" data-targets="skill-lowcode bullet-ir2">Proven experience configuring platforms end to end — low-code/no-code workflows, analytics, reports, user permissions, and provisioning</div>
+      <div class="jd-item" data-targets="skill-training bullet-ir3 bullet-v4">Experience designing training programs and implementation documentation</div>
+      <div class="jd-item no-match">AEC or construction industry experience strongly preferred<span class="no-match-tag">— no direct match</span></div>
+      <div class="jd-item" data-targets="skill-atrisk bullet-v3">Experience managing complex, multi-stakeholder enterprise deployments</div>
+      <div class="jd-item" data-targets="skill-e2e bullet-v1">Exceptional project management and communication skills</div>
+      <div class="jd-item" data-targets="skill-atrisk bullet-v3">Comfortable navigating ambiguity in a fast-moving startup environment</div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="col-resume">
+
+    <div class="col-header">
+      <div class="col-eyebrow">Resume as submitted · June 29, 2026</div>
+      <div class="resume-name">Cathy Rudolph</div>
+      <div class="resume-contact">Stoughton, MA &nbsp;·&nbsp; cathy.rudolph@academicskills.net &nbsp;·&nbsp; <a href="https://linkedin.com/in/cathy-rudolph-450225370">linkedin.com/in/cathy-rudolph-450225370</a></div>
+      <div class="resume-contact"><a href="https://askadmin-web.github.io/ubiquitous-memory">askadmin-web.github.io/ubiquitous-memory</a></div>
+      <div class="resume-role-title">Enterprise Implementation Specialist</div>
+      <div class="resume-subtitle">Enterprise Onboarding &nbsp;|&nbsp; Data Migration &nbsp;|&nbsp; AI-Native Delivery</div>
+      <div class="resume-summary">Implementation leader owning enterprise onboarding end-to-end — 180+ implementations across B2B SaaS and low-code platforms, 72,000+ users, $2B in annual client revenue protected. Eight of those years lived inside relational data models and migration in FileMaker, turning messy, disparate client data into clean, unified structures ready to go live. With recent focus on AI-enabled delivery and data systems, I build enterprise onboarding — end-to-end, repeatable, and AI-native from day one.</div>
+    </div>
+
+    <div class="col-body">
+
+      <div class="resume-section">
+        <div class="resume-section-label">Key Skills</div>
+        <div class="resume-bullet" id="skill-e2e">End-to-End Implementation — own enterprise onboarding solo from kickoff through go-live and adoption; 6 standard / 10–12 peak concurrent</div>
+        <div class="resume-bullet" id="skill-dataqa">Data Migration &amp; QA — profile, clean, deduplicate, and validate disparate client data into unified, migration-ready structures</div>
+        <div class="resume-bullet" id="skill-ai">AI-Native Delivery — AI-accelerated data QA, configuration, and documentation; teach clients to work the same way</div>
+        <div class="resume-bullet" id="skill-lowcode">Low-Code / No-Code Configuration — platform config across workflows, dashboards, reports, permissions, and user provisioning</div>
+        <div class="resume-bullet" id="skill-training">Training &amp; Documentation — SOPs, playbooks, and tailored training for audiences from managers to executive leadership</div>
+        <div class="resume-bullet" id="skill-playbooks">Scalable Implementation Playbooks — build repeatable onboarding process and SOPs that scale with a growing business</div>
+        <div class="resume-bullet" id="skill-atrisk">At-Risk Recovery — identify blockers before clients feel them; drive complex multi-stakeholder onboardings to recovery independently</div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-label">Professional Experience</div>
+
+        <div class="resume-employer">
+          <div class="employer-header">
+            <span class="employer-name" id="employer-ventured">VenturEd Solutions</span>
+            <span class="employer-dates">2018–2025</span>
+          </div>
+          <div class="employer-sector">K-12 Education Technology</div>
+          <div class="employer-role">Implementation Manager</div>
+          <div class="resume-bullet" id="bullet-v1">Owned end-to-end onboarding for 30+ enterprise SaaS implementations, managing 6 standard / 10–12 at peak — discovery, configuration, data migration, training, and go-live — supporting ~12,000 users and $300M+ in annual client revenue.</div>
+          <div class="resume-bullet" id="bullet-v2">Profiled, cleaned, and validated client data across disparate source systems, resolving mapping errors, field mismatches, and duplication through post-migration QA — cutting manual data work ~80% with 100% continuity.</div>
+          <div class="resume-bullet" id="bullet-v3">Drove at-risk onboardings to recovery, identifying blockers before clients felt them and managing complex, multi-stakeholder deployments to go-live independently.</div>
+          <div class="resume-bullet" id="bullet-v4">Turned implementation feedback into repeatable playbooks, SOPs, and enablement assets — partnering selectively with Product, Sales, and Customer Success to scale onboarding.</div>
+        </div>
+
+        <div class="resume-employer">
+          <div class="employer-header">
+            <span class="employer-name" id="employer-inresonance">inRESONANCE</span>
+            <span class="employer-dates">2009–2018</span>
+          </div>
+          <div class="employer-sector">Education Nonprofit Technology</div>
+          <div class="employer-role">Senior Implementation Specialist</div>
+          <div class="resume-bullet" id="bullet-ir1">Built and migrated relational data models in FileMaker for 150+ institutions across a 400-school portfolio — 60,000+ users, $1.5B in annual revenue — turning unstructured institutional data into clean, go-live-ready structures.</div>
+          <div class="resume-bullet" id="bullet-ir2">Configured the platform end-to-end around each institution's workflows in a low-code environment, validating outcomes against client goals from discovery through go-live.</div>
+          <div class="resume-bullet" id="bullet-ir3">Designed and delivered tailored training for technical and non-technical audiences across diverse and international environments — including on-site implementations in China and Jordan.</div>
+          <div class="resume-bullet" id="bullet-ir4">Turned recurring issues and feature requests into playbooks, configuration guidelines, and product enhancements — in collaboration with Product and Support.</div>
+        </div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-label">Applied Delivery Research · 2025–present</div>
+        <div class="resume-bullet" id="adr-1">AI-native data work — used Structify and Perplexity to profile, organize, and QA complex operational datasets into analysis-ready, migration-ready structures</div>
+        <div class="resume-bullet" id="adr-2">AI-accelerated delivery — applied generative AI to accelerate configuration, documentation, and analysis, and to surface repeatable delivery patterns that shorten time-to-value</div>
+        <div class="resume-bullet" id="adr-3">Prompt-driven tooling — prototyped prompt-driven tools to support stakeholder adoption during workflow transitions — the same AI-first mindset taught to onboarding clients</div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-label">Education</div>
+        <div class="resume-inline" id="edu-line">University of Iowa — MS Microbiology &nbsp;·&nbsp; Rice University — BA Biology</div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-label">Technical Proficiencies</div>
+        <div class="resume-inline" id="tech-prof">FileMaker, SQL, Excel, ETL, data migration, CSV data handling, deduplication &amp; validation, API integrations, Salesforce, workflow automation, low-code/no-code configuration, Jira, Teamwork, Trello, agile delivery methods, Structify, Perplexity, Gemini, Claude</div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-label">Certifications</div>
+        <div class="resume-inline">Generative AI (LinkedIn Learning, Sept 2025) &nbsp;·&nbsp; SQL Essential Training (LinkedIn Learning, Sept 2025) &nbsp;·&nbsp; Data Analysis &amp; Visualization Foundations (IBM, Aug 2025) &nbsp;·&nbsp; Excel Essentials for Data Analytics (Coursera, July 2025)</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>Cathy Rudolph</span>
+  <span class="sep">·</span>
+  <a href="mailto:cathy.rudolph@academicskills.net">cathy.rudolph@academicskills.net</a>
+  <span class="sep">·</span>
+  <a href="https://linkedin.com/in/cathy-rudolph-450225370">linkedin.com/in/cathy-rudolph-450225370</a>
+</footer>
+<script>
+  // ── SCROLL SPEED (test control) ───────────────────────────────────────
+  // Distance-aware duration: short jumps stay quick, long jumps don't drag.
+  // SPEED multiplies the computed duration. 1 = default, <1 faster, >1 slower.
+  let SPEED = 1.6;
+  const BASE_MS   = 320;   // floor for a short jump
+  const PER_1000  = 380;   // added ms per 1000px of travel
+  const MAX_MS    = 1100;  // ceiling so very long jumps never crawl
+
+  const easeInOut = t => t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2;
+
+  let scrollRAF = null;
+  function smoothScrollTo(targetY, onDone) {
+    if (scrollRAF) cancelAnimationFrame(scrollRAF);
+    const startY = window.scrollY;
+    const dist = targetY - startY;
+    if (Math.abs(dist) < 2) { if (onDone) onDone(); return; } // already there → bloom now
+    const raw = (BASE_MS + Math.abs(dist) / 1000 * PER_1000) * SPEED;
+    const duration = Math.min(raw, MAX_MS * SPEED);
+    const startT = performance.now();
+    const step = (now) => {
+      const p = Math.min((now - startT) / duration, 1);
+      window.scrollTo(0, startY + dist * easeInOut(p));
+      if (p < 1) { scrollRAF = requestAnimationFrame(step); }
+      else if (onDone) { onDone(); }   // scroll finished → bloom now
+    };
+    scrollRAF = requestAnimationFrame(step);
+  }
+
+  // Scroll an element to vertical center of the viewport, at tunable speed
+  function snapToCenter(el, onDone) {
+    const rect = el.getBoundingClientRect();
+    const targetY = window.scrollY + rect.top - (window.innerHeight / 2) + (rect.height / 2);
+    smoothScrollTo(Math.max(0, targetY), onDone);
+  }
+
+  const jdItems = document.querySelectorAll('.jd-item[data-targets]');
+  let lockedItem = null;
+  let clickToken = 0; // invalidates stale scroll-completion callbacks
+
+  // Identify the scroll anchor: first target that is an experience bullet (bullet-v* / bullet-ir*)
+  const pickAnchorId = (targetIds) =>
+    targetIds.find(id => /^bullet-(v|ir)\d+$/.test(id)) || null;
+
+  // Defensive clear — sweep EVERY locked bullet/item in the document, not just the
+  // tracked one. Guarantees no orphan highlight can survive a lock change.
+  const clearLock = () => {
+    clickToken++;  // cancel any in-flight scroll-completion bloom
+    document.querySelectorAll('.locked, .locked-anchor, .pulse').forEach(el => {
+      el.classList.remove('locked', 'locked-anchor', 'pulse');
+    });
+    lockedItem = null;
+  };
+
+  jdItems.forEach(item => {
+    if (item.classList.contains('no-match')) return; // no-match: inert
+    const targetIds = item.dataset.targets.trim().split(/\s+/);
+    const anchorId = pickAnchorId(targetIds);
+
+    // CLICK: lock the JD item immediately (responsive left-side feedback), scroll the
+    // anchor to center, THEN bloom the resume bullets once the page is stationary.
+    item.addEventListener('click', () => {
+      const wasLocked = lockedItem && lockedItem.el === item;
+      clearLock();
+      if (wasLocked) return; // clicking the locked item again releases it
+
+      const myToken = ++clickToken;
+      item.classList.add('locked');                 // left column responds now
+      lockedItem = { el: item, targetIds };
+
+      const anchorEl = anchorId ? document.getElementById(anchorId)
+                                : document.getElementById(targetIds[0]);
+
+      const bloom = () => {
+        if (myToken !== clickToken) return;          // a newer click superseded this
+        targetIds.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.classList.add('locked');
+        });
+        if (anchorEl) anchorEl.classList.add('locked-anchor');
+      };
+
+      // Restartable pulse — strips and re-adds the class with a forced reflow so the
+      // animation replays on every repeat click, not just the first.
+      const pulse = (el) => {
+        if (!el) return;
+        el.classList.remove('pulse');
+        void el.offsetWidth;        // reflow: lets the animation re-trigger
+        el.classList.add('pulse');
+      };
+
+      // Will this click actually scroll? If the anchor is already centered (within the
+      // no-scroll threshold), the bloom alone gives no motion feedback — so pulse instead.
+      const anchorCentered = (el) => {
+        if (!el) return false;
+        const rect = el.getBoundingClientRect();
+        const targetY = window.scrollY + rect.top - (window.innerHeight / 2) + (rect.height / 2);
+        return Math.abs(targetY - window.scrollY) < 2;
+      };
+
+      if (anchorEl && !anchorCentered(anchorEl)) {
+        snapToCenter(anchorEl, bloom);                // scroll → then bloom
+      } else {
+        bloom();                                      // already centered (or no anchor) → bloom now
+        targetIds.forEach(id => pulse(document.getElementById(id)));  // + transient flash for feedback
+      }
+    });
+  });
+
+  // Click on empty space releases the lock
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.jd-item')) clearLock();
+  });
+</script>
+</body>
+</html>
