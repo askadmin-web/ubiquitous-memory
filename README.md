@@ -12,3 +12,4 @@ Pages:
   and a navigable six-phase framework
 - How It Was Built: Resume Process with AI — manual vs. AI-assisted job 
   search workflow, nine steps, every decision point documented
+- How It Was Built: Job Description-Resume Comparison Interactive — Fictional JD, fictional candidate — MegaHandy's Illuma Engineer role mapped against Joseph Swan's resume. Demonstrates the click-to-map interaction on its own terms, apart from any real application.
