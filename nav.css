@@ -1,0 +1,145 @@
+/* ── Shared Site Navigation ──
+   One stylesheet for the nav across all site pages (index, resume,
+   global-reach, implementation, built-resume, and any future page).
+   Each page keeps its own .nav-inner max-width override if it needs
+   one other than the 720px default — see bottom of this file. */
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  border-bottom: 0.5px solid var(--border);
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.nav-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+}
+
+.nav-link {
+  display: inline-block;
+  padding: 14px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-decoration: none;
+  transition: color 0.15s;
+  white-space: nowrap;
+  position: relative;
+  background: none;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.nav-link:hover { color: var(--text-primary); }
+
+.nav-link.active {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 16px; right: 16px;
+  height: 2px;
+  background: var(--accent, var(--text-primary));
+  border-radius: 1px 1px 0 0;
+}
+
+.nav-spacer { flex: 1; }
+
+.nav-link.soon {
+  cursor: default;
+  color: var(--text-tertiary);
+}
+.nav-link.soon:hover { color: var(--text-tertiary); }
+
+/* ── Dropdown ("How It Was Built") ── */
+
+.nav-dropdown {
+  position: relative;
+}
+
+.nav-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-dropdown-caret {
+  font-size: 13px;
+  transition: transform 0.15s;
+}
+
+.nav-dropdown-trigger[aria-expanded="true"] .nav-dropdown-caret {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 240px;
+  background: var(--bg);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-md, 8px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+  padding: 6px;
+  z-index: 60;
+}
+
+.nav-dropdown-menu.open { display: block; }
+
+.nav-dropdown-item {
+  display: block;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background 0.12s, color 0.12s;
+  white-space: normal;
+  line-height: 1.4;
+}
+
+.nav-dropdown-item:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.nav-dropdown-item.active {
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+}
+
+/* ── Theme toggle ── */
+
+.theme-toggle {
+  background: var(--bg);
+  border: 0.5px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit;
+  margin: 8px 0;
+}
+
+.theme-toggle:hover { background: var(--bg-secondary); color: var(--text-primary); }
+.theme-toggle i { font-size: 15px; }
