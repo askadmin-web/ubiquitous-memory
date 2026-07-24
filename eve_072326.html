@@ -698,14 +698,13 @@
     if (!e.target.closest('.jd-item')) clearLock();
   });
 
-  // Forward ?ref= param to the portfolio nav link so attribution carries through
+ // Forward ?ref= param to every portfolio link so attribution carries through
   (function () {
     var ref = new URLSearchParams(window.location.search).get('ref');
     if (ref) {
-      var portfolioLink = document.querySelector('nav a[href="https://askadmin-web.github.io/ubiquitous-memory"]');
-      if (portfolioLink) {
+      document.querySelectorAll('a[href="https://askadmin-web.github.io/ubiquitous-memory"]').forEach(function (portfolioLink) {
         portfolioLink.href = 'https://askadmin-web.github.io/ubiquitous-memory?ref=' + encodeURIComponent(ref);
-      }
+      });
     }
   })();
 </script>
