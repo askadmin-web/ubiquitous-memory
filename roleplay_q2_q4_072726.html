@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Same Stage, Different Room — Post-Sales Role-Play Quadrants</title>
+<style>
+  :root{
+    --ink:#1c2530;
+    --ink-soft:#4a5766;
+    --ink-faint:#7d8996;
+    --rule:#d8dee5;
+    --rule-soft:#e8ecf0;
+    --paper:#ffffff;
+    --panel:#f7f9fa;
+    --accent-a:#1f6f8b;
+    --accent-a-wash:#e4eff3;
+    --accent-b:#8a5a2b;
+    --accent-b-wash:#f5ece1;
+    --flag:#a8322d;
+    --flag-wash:#fbeceb;
+    --sans:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    --serif:Georgia,"Times New Roman",serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background-color:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:1120px;margin:0 auto;padding:44px 32px 72px}
+  .full{width:100%}
+
+  /* ---------- masthead ---------- */
+  .masthead{border-bottom:2px solid var(--ink);padding-bottom:18px;margin-bottom:8px}
+  h1{
+    font-family:var(--serif);
+    font-size:32px;
+    line-height:1.15;
+    font-weight:400;
+    margin:0 0 10px;
+    letter-spacing:-0.01em;
+  }
+  .standfirst{
+    font-size:15.5px;
+    color:var(--ink-soft);
+    margin:0;
+    width:100%;
+  }
+  .standfirst strong{color:var(--ink);font-weight:600}
+
+  /* ---------- controls ---------- */
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:22px;
+    align-items:flex-end;
+    padding:16px 0 16px;
+    border-bottom:1px solid var(--rule);
+  }
+  .ctl-group{display:flex;flex-direction:column;gap:6px}
+  .ctl-label{
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:.13em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+  }
+  .ctl-row{display:flex;flex-wrap:wrap;gap:6px}
+  .ctl{
+    font:inherit;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:.01em;
+    color:var(--ink-soft);
+    background-color:var(--panel);
+    border:1px solid var(--rule);
+    border-radius:2px;
+    padding:8px 14px;
+    cursor:pointer;
+    transition:background-color .15s,border-color .15s,color .15s;
+  }
+  .ctl:hover{border-color:var(--ink-faint);color:var(--ink)}
+  .ctl:focus-visible{outline:2px solid var(--accent-a);outline-offset:2px}
+  .ctl[aria-pressed="true"]{
+    background-color:var(--ink);
+    border-color:var(--ink);
+    color:#fff;
+  }
+  .explainer{
+    width:100%;
+    margin:0;
+    padding:13px 0 0;
+    font-size:13.5px;
+    line-height:1.5;
+    color:var(--ink-soft);
+    border-bottom:1px solid var(--rule);
+    padding-bottom:16px;
+    margin-bottom:26px;
+  }
+  .explainer strong{color:var(--ink);font-weight:600}
+
+  /* ---------- grid ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0 34px;
+  }
+  .colhead{
+    padding-bottom:12px;
+    margin-bottom:16px;
+    border-bottom:2px solid currentColor;
+  }
+  .col-a .colhead{color:var(--accent-a)}
+  .col-b .colhead{color:var(--accent-b)}
+  .qtag{
+    display:inline-block;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    padding:3px 8px;
+    border-radius:2px;
+    margin-bottom:9px;
+  }
+  .col-a .qtag{background-color:var(--accent-a-wash);color:var(--accent-a)}
+  .col-b .qtag{background-color:var(--accent-b-wash);color:var(--accent-b)}
+  .interaction{
+    font-family:var(--serif);
+    font-size:21px;
+    line-height:1.25;
+    color:var(--ink);
+    margin:0;
+  }
+  .arrows{color:var(--ink-faint);padding:0 3px}
+
+  .band{padding:0 0 22px}
+  .band-label{
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:.13em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    margin:0 0 7px;
+  }
+  .band p{margin:0;color:var(--ink-soft)}
+  .band strong{color:var(--ink);font-weight:600}
+
+  /* ---------- spine ---------- */
+  .spine-head{
+    width:100%;
+    border-top:1px solid var(--rule);
+    padding-top:22px;
+    margin-top:4px;
+  }
+  .spine-head h2{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:23px;
+    margin:0 0 7px;
+  }
+  .spine-head p{margin:0 0 8px;color:var(--ink-soft);font-size:14.5px;width:100%}
+  .spine-hint{
+    font-size:12.5px;
+    color:var(--ink-faint);
+    margin:0 0 20px;
+  }
+
+  .spine{display:grid;grid-template-columns:1fr 128px 1fr;gap:9px 0;align-items:stretch}
+  .concern{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    border-left:1px solid var(--rule-soft);
+    border-right:1px solid var(--rule-soft);
+    padding:0 8px;
+  }
+  .q{
+    position:relative;
+    padding:13px 15px;
+    border:1px solid var(--rule);
+    border-radius:2px;
+    background-color:var(--panel);
+    color:var(--ink-soft);
+    font-size:14px;
+    line-height:1.45;
+    cursor:pointer;
+    transition:background-color .16s,border-color .16s,color .16s,opacity .2s;
+  }
+  .q.side-a{margin-right:16px}
+  .q.side-b{margin-left:16px}
+  .q:hover{border-color:var(--ink-faint)}
+  .q.lit{
+    color:var(--ink);
+    border-color:var(--accent-a);
+    background-color:var(--accent-a-wash);
+  }
+  .q.side-b.lit{border-color:var(--accent-b);background-color:var(--accent-b-wash)}
+  .q:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+  /* ---------- miscast ---------- */
+  .miscast{
+    margin-top:8px;
+    padding:11px 14px;
+    border:1px dashed var(--flag);
+    border-radius:2px;
+    background-color:var(--flag-wash);
+    font-size:13.5px;
+    line-height:1.45;
+    color:var(--flag);
+    opacity:0;
+    transform:translateY(-4px);
+    transition:opacity .3s,transform .3s;
+  }
+  body.miscasting .miscast{opacity:1;transform:none}
+  .miscast .struck{text-decoration:line-through;color:#8f4a46;display:block;margin-bottom:6px}
+  .miscast .flag{
+    display:block;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .miscast-slot{display:none}
+  body.miscasting .miscast-slot{display:block}
+
+  /* ---------- register filters ---------- */
+  body.reg-external .q.internal,
+  body.reg-external .col-b .band,
+  body.reg-external .col-b .colhead{opacity:.2}
+  body.reg-external .q.internal{pointer-events:none}
+
+  body.reg-internal .q.external,
+  body.reg-internal .col-a .band,
+  body.reg-internal .col-a .colhead{opacity:.2}
+  body.reg-internal .q.external{pointer-events:none}
+
+  /* ---------- achieves ---------- */
+  .achieves{
+    border-top:1px solid var(--rule);
+    margin-top:30px;
+    padding-top:24px;
+  }
+  .achieves .qtag{margin-bottom:6px}
+  .achieves .who{
+    font-family:var(--serif);
+    font-size:16px;
+    margin:0 0 3px;
+    color:var(--ink);
+  }
+  .achieves .band-label{margin:0 0 10px}
+  .verdict{
+    font-size:13.5px;
+    font-weight:700;
+    letter-spacing:.02em;
+    margin:0 0 8px;
+  }
+  .col-a .verdict{color:var(--accent-a)}
+  .col-b .verdict{color:var(--accent-b)}
+  .achieves p.body{margin:0;color:var(--ink-soft)}
+
+  /* ---------- closing ---------- */
+  .closing{
+    width:100%;
+    margin-top:34px;
+    padding:24px 28px;
+    background-color:var(--panel);
+    border-top:2px solid var(--ink);
+  }
+  .closing h3{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:20px;
+    margin:0 0 9px;
+  }
+  .closing p{margin:0;font-size:14.5px;color:var(--ink-soft);width:100%}
+  .closing p + p{margin-top:9px}
+  .closing em{color:var(--ink)}
+
+  @media (max-width:840px){
+    .page{padding:30px 20px 56px}
+    h1{font-size:26px}
+    .grid{grid-template-columns:1fr;gap:0}
+    .col-b{margin-top:34px}
+    .achieves .col-b{margin-top:28px}
+    .spine{grid-template-columns:1fr;gap:0}
+    .concern{
+      justify-content:flex-start;
+      border:0;
+      border-top:1px solid var(--rule-soft);
+      padding:16px 0 7px;
+    }
+    .q.side-a,.q.side-b{margin:0 0 7px}
+    .closing{padding:20px}
+  }
+  @media print{
+    .controls,.explainer,.spine-hint{display:none}
+    body{font-size:11px}
+    .page{padding:0;max-width:none}
+    .miscast-slot{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <h1>Same stage, different room</h1>
+    <p class="standfirst">Two post-sales role-play setups that look identical on a calendar invitation. Both sit after signature. Both are called a scoping session. <strong>One puts a client across the table; the other puts colleagues there.</strong> The questions that earn a high score in one are unsayable in the other — and a brief that never states which room you are in leaves the candidate to guess, then grades the guess.</p>
+  </header>
+
+  <div class="controls">
+    <div class="ctl-group">
+      <span class="ctl-label">Show register</span>
+      <div class="ctl-row" id="reg-group">
+        <button class="ctl" data-reg="both" aria-pressed="true">Both rooms</button>
+        <button class="ctl" data-reg="external" aria-pressed="false">Client-facing only</button>
+        <button class="ctl" data-reg="internal" aria-pressed="false">Internal only</button>
+      </div>
+    </div>
+    <div class="ctl-group">
+      <span class="ctl-label">Demonstrate the failure</span>
+      <div class="ctl-row">
+        <button class="ctl" id="btn-miscast" aria-pressed="false">Move the internal questions into the client room</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="explainer" id="explainer"><strong>Both rooms shown.</strong> The left column is what an implementer says to a client after signature. The right column is what the same implementer says to their own delivery team before that meeting. Use the register buttons to isolate one; use the failure button to see what happens when the two are confused.</p>
+
+  <div class="grid">
+
+    <div class="col-a">
+      <div class="colhead">
+        <span class="qtag">Quadrant 2</span>
+        <p class="interaction">Client <span class="arrows">&#8596;</span> Implementer</p>
+      </div>
+      <div class="band">
+        <p class="band-label">The scene</p>
+        <p>Contract signed, statement of work in hand. The implementer owns the room. Across the table: an executive sponsor, operational leads, technical staff. Every sentence is spoken to a counterparty.</p>
+      </div>
+      <div class="band">
+        <p class="band-label">What the session produces</p>
+        <p>Reconciled scope. Named owners on both sides. Acknowledged dependencies with the critical path made explicit. A meeting cadence. A working definition of done.</p>
+      </div>
+    </div>
+
+    <div class="col-b">
+      <div class="colhead">
+        <span class="qtag">Quadrant 4</span>
+        <p class="interaction">Implementation Team <span class="arrows">&#8596;</span> New Team Member</p>
+      </div>
+      <div class="band">
+        <p class="band-label">The scene</p>
+        <p>Contract signed, kickoff pending. Internal preparation with the delivery pod — technical configuration owner, ongoing relationship owner, whoever else sits in the model. Every sentence is spoken to colleagues.</p>
+      </div>
+      <div class="band">
+        <p class="band-label">What the session produces</p>
+        <p>Role boundaries for the client room. A discovery sequence. Agreed additions to the standard phase model. The internal gate that must clear before anyone commits a date.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="spine-head full">
+    <h2>Signature questions</h2>
+    <p>Read across. Each pair takes the same underlying concern into a different room. The left column can be said to a partner. The right column cannot — not because it is impolite, but because it discusses your own company's capacity, methodology, and commitments in front of the people who bought them.</p>
+    <p class="spine-hint">Click any question to light its counterpart. Click again to release.</p>
+  </div>
+
+  <div class="spine full" id="spine">
+
+    <div class="q side-a external" data-pair="sale" role="button" tabindex="0" aria-pressed="false">Walk me through what you understood you were buying, in your words.
+      <div class="miscast-slot"><div class="miscast"><span class="struck">What commitments may have been made verbally that I should ask the client about directly?</span><span class="flag">Tells the partner Sales may have overpromised</span></div></div>
+    </div>
+    <div class="concern">The sale</div>
+    <div class="q side-b internal" data-pair="sale" role="button" tabindex="0" aria-pressed="false">What commitments may have been made verbally that I should ask the client about directly?</div>
+
+    <div class="q side-a external" data-pair="data" role="button" tabindex="0" aria-pressed="false">Who owns each extract, and what is their availability over the next ninety days?
+      <div class="miscast-slot"><div class="miscast"><span class="struck">What do I receive from Sales, and is the spec form authoritative or a starting point?</span><span class="flag">Exposes an internal handoff the partner should never see</span></div></div>
+    </div>
+    <div class="concern">Data</div>
+    <div class="q side-b internal" data-pair="data" role="button" tabindex="0" aria-pressed="false">What do I receive from Sales, and is the spec form authoritative or a starting point?</div>
+
+    <div class="q side-a external" data-pair="date" role="button" tabindex="0" aria-pressed="false">Which of these dependencies sit on your side, and are the owners aware they are on the critical path?
+      <div class="miscast-slot"><div class="miscast"><span class="struck">Who internally approves a date, and against what evidence?</span><span class="flag">Signals to the buyer that you cannot speak for your own company</span></div></div>
+    </div>
+    <div class="concern">The date</div>
+    <div class="q side-b internal" data-pair="date" role="button" tabindex="0" aria-pressed="false">Who internally approves a date, and against what evidence?</div>
+
+    <div class="q side-a external" data-pair="model" role="button" tabindex="0" aria-pressed="false">Who is going to tell the end users this is happening, and when?
+      <div class="miscast-slot"><div class="miscast"><span class="struck">What is missing from our standard phase model, and which gaps does nobody own?</span><span class="flag">Critiques your own methodology in front of the people paying for it</span></div></div>
+    </div>
+    <div class="concern">The model</div>
+    <div class="q side-b internal" data-pair="model" role="button" tabindex="0" aria-pressed="false">What is missing from our standard phase model, and which gaps does nobody own?</div>
+
+    <div class="q side-a external" data-pair="done" role="button" tabindex="0" aria-pressed="false">What does done mean — configured, tested, trained, adopted, or measured?
+      <div class="miscast-slot"><div class="miscast"><span class="struck">What does done mean to us, as distinct from what the client is measuring?</span><span class="flag">Admits a private standard running beneath the contract</span></div></div>
+    </div>
+    <div class="concern">Done</div>
+    <div class="q side-b internal" data-pair="done" role="button" tabindex="0" aria-pressed="false">What does done mean to us, as distinct from what the client is measuring?</div>
+
+  </div>
+
+  <div class="achieves">
+    <div class="grid">
+      <div class="col-a">
+        <span class="qtag">Quadrant 2</span>
+        <p class="who">Client <span class="arrows">&#8596;</span> Implementer</p>
+        <p class="band-label">What it achieves as an interview exercise</p>
+        <p class="verdict">Highest fidelity to the work itself.</p>
+        <p class="body">Tests discovery discipline, the separation of a sponsor's stated goal from operational reality, and whether a candidate can assign accountability to a client without spending goodwill. It requires no internal knowledge of the hiring company, and product depth brackets with a single sentence: assume you are trained. The default choice when only one exercise can be run.</p>
+      </div>
+      <div class="col-b">
+        <span class="qtag">Quadrant 4</span>
+        <p class="who">Implementation Team <span class="arrows">&#8596;</span> New Team Member</p>
+        <p class="band-label">What it achieves as an interview exercise</p>
+        <p class="verdict">Highest signal on how someone joins a team.</p>
+        <p class="body">Tests role hygiene inside a pod, coachability, and the quality of questions asked when the honest position is <em>I do not know your product yet</em>. It is the only post-sales setup a candidate with no product exposure can occupy at full strength — which is precisely why a brief weighted toward internal-register prompts reads as this room.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="closing full">
+    <h3>One sentence closes the gap</h3>
+    <p>Before a scoping role-play begins, the casting has to be said out loud: <em>am I the vendor with you as the institution, or am I the new team member with you as the delivery team?</em></p>
+    <p>Content assumptions are what an exercise is meant to test — scope, data, governance, change management, what done means. Assumptions about the room are not. Those are a logistics fact, available for the asking, and expensive to guess. A candidate who prepares brilliantly for the wrong room has demonstrated everything except the one question that would have placed them in the right one.</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var spine = document.getElementById('spine');
+  var body  = document.body;
+
+  /* ---- paired highlight: click to toggle ---- */
+  var active = null;
+
+  function paint(pair, on){
+    var nodes = spine.querySelectorAll('.q[data-pair="' + pair + '"]');
+    for (var i = 0; i < nodes.length; i++){
+      nodes[i].classList.toggle('lit', on);
+      nodes[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+  }
+
+  function select(pair){
+    if (active === pair){ paint(pair, false); active = null; return; }
+    if (active) paint(active, false);
+    paint(pair, true);
+    active = pair;
+  }
+
+  var cards = spine.querySelectorAll('.q');
+  for (var i = 0; i < cards.length; i++){
+    (function(card){
+      var pair = card.getAttribute('data-pair');
+      card.addEventListener('click', function(){ select(pair); });
+      card.addEventListener('keydown', function(e){
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar'){
+          e.preventDefault();
+          select(pair);
+        }
+      });
+    })(cards[i]);
+  }
+
+  /* ---- explainer copy ---- */
+  var explainer = document.getElementById('explainer');
+
+  var COPY = {
+    both:     '<strong>Both rooms shown.</strong> The left column is what an implementer says to a client after signature. The right column is what the same implementer says to their own delivery team before that meeting. Use the register buttons to isolate one; use the failure button to see what happens when the two are confused.',
+    external: '<strong>Client-facing register only.</strong> This is everything an implementer may say with a partner at the table. What is dimmed is not wrong — it is accurate, necessary, and belongs to a different room.',
+    internal: '<strong>Internal register only.</strong> This is what the delivery pod says to each other before anyone walks into kickoff: capacity, methodology gaps, what Sales committed, what done means to us. Candid here, unsayable across the table.'
+  };
+
+  var MISCAST_COPY = '<strong>The failure, staged.</strong> Each internal question now sits in the client column, struck through, with the specific damage it does. Every one of them is a reasonable question. None of them can be asked with the partner in the room. This is what a mis-staged role-play costs — not weak preparation, but sound preparation delivered to the wrong audience.';
+
+  var reg = 'both';
+  var miscast = false;
+
+  function refresh(){
+    body.classList.toggle('reg-external', reg === 'external');
+    body.classList.toggle('reg-internal', reg === 'internal');
+    body.classList.toggle('miscasting', miscast);
+    explainer.innerHTML = miscast ? MISCAST_COPY : COPY[reg];
+  }
+
+  var regButtons = document.getElementById('reg-group').querySelectorAll('.ctl');
+  for (var j = 0; j < regButtons.length; j++){
+    (function(btn){
+      btn.addEventListener('click', function(){
+        reg = btn.getAttribute('data-reg');
+        for (var k = 0; k < regButtons.length; k++){
+          regButtons[k].setAttribute('aria-pressed', regButtons[k] === btn ? 'true' : 'false');
+        }
+        refresh();
+      });
+    })(regButtons[j]);
+  }
+
+  var btnMis = document.getElementById('btn-miscast');
+  btnMis.addEventListener('click', function(){
+    miscast = !miscast;
+    btnMis.setAttribute('aria-pressed', miscast ? 'true' : 'false');
+    btnMis.textContent = miscast
+      ? 'Return them to the internal room'
+      : 'Move the internal questions into the client room';
+    refresh();
+  });
+
+  refresh();
+})();
+</script>
+</body>
+</html>
