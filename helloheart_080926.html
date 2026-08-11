@@ -11,10 +11,50 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-QVZ0K1D563');
-  // ?ref= capture — tag the visit source for outreach attribution
+  // ---- Outreach attribution -------------------------------------------------
+  // ?ref= identifies the recipient. Automated fetchers (LinkedIn link preview,
+  // corporate mail and security scanners) WILL trigger a page_view; they will
+  // not click a requirement and will not linger. So page_view is not treated as
+  // a read signal. The real signals are jd_interaction and real_read.
   (function () {
-    var ref = new URLSearchParams(window.location.search).get('ref');
-    if (ref) gtag('event', 'page_view', { ref_source: ref });
+    var ref = new URLSearchParams(window.location.search).get('ref') || '(none)';
+    window.CR_REF = ref;
+
+    // Tag the visit WITHOUT firing a second page_view. A second page_view makes
+    // GA4 count the session as "engaged" on 2+ views alone, which is what was
+    // inflating engaged-session counts on crawler hits.
+    if (ref !== '(none)') {
+      gtag('event', 'ref_visit', { ref_source: ref, non_interaction: true });
+    }
+
+    var fired = {};
+    window.crTrack = function (name, params) {
+      if (fired[name]) return;            // once per session per event
+      fired[name] = true;
+      var p = params || {};
+      p.ref_source = window.CR_REF;
+      gtag('event', name, p);
+    };
+
+    // real_read: 20 cumulative seconds with the tab actually visible.
+    // Background tabs and headless fetches do not accumulate.
+    var visibleMs = 0, last = null;
+    var timer = setInterval(function () {
+      if (document.visibilityState === 'visible') {
+        var now = Date.now();
+        if (last !== null) visibleMs += now - last;
+        last = now;
+        if (visibleMs >= 20000) {
+          window.crTrack('real_read', { seconds: 20 });
+          clearInterval(timer);
+        }
+      } else {
+        last = null;
+      }
+    }, 1000);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState !== 'visible') last = null;
+    });
   })();
 </script>
 <!-- Cathy Rudolph, August 9, 2026 -->
@@ -677,6 +717,9 @@
     // CLICK: lock the JD item immediately (responsive left-side feedback), scroll the
     // anchor to center, THEN bloom the resume bullets once the page is stationary.
     item.addEventListener('click', () => {
+      // Unfakeable read signal: a crawler fetches HTML, it never clicks a
+      // requirement. Fires once per session, before any early return.
+      if (window.crTrack) window.crTrack('jd_interaction');
       const wasLocked = lockedItem && lockedItem.el === item;
       clearLock();
       if (wasLocked) return; // clicking the locked item again releases it
