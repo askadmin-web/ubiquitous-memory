@@ -4,68 +4,78 @@
  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-QVZ0K1D563"></script>
 <script>
-  /* ── Outreach attribution ─────────────────────────────────────────────
-     This page's URL went out in the Valon outreach WITHOUT a ?ref= tag, so
-     there is nothing in the link itself to attribute a visit with. This
-     block supplies the attribution from the page instead.
-
-     HOW IT DECIDES
-       1. An explicit ?ref= in the URL always wins.
-       2. Otherwise, if the visitor did NOT arrive from elsewhere on this
-          site, the visit is attributed to CAMPAIGN below. Cold arrivals —
-          an emailed link, a pasted link, no referrer — are the outreach
-          traffic this is meant to catch.
-       3. A visitor who clicked through from the portfolio index or the nav
-          carries an internal referrer and is left untagged, so ordinary
-          browsing is never misattributed to Valon.
-
-     Referrer is unreliable in one direction only: some mail clients and
-     privacy settings strip it. That can make an internal visit look cold;
-     it cannot make a cold visit look internal. The error leans toward
-     over-counting Valon slightly, never toward missing it.
-
-     WHEN THE OUTREACH IS OVER: set CAMPAIGN to '' (empty string). The
-     explicit ?ref= path keeps working — only the fallback switches off.
-     ──────────────────────────────────────────────────────────────────── */
-  var CAMPAIGN  = 'valon';                    // ← outreach this upload is for
-  var SITE_HOST = 'askadmin-web.github.io';   // internal-referrer test
-
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
-  var refSource = null;
-  var refOrigin = null;
+  gtag('config', 'G-QVZ0K1D563');
+  // ---- Outreach attribution -------------------------------------------------
+  // ?ref= identifies the recipient. Automated fetchers (LinkedIn link preview,
+  // corporate mail and security scanners) WILL trigger a page_view; they will
+  // not click a phase and will not linger. So page_view is not treated as a
+  // read signal. The real signals are jd_interaction and real_read.
+  //
+  // The event name is shared with the JD pages on purpose — one GA report then
+  // covers every page. The page_file and interaction params keep the rows
+  // apart. Rename INTERACT_EVENT below if you'd rather split them.
+  var INTERACT_EVENT = 'jd_interaction';
 
   (function () {
-    var explicit = new URLSearchParams(window.location.search).get('ref');
-    if (explicit) {
-      refSource = explicit;
-      refOrigin = 'url';
-      return;
+    var ref = new URLSearchParams(window.location.search).get('ref') || '(none)';
+    window.CR_REF = ref;
+
+    // Tag the visit WITHOUT firing a second page_view. A second page_view makes
+    // GA4 count the session as "engaged" on 2+ views alone, which is what was
+    // inflating engaged-session counts on crawler hits.
+    if (ref !== '(none)') {
+      gtag('event', 'ref_visit', { ref_source: ref, non_interaction: true });
     }
-    if (!CAMPAIGN) return;
-    var cameFromThisSite = (document.referrer || '').indexOf(SITE_HOST) > -1;
-    if (!cameFromThisSite) {
-      refSource = CAMPAIGN;
-      refOrigin = 'page_default';
-    }
+
+    var fired = {};
+    window.crTrack = function (name, params) {
+      if (fired[name]) return;            // once per session per event
+      fired[name] = true;
+      var p = params || {};
+      p.ref_source = window.CR_REF;
+      p.page_file  = 'implementation.html';
+      gtag('event', name, p);
+    };
+
+    // real_read: 20 cumulative seconds with the tab actually visible.
+    // Background tabs and headless fetches do not accumulate.
+    var visibleMs = 0, last = null;
+    var timer = setInterval(function () {
+      if (document.visibilityState === 'visible') {
+        var now = Date.now();
+        if (last !== null) visibleMs += now - last;
+        last = now;
+        if (visibleMs >= 20000) {
+          window.crTrack('real_read', { seconds: 20 });
+          clearInterval(timer);
+        }
+      } else {
+        last = null;
+      }
+    }, 1000);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState !== 'visible') last = null;
+    });
   })();
 
-  /* Resolved BEFORE config so the attribution rides on the single automatic
-     page_view instead of firing a second manual one. */
-  gtag('config', 'G-QVZ0K1D563',
-    refSource ? { ref_source: refSource, ref_origin: refOrigin } : {});
-
-  /* A distinctly-named event, so outreach arrivals can be counted on their
-     own rather than read out of the page_view stream. */
-  if (refSource) {
-    gtag('event', 'outreach_visit', {
-      ref_source: refSource,
-      ref_origin: refOrigin,
-      page_file: 'implementation.html'
-    });
-  }
+  // ---- Optional: attribution for a link sent without a ?ref= ----------------
+  // Kept, switched off. If a URL goes out untagged and you want its cold
+  // arrivals attributed anyway, uncomment and set CAMPAIGN to an opaque code
+  // (the code-to-recipient mapping belongs in the WorkLog, not here — page
+  // source is public). Visitors arriving from elsewhere on this site are left
+  // alone, so ordinary browsing is never misattributed. An explicit ?ref=
+  // always wins over this.
+  //
+  //   var CAMPAIGN = 'o-081226-a';
+  //   if (window.CR_REF === '(none)' && CAMPAIGN &&
+  //       (document.referrer || '').indexOf('askadmin-web.github.io') === -1) {
+  //     window.CR_REF = CAMPAIGN;
+  //     gtag('event', 'ref_visit',
+  //          { ref_source: CAMPAIGN, ref_origin: 'page_default', non_interaction: true });
+  //   }
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -634,7 +644,15 @@ function renderNav() {
       '<span class="phase-num">Phase ' + phase.id + '</span>' +
       '<span class="phase-btn-title">' + phase.title + '</span>' +
       (phase.parallel ? '<span class="parallel-pill">' + phase.parallelNote + '</span>' : '');
-    btn.addEventListener('click', () => { activeIdx = i; renderNav(); renderPanel(); });
+    btn.addEventListener('click', () => {
+      // Unfakeable read signal: a crawler fetches HTML, it never clicks a
+      // phase. Fires once per session, before any state change.
+      if (window.crTrack) window.crTrack(INTERACT_EVENT, {
+        interaction: 'phase_click',
+        phase: phase.id + ' — ' + phase.title
+      });
+      activeIdx = i; renderNav(); renderPanel();
+    });
     navEl.appendChild(btn);
   });
 }
@@ -692,7 +710,18 @@ ganttRows.forEach((row, idx) => {
     const div = document.createElement('div');
     if (w >= row.start && w <= row.end) {
       div.className = `gantt-bar ${row.type}`;
-      if (row.tip) div.setAttribute('data-tip', row.tip);
+      if (row.tip) {
+        div.setAttribute('data-tip', row.tip);
+        // Secondary read signal — the Gantt tooltip is hover-only, so a reader
+        // who explores it has a pointer and is moving it deliberately. Same
+        // once-per-session dedupe as the phase click.
+        div.addEventListener('mouseenter', () => {
+          if (window.crTrack) window.crTrack(INTERACT_EVENT, {
+            interaction: 'gantt_hover',
+            phase: row.label
+          });
+        });
+      }
     } else {
       div.className = 'gantt-bar empty';
     }
