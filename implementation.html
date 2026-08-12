@@ -4,16 +4,66 @@
  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-QVZ0K1D563"></script>
 <script>
+  /* ── Outreach attribution ─────────────────────────────────────────────
+     This page's URL went out in the Valon outreach WITHOUT a ?ref= tag, so
+     there is nothing in the link itself to attribute a visit with. This
+     block supplies the attribution from the page instead.
+
+     HOW IT DECIDES
+       1. An explicit ?ref= in the URL always wins.
+       2. Otherwise, if the visitor did NOT arrive from elsewhere on this
+          site, the visit is attributed to CAMPAIGN below. Cold arrivals —
+          an emailed link, a pasted link, no referrer — are the outreach
+          traffic this is meant to catch.
+       3. A visitor who clicked through from the portfolio index or the nav
+          carries an internal referrer and is left untagged, so ordinary
+          browsing is never misattributed to Valon.
+
+     Referrer is unreliable in one direction only: some mail clients and
+     privacy settings strip it. That can make an internal visit look cold;
+     it cannot make a cold visit look internal. The error leans toward
+     over-counting Valon slightly, never toward missing it.
+
+     WHEN THE OUTREACH IS OVER: set CAMPAIGN to '' (empty string). The
+     explicit ?ref= path keeps working — only the fallback switches off.
+     ──────────────────────────────────────────────────────────────────── */
+  var CAMPAIGN  = 'valon';                    // ← outreach this upload is for
+  var SITE_HOST = 'askadmin-web.github.io';   // internal-referrer test
+
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-QVZ0K1D563');
 
-  // Capture ?ref= parameter
-  const refParam = new URLSearchParams(window.location.search).get('ref');
-  if (refParam) {
-    gtag('event', 'page_view', {
-      'ref': refParam
+  var refSource = null;
+  var refOrigin = null;
+
+  (function () {
+    var explicit = new URLSearchParams(window.location.search).get('ref');
+    if (explicit) {
+      refSource = explicit;
+      refOrigin = 'url';
+      return;
+    }
+    if (!CAMPAIGN) return;
+    var cameFromThisSite = (document.referrer || '').indexOf(SITE_HOST) > -1;
+    if (!cameFromThisSite) {
+      refSource = CAMPAIGN;
+      refOrigin = 'page_default';
+    }
+  })();
+
+  /* Resolved BEFORE config so the attribution rides on the single automatic
+     page_view instead of firing a second manual one. */
+  gtag('config', 'G-QVZ0K1D563',
+    refSource ? { ref_source: refSource, ref_origin: refOrigin } : {});
+
+  /* A distinctly-named event, so outreach arrivals can be counted on their
+     own rather than read out of the page_view stream. */
+  if (refSource) {
+    gtag('event', 'outreach_visit', {
+      ref_source: refSource,
+      ref_origin: refOrigin,
+      page_file: 'implementation.html'
     });
   }
 </script>
