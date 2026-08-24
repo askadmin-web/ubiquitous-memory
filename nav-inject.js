@@ -30,6 +30,7 @@
   markActive(page);
   initDropdowns();
   initThemeToggle();
+  forwardRef();
 
   function currentPage() {
     var path = window.location.pathname.split('/').pop();
@@ -146,6 +147,22 @@
       document.body.classList.toggle('dark', dark);
       localStorage.setItem('theme', dark ? 'dark' : 'light');
       reflect(dark);
+    });
+  }
+
+  // Forward ?ref= onto every nav link so outreach attribution survives a
+  // click into or through the site — including Welcome/index.html. Scoped
+  // to the nav only: each page's own bottom-of-body script (see
+  // _template.html) handles ref-forwarding for links in its own content and
+  // deliberately skips anything inside #nav-placeholder to avoid touching
+  // a link this function has already tagged.
+  function forwardRef() {
+    var ref = new URLSearchParams(window.location.search).get('ref');
+    if (!ref) return;
+    placeholder.querySelectorAll('a[href]').forEach(function (a) {
+      var href = a.getAttribute('href');
+      if (!href || /^(https?:|mailto:|#)/.test(href)) return;
+      a.setAttribute('href', href + (href.indexOf('?') > -1 ? '&' : '?') + 'ref=' + encodeURIComponent(ref));
     });
   }
 })();

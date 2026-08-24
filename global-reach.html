@@ -349,6 +349,7 @@ const order = ["NAMER","LATAM","EMEA","APAC"];
   document.querySelectorAll('a[href]').forEach(function (a) {
     var href = a.getAttribute('href');
     if (!href || /^(https?:|mailto:|#)/.test(href)) return;
+    if (a.closest('#nav-placeholder')) return; // nav-inject.js already handles nav links
     a.setAttribute('href', href + (href.indexOf('?') > -1 ? '&' : '?') + 'ref=' + encodeURIComponent(ref));
   });
 })();
