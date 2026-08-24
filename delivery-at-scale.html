@@ -11,14 +11,15 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-QVZ0K1D563');
-  // ?ref= capture — tag the visit source for outreach attribution
-  (function () {
-    var ref = new URLSearchParams(window.location.search).get('ref');
-    if (ref) gtag('event', 'page_view', { ref_source: ref });
-  })();
+  // Capture ?ref= parameter
+  const refParam = new URLSearchParams(window.location.search).get('ref');
+  if (refParam) {
+    gtag('event', 'page_view', { 'ref': refParam });
+  }
 </script>
 <!-- Cathy Rudolph, August 6, 2026 -->
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nav.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -40,6 +41,25 @@
     --border: #D3D1C7;
     --font-sans: 'IBM Plex Sans', sans-serif;
     --font-mono: 'IBM Plex Mono', monospace;
+
+    /* Bridge vars — nav.css / nav-inject.js expect these */
+    --bg: #ffffff;
+    --bg-secondary: var(--gray-100);
+    --accent: #0D9488;
+    --accent-bg: rgba(13, 148, 136, 0.08);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+
+  body.dark {
+    --bg: #1e1e1c;
+    --bg-secondary: #2a2a27;
+    --text-primary: #f0ede6;
+    --text-secondary: #b0ada5;
+    --text-tertiary: #6e6c67;
+    --border: rgba(255,255,255,0.1);
+    --accent: #C084FC;
+    --accent-bg: rgba(192, 132, 252, 0.12);
   }
 
   html { font-size: 15px; -webkit-text-size-adjust: 100%; }
@@ -52,40 +72,8 @@
     min-height: 100vh;
   }
 
-  /* NAV */
-  nav {
-    background-color: #fff;
-    border-bottom: 1px solid var(--border);
-    padding: 0 2rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    height: 48px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  nav a {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--text-secondary);
-    text-decoration: none;
-    letter-spacing: 0.03em;
-    padding: 4px 0;
-    border-bottom: 1.5px solid transparent;
-    transition: color 0.15s, border-color 0.15s;
-  }
-
-  nav a:hover { color: var(--teal-600); border-bottom-color: var(--teal-400); }
-
-  nav a.current {
-    color: var(--text-primary);
-    border-bottom-color: var(--teal-400);
-    font-weight: 500;
-  }
-
-  nav .nav-sep { color: var(--gray-200); font-family: var(--font-mono); font-size: 12px; }
+  /* Shared site nav width — keep in sync with .shell */
+  .nav-inner { max-width: 780px; }
 
   /* SHELL */
   .shell {
@@ -391,7 +379,6 @@
   /* RESPONSIVE */
   @media (max-width: 640px) {
     html { font-size: 14px; }
-    nav { padding: 0 1.25rem; }
     .shell { padding: 0 1.25rem 4rem; }
     .hero { padding: 3rem 0 2rem; }
     h1 { font-size: 2rem; max-width: none; }
@@ -407,11 +394,17 @@
 </head>
 <body>
 
-<nav>
-  <a href="https://askadmin-web.github.io/ubiquitous-memory">Portfolio</a>
-  <span class="nav-sep">/</span>
-  <a href="#" class="current">What Breaks When Delivery Scales</a>
-</nav>
+<script>
+(function () {
+  var saved = localStorage.getItem('theme');
+  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  document.body.classList.toggle('dark', saved ? saved === 'dark' : prefersDark);
+})();
+</script>
+
+<div id="nav-placeholder"></div>
+<script src="pages.js"></script>
+<script src="nav-inject.js"></script>
 
 <div class="shell">
 
@@ -658,13 +651,13 @@
 
 <script>
 (function () {
-  // Forward ?ref= to portfolio links so outreach attribution survives navigation
+  // Forward ?ref= to internal links so outreach attribution survives navigation
   var ref = new URLSearchParams(window.location.search).get('ref');
   if (ref) {
-    document.querySelectorAll('a[href^="https://askadmin-web.github.io"]').forEach(function (a) {
-      var u = new URL(a.href);
-      u.searchParams.set('ref', ref);
-      a.href = u.toString();
+    document.querySelectorAll('a[href]').forEach(function (a) {
+      var href = a.getAttribute('href');
+      if (!href || /^(https?:|mailto:|#)/.test(href)) return;
+      a.setAttribute('href', href + (href.indexOf('?') > -1 ? '&' : '?') + 'ref=' + encodeURIComponent(ref));
     });
   }
 

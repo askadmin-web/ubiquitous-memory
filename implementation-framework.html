@@ -657,5 +657,18 @@ ganttRows.forEach((row, idx) => {
 renderNav();
 renderPanel();
 </script>
+
+<script>
+(function () {
+  // Forward ?ref= to internal links so outreach attribution survives navigation
+  var ref = new URLSearchParams(window.location.search).get('ref');
+  if (!ref) return;
+  document.querySelectorAll('a[href]').forEach(function (a) {
+    var href = a.getAttribute('href');
+    if (!href || /^(https?:|mailto:|#)/.test(href)) return;
+    a.setAttribute('href', href + (href.indexOf('?') > -1 ? '&' : '?') + 'ref=' + encodeURIComponent(ref));
+  });
+})();
+</script>
 </body>
 </html>
