@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- ═══════════════════════════════════════════════════════════════════
+     PAGE TEMPLATE — Cathy Rudolph portfolio
+     Copy this file, rename it, fill in the marked spots. Everything
+     outside the ▼ FILL IN ▼ markers can be left alone.
+
+     CHECKLIST
+       1. Save as kebab-case, no date:  my-new-page.html
+       2. Fill in <title>, .page-name, .page-tagline, .page-intro
+       3. Write the content in the CONTENT section
+       4. Add one entry to pages.js  ← the page is invisible until you do
+       5. Upload the new file + pages.js
+
+     This file is named with a leading underscore so GitHub Pages/Jekyll
+     skips it and it never publishes. Keep the underscore.
+
+     BUILDING A MAP, IMAGE, TABLE OR CHART PAGE?
+     Start here anyway, then copy the blocks you need out of
+     _wide-blocks.html — figure container, responsive image, data table
+     (incl. Structify exports), validated chart palette, legend, tooltip.
+     That CSS is kept out of this template on purpose so text pages stay
+     lean. _wide-blocks.html also documents the page-width change, which
+     has to happen in two places at once.
+     ═══════════════════════════════════════════════════════════════════ -->
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QVZ0K1D563"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-QVZ0K1D563');
+
+  // Capture ?ref= parameter
+  const refParam = new URLSearchParams(window.location.search).get('ref');
+  if (refParam) {
+    gtag('event', 'page_view', { 'ref': refParam });
+  }
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">   <!-- ← DELETE THIS LINE when the page goes live -->
+
+<!-- ▼ FILL IN ▼ -->
+<title>Cathy Rudolph — Page Title Here</title>
+<!-- ▲ FILL IN ▲ -->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="nav.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f7f6f3;
+    --text-primary: #1a1a18;
+    --text-secondary: #4a4a46;
+    --text-tertiary: #888780;
+    --border: rgba(0,0,0,0.12);
+    --border-hover: rgba(0,0,0,0.22);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+
+    /* Accent — one per page. Teal is the site default.
+       Resume uses orange (#E85D04). Pick one and keep it consistent
+       within the page; the nav active-underline picks it up. */
+    --accent: #0D9488;
+    --accent-bg: rgba(13, 148, 136, 0.08);
+  }
+
+  body.dark {
+    --bg: #1e1e1c;
+    --bg-secondary: #2a2a27;
+    --text-primary: #f0ede6;
+    --text-secondary: #b0ada5;
+    --text-tertiary: #6e6c67;
+    --border: rgba(255,255,255,0.1);
+    --border-hover: rgba(255,255,255,0.2);
+    --accent: #C084FC;
+    --accent-bg: rgba(192, 132, 252, 0.12);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* Page width. 720px is the site default; Global Reach uses 900px.
+     If you widen this, add a matching .nav-inner override below. */
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+  }
+  /* .nav-inner { max-width: 720px; }  ← uncomment and match if you widen .page */
+
+  hr { border: none; border-top: 0.5px solid var(--border); margin: 18px 0; }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+
+  /* ── Page header ── */
+  .page-name {
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+  }
+
+  .page-tagline {
+    font-size: 15px;
+    color: var(--text-tertiary);
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  .page-intro {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-top: 14px;
+  }
+
+  /* ── Section label ── */
+  .section-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 12px;
+  }
+
+  /* ── Body copy ── */
+  .prose p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin-bottom: 1rem;
+    max-width: 66ch;
+  }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose strong { color: var(--text-primary); font-weight: 600; }
+
+  /* ── Bullet list ── */
+  .items { list-style: none; padding: 0; }
+
+  .items li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    padding-left: 14px;
+    position: relative;
+    margin-bottom: 10px;
+  }
+  .items li:last-child { margin-bottom: 0; }
+  .items li::before {
+    content: "–";
+    position: absolute;
+    left: 0;
+    color: var(--text-tertiary);
+  }
+  .item-label { font-weight: 600; color: var(--text-primary); }
+
+  /* ── Card / panel ── */
+  .panel {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+    background: var(--bg);
+  }
+
+  .panel-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+
+  .panel-meta {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-bottom: 10px;
+  }
+
+  /* Two-across card row; collapses to one column on narrow screens. */
+  .panel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 500px) {
+    .panel-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── Callout — for the load-bearing point ── */
+  .callout {
+    border: 0.5px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    padding: 12px 16px;
+    background: var(--accent-bg);
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+  .callout strong { color: var(--text-primary); font-weight: 600; }
+
+  /* ── Pill badge ── */
+  .pill {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--accent);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 1px 7px;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<!-- Applies dark mode before first paint. Must stay inline and must stay
+     here, above the nav — otherwise the page flashes light then dark. -->
+<script>
+(function () {
+  var saved = localStorage.getItem('theme');
+  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  document.body.classList.toggle('dark', saved ? saved === 'dark' : prefersDark);
+})();
+</script>
+
+<!-- Shared nav. pages.js MUST load before nav-inject.js. -->
+<div id="nav-placeholder"></div>
+<script src="pages.js"></script>
+<script src="nav-inject.js"></script>
+
+<div class="page">
+
+  <!-- ▼ FILL IN ▼ ═══════════════════════════════════════════════════ -->
+
+  <h1 class="sr-only">Page Title — Cathy Rudolph</h1>
+
+  <div class="page-name">Page Title</div>
+  <div class="page-tagline">One line that says what this is.</div>
+  <p class="page-intro">
+    Two or three sentences of setup. What the reader is looking at, and
+    why it's worth their time.
+  </p>
+
+  <hr>
+
+  <!-- ══ CONTENT ══════════════════════════════════════════════════════
+       Building blocks below — delete what you don't use.
+       ═══════════════════════════════════════════════════════════════ -->
+
+  <div class="section-label">Section heading</div>
+
+  <div class="prose">
+    <p>Body copy. Use <strong>bold</strong> for the phrase that carries the
+      point, sparingly — one per paragraph at most.</p>
+  </div>
+
+  <hr>
+
+  <div class="section-label">A list</div>
+
+  <ul class="items">
+    <li><span class="item-label">Label:</span> the explanation that follows it.</li>
+    <li><span class="item-label">Another:</span> and so on.</li>
+  </ul>
+
+  <hr>
+
+  <div class="section-label">Two panels side by side</div>
+
+  <div class="panel-grid">
+    <div class="panel">
+      <div class="panel-title">Left panel</div>
+      <div class="panel-meta">Supporting detail · a count</div>
+      <ul class="items">
+        <li>First point</li>
+        <li>Second point</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Right panel <span class="pill">optional tag</span></div>
+      <div class="panel-meta">Supporting detail</div>
+      <ul class="items">
+        <li>First point</li>
+        <li>Second point</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="section-label">The point</div>
+
+  <div class="callout">
+    <strong>The load-bearing sentence goes here.</strong> Then the
+    qualification, the cost, or the thing it doesn't solve.
+  </div>
+
+  <!-- ▲ FILL IN ▲ ═══════════════════════════════════════════════════ -->
+
+</div>
+
+<script>
+// Forward ?ref= to internal links so outreach attribution survives navigation.
+(function () {
+  var ref = new URLSearchParams(window.location.search).get('ref');
+  if (!ref) return;
+  document.querySelectorAll('a[href]').forEach(function (a) {
+    var href = a.getAttribute('href');
+    if (!href || /^(https?:|mailto:|#)/.test(href)) return;
+    a.setAttribute('href', href + (href.indexOf('?') > -1 ? '&' : '?') + 'ref=' + encodeURIComponent(ref));
+  });
+})();
+</script>
+
+</body>
+</html>

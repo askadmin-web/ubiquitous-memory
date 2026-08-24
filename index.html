@@ -59,7 +59,7 @@
   .page {
     max-width: 720px;
     margin: 0 auto;
-    padding: 3rem 1.5rem;
+    padding: 3rem 1.5rem 5rem;
   }
 
   .page-name {
@@ -86,29 +86,53 @@
 
   hr { border: none; border-top: 0.5px solid var(--border); margin: 18px 0; }
 
+  /* ── Group heading ── */
+  .group { margin-bottom: 2.5rem; }
+  .group:last-child { margin-bottom: 0; }
+
+  .group-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+  }
+
   .section-label {
     font-size: 10.5px;
     font-weight: 600;
     letter-spacing: 0.09em;
     text-transform: uppercase;
     color: var(--text-tertiary);
+  }
+
+  .group-count {
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    opacity: 0.7;
+  }
+
+  .group-blurb {
+    font-size: 12.5px;
+    color: var(--text-tertiary);
+    line-height: 1.6;
+    max-width: 62ch;
     margin-bottom: 14px;
   }
 
-  .cards {
+  /* ── Cards ── */
+  .cards-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 12px;
-    margin-bottom: 12px;
   }
 
-  .cards-row2 {
+  .cards-stack {
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
   }
-
-  .cards-row2 + .cards-row2 { margin-top: 12px; }
 
   .card {
     border: 0.5px solid var(--border);
@@ -149,8 +173,7 @@
   }
 
   @media (max-width: 560px) {
-    .cards { grid-template-columns: 1fr; }
-    .cards-row2 { grid-template-columns: 1fr; }
+    .cards-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -165,76 +188,78 @@
 </script>
 
 <div id="nav-placeholder"></div>
+<script src="pages.js"></script>
 <script src="nav-inject.js"></script>
 
 <main class="page">
   <h1 class="sr-only">Cathy Rudolph — Portfolio</h1>
-  <div class="page-name">Cathy Rudolph</div>
-  <p class="page-tagline">Implementation Manager · Full-lifecycle implementation across B2B SaaS and low-code platforms. Fully remote.</p>
-  <p class="page-location">Stoughton, MA</p>
+  <div class="page-name" id="owner-name"></div>
+  <p class="page-tagline" id="owner-tagline"></p>
+  <p class="page-location" id="owner-location"></p>
 
   <hr>
 
-  <div class="section-label">Portfolio</div>
-
-  <!-- Row 1: Resume | Global Reach | Implementation Framework -->
-  <div class="cards">
-
-    <a href="resume.html" class="card">
-      <div class="card-icon"><i class="ti ti-file-text" aria-hidden="true"></i></div>
-      <div class="card-title">Interactive Resume</div>
-      <div class="card-desc">Skills with supporting evidence, full work history, certifications.</div>
-      <span class="card-badge live">Live</span>
-    </a>
-
-    <a href="global-reach.html" class="card">
-      <div class="card-icon"><i class="ti ti-map-pin" aria-hidden="true"></i></div>
-      <div class="card-title">Global Reach</div>
-      <div class="card-desc">Onsite implementations across 4 regions, 14 countries, 16 cities.</div>
-      <span class="card-badge live">Live</span>
-    </a>
-
-    <a href="implementation.html" class="card">
-      <div class="card-icon"><i class="ti ti-sitemap" aria-hidden="true"></i></div>
-      <div class="card-title">Implementation Framework</div>
-      <div class="card-desc">How I run implementations — two delivery shapes, six-phase framework.</div>
-      <span class="card-badge live">Live</span>
-    </a>
-
-  </div>
-
-  <!-- Row 2: Role-Play Quadrants -->
-  <div class="cards-row2">
-
-    <a href="roleplay_q2_q4_072726.html" class="card">
-      <div class="card-icon"><i class="ti ti-layout-columns" aria-hidden="true"></i></div>
-      <div class="card-title">Same Stage, Different Room</div>
-      <div class="card-desc">Two post-sales role-play setups that look identical on a calendar invitation — one puts a client across the table, one puts colleagues there. An interactive comparison of what can be asked in each room, and what it costs to confuse them.</div>
-      <span class="card-badge live">Live</span>
-    </a>
-
-  </div>
-
-  <!-- Row 3: How It Was Built -->
-  <div class="cards-row2">
-
-    <a href="built-resume.html" class="card">
-      <div class="card-icon"><i class="ti ti-tool" aria-hidden="true"></i></div>
-      <div class="card-title">How It Was Built: Resume Process with AI</div>
-      <div class="card-desc">Discovering judicious addition of AI-enabled workflow and value-added delivery framework. Manual process vs. AI-assisted — nine steps, every decision point documented.</div>
-      <span class="card-badge live">Live</span>
-    </a>
-
-    <a href="built-interactive.html" class="card">
-      <div class="card-icon"><i class="ti ti-arrows-left-right" aria-hidden="true"></i></div>
-      <div class="card-title">How It Was Built: Job Description-Resume Comparison Interactive</div>
-      <div class="card-desc">Fictional JD, fictional candidate — MegaHandy's Illuma Engineer role mapped against Joseph Swan's resume. Demonstrates the click-to-map interaction on its own terms, apart from any real application.</div>
-      <span class="card-badge live">Live</span>
-    </a>
-
-  </div>
-
+  <!-- Everything below is generated from pages.js. Do not hand-edit. -->
+  <div id="portfolio-groups"></div>
 </main>
+
+<script>
+(function () {
+  var P = window.PORTFOLIO;
+  if (!P) {
+    document.getElementById('portfolio-groups').textContent =
+      'Portfolio manifest failed to load.';
+    return;
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  document.getElementById('owner-name').textContent = P.owner.name;
+  document.getElementById('owner-tagline').textContent = P.owner.tagline;
+  document.getElementById('owner-location').textContent = P.owner.location;
+
+  var host = document.getElementById('portfolio-groups');
+
+  host.innerHTML = P.liveGroups().map(function (g) {
+    var cards = g.pages.map(function (p) {
+      return '' +
+        '<a href="' + esc(p.file) + '" class="card">' +
+          '<div class="card-icon"><i class="ti ti-' + esc(p.icon) + '" aria-hidden="true"></i></div>' +
+          '<div class="card-title">' + esc(p.title) + '</div>' +
+          '<div class="card-desc">' + esc(p.desc) + '</div>' +
+          '<span class="card-badge live">Live</span>' +
+        '</a>';
+    }).join('');
+
+    return '' +
+      '<section class="group">' +
+        '<div class="group-head">' +
+          '<div class="section-label">' + esc(g.label) + '</div>' +
+          '<div class="group-count">' + g.pages.length + '</div>' +
+        '</div>' +
+        (g.blurb ? '<p class="group-blurb">' + esc(g.blurb) + '</p>' : '') +
+        '<div class="' + (g.layout === 'grid' ? 'cards-grid' : 'cards-stack') + '">' +
+          cards +
+        '</div>' +
+      '</section>';
+  }).join('');
+
+  // Forward ?ref= to every internal link so outreach attribution survives
+  // navigation into a portfolio page.
+  var ref = new URLSearchParams(window.location.search).get('ref');
+  if (ref) {
+    document.querySelectorAll('a.card, #nav-placeholder a').forEach(function (a) {
+      var href = a.getAttribute('href');
+      if (!href || /^(https?:|mailto:|#)/.test(href)) return;
+      a.setAttribute('href', href + (href.indexOf('?') > -1 ? '&' : '?') + 'ref=' + encodeURIComponent(ref));
+    });
+  }
+})();
+</script>
 
 </body>
 </html>

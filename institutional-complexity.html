@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cathy Rudolph — Institutional Complexity</title>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QVZ0K1D563"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-QVZ0K1D563');
+  (function () {
+    var ref = new URLSearchParams(window.location.search).get('ref');
+    if (ref) gtag('event', 'page_view', { ref_source: ref });
+  })();
+</script>
+<!-- Cathy Rudolph, August 6, 2026 -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal-50: #E1F5EE;
+    --teal-100: #9FE1CB;
+    --teal-400: #1D9E75;
+    --teal-600: #0F6E56;
+    --teal-800: #085041;
+    --gray-50: #F8F7F4;
+    --gray-100: #EEECEA;
+    --gray-200: #D3D1C7;
+    --gray-400: #888780;
+    --gray-600: #5F5E5A;
+    --text-primary: #1a1a18;
+    --text-secondary: #5F5E5A;
+    --text-tertiary: #888780;
+    --border: #D3D1C7;
+    --font-sans: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+
+  html { font-size: 15px; -webkit-text-size-adjust: 100%; }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--gray-50);
+    color: var(--text-primary);
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    background-color: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    height: 48px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  nav a {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    padding: 4px 0;
+    border-bottom: 1.5px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  nav a:hover { color: var(--teal-600); border-bottom-color: var(--teal-400); }
+
+  nav a.current {
+    color: var(--text-primary);
+    border-bottom-color: var(--teal-400);
+    font-weight: 500;
+  }
+
+  nav .nav-sep { color: var(--gray-200); font-family: var(--font-mono); font-size: 12px; }
+
+  .shell { max-width: 820px; margin: 0 auto; padding: 0 2rem 6rem; }
+
+  /* HERO */
+  .hero { padding: 4.5rem 0 2.5rem; }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-size: 2.6rem;
+    line-height: 1.12;
+    font-weight: 300;
+    letter-spacing: -0.022em;
+    margin-bottom: 2rem;
+    max-width: 17ch;
+  }
+
+  h1 em { font-style: italic; font-weight: 400; color: var(--teal-600); }
+
+  .lede p {
+    font-size: 1.06rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+    margin-bottom: 1.1rem;
+    max-width: 62ch;
+  }
+
+  .lede p:last-child { margin-bottom: 0; }
+  .lede strong { color: var(--text-primary); font-weight: 500; }
+
+  /* TOGGLE */
+  .switch-wrap {
+    position: sticky;
+    top: 48px;
+    z-index: 90;
+    background-color: var(--gray-50);
+    padding: 1.25rem 0 1rem;
+    margin-top: 2.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .switch-label {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 0.6rem;
+  }
+
+  .switch {
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    background-color: #fff;
+  }
+
+  .switch button {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.05em;
+    padding: 0.55rem 1.1rem;
+    background-color: #fff;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: background-color 0.18s, color 0.18s;
+    white-space: nowrap;
+  }
+
+  .switch button + button { border-left: 1px solid var(--border); }
+  .switch button:hover { background-color: var(--teal-50); color: var(--teal-800); }
+
+  .switch button[aria-pressed="true"] {
+    background-color: var(--teal-600);
+    color: #fff;
+  }
+
+  .switch button:focus-visible { outline: 2px solid var(--teal-400); outline-offset: -2px; }
+
+  /* VARIABLES */
+  .stack { margin-top: 2.25rem; }
+
+  .var {
+    background-color: #fff;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--teal-400);
+    padding: 1.5rem 1.6rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .var-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.85rem;
+    margin-bottom: 1.15rem;
+  }
+
+  .var-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--teal-600);
+    flex-shrink: 0;
+  }
+
+  .var-title {
+    font-size: 1.12rem;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    flex: 1;
+  }
+
+  .shift {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    border: 1px solid var(--gray-200);
+    padding: 2px 7px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .shift.high { color: var(--teal-800); border-color: var(--teal-100); background-color: var(--teal-50); }
+
+  .field { margin-bottom: 1.15rem; }
+  .field:last-child { margin-bottom: 0; }
+
+  .field .k {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+
+  .field p {
+    font-size: 0.97rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+    max-width: 66ch;
+  }
+
+  .field p + p { margin-top: 0.65rem; }
+  .field p strong { color: var(--text-primary); font-weight: 500; }
+
+  /* the context-dependent field — swaps on toggle */
+  .field.contextual {
+    border-left: 2px solid var(--teal-100);
+    padding-left: 1rem;
+    margin-left: -1rem;
+  }
+
+  .field.contextual .k { color: var(--teal-600); }
+
+  .ctx { display: none; }
+  .ctx.active { display: block; animation: ctx-in 0.28s ease-out; }
+
+  @keyframes ctx-in {
+    from { opacity: 0; transform: translateY(3px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* the discovery question — load-bearing */
+  .field.ask {
+    background-color: var(--teal-50);
+    border-left: 2px solid var(--teal-400);
+    padding: 0.85rem 1.1rem;
+    margin-left: 0;
+  }
+
+  .field.ask .k { color: var(--teal-800); }
+  .field.ask p { color: var(--teal-800); }
+
+  /* CLOSE */
+  .close { margin-top: 3.5rem; padding-top: 2rem; border-top: 1px solid var(--border); }
+
+  .close p {
+    font-size: 1.02rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+    margin-bottom: 1.1rem;
+    max-width: 62ch;
+  }
+
+  .close p:last-child { margin-bottom: 0; }
+  .close strong { color: var(--text-primary); font-weight: 500; }
+
+  .sig {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-tertiary);
+    line-height: 1.9;
+  }
+
+  .sig a { color: var(--teal-600); text-decoration: none; }
+  .sig a:hover { text-decoration: underline; }
+
+  @media (max-width: 640px) {
+    html { font-size: 14px; }
+    nav { padding: 0 1.25rem; }
+    .shell { padding: 0 1.25rem 4rem; }
+    .hero { padding: 3rem 0 2rem; }
+    h1 { font-size: 2rem; max-width: none; }
+    .var { padding: 1.25rem 1.1rem; }
+    .var-head { flex-wrap: wrap; gap: 0.5rem; }
+    .field.contextual { margin-left: -0.6rem; padding-left: 0.6rem; }
+    .switch { display: flex; width: 100%; }
+    .switch button { flex: 1; padding: 0.55rem 0.5rem; font-size: 10.5px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://askadmin-web.github.io/ubiquitous-memory">Portfolio</a>
+  <span class="nav-sep">/</span>
+  <a href="#" class="current">Institutional Complexity</a>
+</nav>
+
+<div class="shell">
+
+  <div class="hero">
+    <div class="eyebrow">Implementation delivery · Discovery under two conditions</div>
+    <h1>The same picture, <em>five thousand pieces</em></h1>
+    <div class="lede">
+      <p>A five-hundred-piece puzzle and a five-thousand-piece puzzle are not the same task at different sizes. At five hundred you work from the picture — you find the barn, you find the sky, you place by what things look like. At five thousand with a wide expanse of sky, the picture stops helping. You sort by edge geometry. You work in sectors. You build a reference system and trust it over your eye.</p>
+      <p>The activity is identical. The method is not, and <strong>the smaller method does not get slow at scale — it stops working.</strong></p>
+      <p>Below is the same set of variables under two conditions: a smaller institution where functions are concentrated, and a larger one where they are separated. Switch between them and watch which ones move. What changes most is not delivery. It is discovery.</p>
+    </div>
+  </div>
+
+  <div class="switch-wrap">
+    <div class="switch-label">Institutional context</div>
+    <div class="switch" role="group" aria-label="Institutional context">
+      <button type="button" data-ctx="small" aria-pressed="true">Concentrated functions</button>
+      <button type="button" data-ctx="large" aria-pressed="false">Separated functions</button>
+    </div>
+  </div>
+
+  <div class="stack">
+
+    <!-- 1 -->
+    <div class="var">
+      <div class="var-head">
+        <span class="var-num">01</span>
+        <span class="var-title">Who owns the answer</span>
+        <span class="shift high">Changes most</span>
+      </div>
+      <div class="field contextual">
+        <span class="k">In this context</span>
+        <div class="ctx active" data-ctx="small">
+          <p>A handful of people hold several functions between them. One person may own giving records, events, and constituent data at once. When a question arises about what a field means or how a process should work, the person who can answer it is in the room, and their answer is authoritative because there is no competing owner.</p>
+        </div>
+        <div class="ctx" data-ctx="large">
+          <p>The same functions exist as separate departments with separate owners, and frequently an operations or services team sitting between them. The same field has more than one definition, each correct within its own function. Nobody in the room may be able to authorize a decision, and the person who can may not know the question is being asked.</p>
+        </div>
+      </div>
+      <div class="field">
+        <span class="k">What actually changes</span>
+        <p>Not the work — the path to a decision. Requirements gathering stops being collection and becomes reconciliation. The risk shifts from missing a requirement to <strong>capturing two contradictory ones and not noticing.</strong></p>
+      </div>
+      <div class="field ask">
+        <span class="k">The discovery question</span>
+        <p>Not "what does this field mean." It is "who else uses this field, and would they define it the same way?" And separately: when these two answers conflict, who decides — and are they on this project?</p>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="var">
+      <div class="var-head">
+        <span class="var-num">02</span>
+        <span class="var-title">Architecture and deployment</span>
+        <span class="shift high">Changes most</span>
+      </div>
+      <div class="field contextual">
+        <span class="k">In this context</span>
+        <div class="ctx active" data-ctx="small">
+          <p>A relational solution served locally or to a small user base. This is not a small-data situation — a single table occurrence can hold six figures of records, and a mature deployment carries many of them. But administration is close at hand, the user population is bounded, and a maintenance window is a conversation rather than a change request.</p>
+        </div>
+        <div class="ctx" data-ctx="large">
+          <p>Web-scale or SQL deployments with distributed access, formal environments, and administration that belongs to a team the project does not control. Concurrency is a real constraint rather than a theoretical one, and downtime has to be scheduled against an institutional calendar that was set before the project started.</p>
+        </div>
+      </div>
+      <div class="field">
+        <span class="k">What actually changes</span>
+        <p>Record volume is the wrong axis — the difference is not that one has more data. It is concurrency, access patterns, who holds administrative control, and what a cutover window costs. <strong>Uptime stops being a technical property and becomes a negotiated one.</strong></p>
+      </div>
+      <div class="field ask">
+        <span class="k">The discovery question</span>
+        <p>Who administers this environment, and are they aware of this project? What is the shortest maintenance window they will approve, and against whose calendar? What has to be true before they will approve one at all?</p>
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="var">
+      <div class="var-head">
+        <span class="var-num">03</span>
+        <span class="var-title">Position relative to the system of record</span>
+        <span class="shift high">Changes most</span>
+      </div>
+      <div class="field contextual">
+        <span class="k">In this context</span>
+        <div class="ctx active" data-ctx="small">
+          <p>The platform being implemented frequently becomes the system of record, or replaces one outright. Data moves once, in one direction, and afterward there is a single authoritative source. Migration completes and stays completed.</p>
+        </div>
+        <div class="ctx" data-ctx="large">
+          <p>The system of record is established, institutional, and not going anywhere. The platform integrates around it. Data moves continuously in both directions, and the implementation does not end at go-live — it transitions into an ongoing synchronization that has to keep working.</p>
+        </div>
+      </div>
+      <div class="field">
+        <span class="k">What actually changes</span>
+        <p>Migration inverts into synchronization, which is a different problem with different failure modes. A migration fails loudly and once. A sync fails quietly and repeatedly, and the first person to notice is usually a user looking at a number that does not match.</p>
+      </div>
+      <div class="field ask">
+        <span class="k">The discovery question</span>
+        <p>Which system wins when the two disagree, and who decided that? What happens to a record edited in both places between syncs? And who is watching the sync six months after go-live?</p>
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="var">
+      <div class="var-head">
+        <span class="var-num">04</span>
+        <span class="var-title">Integration maturity</span>
+        <span class="shift">Changes some</span>
+      </div>
+      <div class="field contextual">
+        <span class="k">In this context</span>
+        <div class="ctx active" data-ctx="small">
+          <p>Smaller institutions cluster on widely-adopted systems, which are the ones most likely to have a native connector built and maintained by the platform vendor. The integration is supported, versioned, and owned by a party with a direct stake in it working.</p>
+        </div>
+        <div class="ctx" data-ctx="large">
+          <p>Larger institutions run a wider and more varied set of systems, and connector coverage thins out accordingly. Some paths run through third-party development shops. Some do not exist at all, and the institution supplies its own engineering or moves files on a schedule.</p>
+        </div>
+      </div>
+      <div class="field">
+        <span class="k">What actually changes</span>
+        <p>A platform sitting above the system of record integrates on a spectrum, not a binary. Some systems have a native connector built by the vendor. Some have pre-built connectors from third-party development shops — which means a separate license, a separate support path, and a party to the implementation who does not report to anyone on the project. Some have nothing pre-built at all.</p>
+        <p>These are three different implementations wearing the same name. The third is the obvious risk. <strong>The second is the one that gets underestimated</strong> — a connector that exists is assumed to be a connector that works.</p>
+      </div>
+      <div class="field ask">
+        <span class="k">The discovery question</span>
+        <p>Not whether a connector exists. Who is accountable when it breaks mid-migration — and does the institution have the engineering capacity to sit behind it if the answer is nobody?</p>
+      </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="var">
+      <div class="var-head">
+        <span class="var-num">05</span>
+        <span class="var-title">Governance and compliance</span>
+        <span class="shift high">Changes most</span>
+      </div>
+      <div class="field contextual">
+        <span class="k">In this context</span>
+        <div class="ctx active" data-ctx="small">
+          <p>Data ownership is largely informal. The person who maintains a field is understood to own it, and a definition can be changed by the people in the room agreeing to change it. Retention practice exists but is rarely written down as a constraint the project has to work within.</p>
+        </div>
+        <div class="ctx" data-ctx="large">
+          <p>Ownership is formal and assigned. Changing a definition requires authorization from a function that may not be represented on the project. Retention schedules, access rules, and privacy obligations constrain what a conversion may discard, what may move where, and who may see it once it lands.</p>
+        </div>
+      </div>
+      <div class="field">
+        <span class="k">What actually changes</span>
+        <p>This is implementation work, not procurement paperwork. Retention obligations determine whether historical records can be cleaned or must be carried forward intact. Access rules determine what the target system has to be able to restrict. <strong>Both are design constraints, and both surface late if nobody asks early.</strong></p>
+      </div>
+      <div class="field ask">
+        <span class="k">The discovery question</span>
+        <p>What may this institution not discard, and who says so? Who has to approve a change to a field definition, and how long does that take? What in the source data cannot be seen by everyone who will have access to the target?</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="close">
+    <p>These are five variables, not five stages. <strong>Every institution has all of them</strong>; what differs is how far apart the answers live.</p>
+    <p>Delivery work is largely stable across that range — configuration, conversion, reconciliation, training. Discovery is not. At the concentrated end the answers are in the room. At the separated end, finding who can decide something is most of the work, and the largest risk is a definition two functions disagree about that nobody has surfaced.</p>
+    <p>Which is why the method has to change before the scale does, rather than after.</p>
+  </div>
+
+  <div class="sig">
+    Cathy Rudolph<br>
+    <a href="mailto:cathy.rudolph@academicskills.net" class="contact-link">cathy.rudolph@academicskills.net</a><br>
+    <a href="https://askadmin-web.github.io/ubiquitous-memory" class="contact-link">askadmin-web.github.io/ubiquitous-memory</a>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  // Forward ?ref= to portfolio links so outreach attribution survives navigation
+  var ref = new URLSearchParams(window.location.search).get('ref');
+  if (ref) {
+    document.querySelectorAll('a[href^="https://askadmin-web.github.io"]').forEach(function (a) {
+      var u = new URL(a.href);
+      u.searchParams.set('ref', ref);
+      a.href = u.toString();
+    });
+  }
+
+  var buttons = document.querySelectorAll('.switch button');
+
+  function setContext(ctx) {
+    buttons.forEach(function (b) {
+      b.setAttribute('aria-pressed', b.dataset.ctx === ctx ? 'true' : 'false');
+    });
+    document.querySelectorAll('.ctx').forEach(function (panel) {
+      if (panel.dataset.ctx === ctx) {
+        panel.classList.add('active');
+      } else {
+        panel.classList.remove('active');
+      }
+    });
+  }
+
+  buttons.forEach(function (b) {
+    b.addEventListener('click', function () { setContext(b.dataset.ctx); });
+  });
+})();
+</script>
+
+</body>
+</html>

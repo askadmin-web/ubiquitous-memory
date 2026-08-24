@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- ═══════════════════════════════════════════════════════════════════
+     WIDE-PAGE BLOCKS — maps, images, tables, charts
+     Companion to _template.html. This is a reference sheet, not a page
+     to publish: open it, find the block you need, copy the markup AND
+     its CSS into your new page.
+
+     Underscore prefix keeps GitHub Pages from publishing it. Keep it.
+
+     WHY THIS IS SEPARATE: these blocks carry CSS that a text page never
+     uses. Keeping them out of _template.html means every essay page
+     stays lean, and you pay for the table/chart CSS only on the pages
+     that actually have a table or a chart.
+     ═══════════════════════════════════════════════════════════════════ -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Wide-page blocks — reference</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="nav.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f7f6f3;
+    --text-primary: #1a1a18;
+    --text-secondary: #4a4a46;
+    --text-tertiary: #888780;
+    --border: rgba(0,0,0,0.12);
+    --border-hover: rgba(0,0,0,0.22);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --accent: #0D9488;
+    --accent-bg: rgba(13, 148, 136, 0.08);
+
+    /* ── VALIDATED CHART PALETTE ──────────────────────────────────────
+       Assign in this order, top down. Never skip around, never invent a
+       new hue for a 4th series — see the cap note in §5.
+       Light-mode steps. Dark steps are in body.dark below.            */
+    --series-1: #2a78d6;   /* blue   */
+    --series-2: #eb6834;   /* orange */
+    --series-3: #1baf7a;   /* aqua   */
+    --series-4: #eda100;   /* yellow — ordered forms only, see §5 */
+    --series-5: #e87ba4;   /* magenta — ordered forms only */
+
+    /* Chart furniture — always gray, never a series color. */
+    --chart-grid: rgba(0,0,0,0.08);
+    --chart-axis: #888780;
+  }
+
+  body.dark {
+    --bg: #1e1e1c;
+    --bg-secondary: #2a2a27;
+    --text-primary: #f0ede6;
+    --text-secondary: #b0ada5;
+    --text-tertiary: #6e6c67;
+    --border: rgba(255,255,255,0.1);
+    --border-hover: rgba(255,255,255,0.2);
+    --accent: #C084FC;
+    --accent-bg: rgba(192, 132, 252, 0.12);
+
+    /* Dark steps are SELECTED for the dark surface, not an auto-flip of
+       the light values. Do not compute these — use these. */
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+
+    --chart-grid: rgba(255,255,255,0.09);
+    --chart-axis: #6e6c67;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ══ §1  WIDE PAGE SETUP ═══════════════════════════════════════════
+     A map/table/chart page usually needs more than the 720px default.
+     Change BOTH of these together — .page alone leaves the nav bar
+     narrower than the content, which looks like a mistake.           */
+  .page { max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+  .nav-inner { max-width: 900px; }
+
+  hr { border: none; border-top: 0.5px solid var(--border); margin: 1.5rem 0; }
+
+  .page-name { font-size: 30px; font-weight: 600; letter-spacing: -0.5px; }
+  .page-tagline { font-size: 15px; color: var(--text-tertiary); margin-top: 6px; font-style: italic; }
+
+  .section-label {
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.09em;
+    text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 12px;
+  }
+
+  .note {
+    font-size: 12.5px; color: var(--text-secondary); line-height: 1.7;
+    max-width: 68ch; margin-bottom: 14px;
+  }
+  .note strong { color: var(--text-primary); font-weight: 600; }
+  .note code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11.5px; background: var(--bg-secondary);
+    padding: 1px 5px; border-radius: 4px; border: 0.5px solid var(--border);
+  }
+
+  /* ══ §2  FIGURE — the wrapper for ANY visual ═══════════════════════
+     Map, image, chart, embedded SVG. One container, one caption style,
+     so every visual on the site sits the same way in the page.       */
+  .figure {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-secondary);
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+
+  /* Direct children fill the box and stay responsive. Height is never
+     fixed — the container grows with content, so nothing gets a nested
+     scrollbar on a phone. */
+  .figure > img,
+  .figure > svg,
+  .figure > canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .figure-pad { padding: 16px; }          /* use when the visual needs breathing room */
+
+  .figure-caption {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    max-width: 68ch;
+  }
+
+  /* ══ §3  STAT ROW ══════════════════════════════════════════════════ */
+  .stat-row { display: flex; flex-wrap: wrap; gap: 1rem 2.5rem; margin-bottom: 1.5rem; }
+  .stat { font-size: 13px; color: var(--text-tertiary); }
+  .stat strong { color: var(--text-primary); font-weight: 600; }
+
+  /* ══ §4  DATA TABLE — for Structify exports and any tabular data ═══ */
+  .table-wrap {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow-x: auto;                 /* long tables scroll sideways, not off-page */
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 10px;
+  }
+
+  table.data {
+    width: 100%;
+    min-width: 520px;                 /* below this, scroll rather than crush */
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+
+  table.data thead th {
+    position: sticky; top: 0;         /* header survives a long scroll */
+    background: var(--bg-secondary);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 0.5px solid var(--border);
+    white-space: nowrap;
+  }
+
+  table.data tbody td {
+    padding: 9px 14px;
+    color: var(--text-secondary);
+    border-bottom: 0.5px solid var(--border);
+    vertical-align: top;
+  }
+
+  table.data tbody tr:last-child td { border-bottom: none; }
+  table.data tbody tr:hover td { background: var(--bg-secondary); }
+
+  table.data .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;   /* digits align in a column */
+    white-space: nowrap;
+  }
+
+  table.data .row-label { color: var(--text-primary); font-weight: 500; }
+
+  /* ══ §5  CHART FURNITURE ═══════════════════════════════════════════ */
+  .legend { display: flex; flex-wrap: wrap; gap: 0.6rem 1.75rem; margin: 12px 0; }
+
+  .legend-item {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 12px; color: var(--text-secondary);
+  }
+
+  .legend-pip { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .legend-pip.sq { border-radius: 2px; }
+
+  /* Shared tooltip. Position it with JS on mousemove — see global-reach.html. */
+  #tooltip {
+    position: fixed;
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 6px 11px;
+    font-size: 13px;
+    color: var(--text-primary);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.12s;
+    white-space: nowrap;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  }
+
+  /* Bar demo — 2px surface gap between fills, 4px rounded data-end. */
+  .bar-track { display: flex; flex-direction: column; gap: 8px; }
+  .bar-row { display: grid; grid-template-columns: 130px 1fr auto; align-items: center; gap: 12px; }
+  .bar-name { font-size: 12.5px; color: var(--text-secondary); }
+  .bar-rail { background: var(--chart-grid); border-radius: 4px; height: 18px; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .bar-val { font-size: 12px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+
+  .callout {
+    border: 0.5px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    padding: 12px 16px;
+    background: var(--accent-bg);
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+  .callout strong { color: var(--text-primary); font-weight: 600; }
+
+  @media (max-width: 560px) {
+    .bar-row { grid-template-columns: 92px 1fr auto; }
+  }
+</style>
+</head>
+<body>
+
+<script>
+(function () {
+  var saved = localStorage.getItem('theme');
+  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  document.body.classList.toggle('dark', saved ? saved === 'dark' : prefersDark);
+})();
+</script>
+
+<div id="nav-placeholder"></div>
+<script src="pages.js"></script>
+<script src="nav-inject.js"></script>
+
+<div class="page">
+
+  <div class="page-name">Wide-page blocks</div>
+  <div class="page-tagline">Reference sheet — maps, images, tables, charts. Copy what you need.</div>
+
+  <hr>
+
+  <!-- ─────────────────────────────────────────────────────────────── -->
+  <div class="section-label">§1 · Page width</div>
+  <p class="note">
+    A visual page usually wants more than the 720px default. Change
+    <code>.page</code> and <code>.nav-inner</code> <strong>together</strong> —
+    changing only <code>.page</code> leaves the nav bar narrower than the
+    content, which reads as a bug. 900px is what Global Reach uses and is a
+    good default for a map or a wide table.
+  </p>
+
+  <hr>
+
+  <!-- ─────────────────────────────────────────────────────────────── -->
+  <div class="section-label">§2 · Figure — the wrapper for any visual</div>
+  <p class="note">
+    One container for maps, images, charts and embedded SVG, so every visual
+    sits in the page the same way. Height is never fixed: the box grows with
+    its content, which is what keeps a map or a wide chart from getting its
+    own little scrollbar on a phone. Caption goes <em>below</em> the box, in
+    tertiary text.
+  </p>
+
+  <div class="figure figure-pad">
+    <svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder figure">
+      <rect width="800" height="200" fill="transparent"/>
+      <text x="400" y="104" text-anchor="middle" font-family="-apple-system, sans-serif"
+            font-size="13" fill="#888780">map · image · chart goes here</text>
+    </svg>
+  </div>
+  <p class="figure-caption">
+    Caption. Say what the reader is looking at and where the numbers came from —
+    this is also where a source note belongs.
+  </p>
+
+  <p class="note">
+    <strong>For a raster image</strong> (a screenshot, a photo), put an
+    <code>&lt;img&gt;</code> directly inside <code>.figure</code>. It gets
+    <code>width:100%; height:auto</code> automatically, so it scales. Always
+    write real <code>alt</code> text. Export at roughly twice the display width
+    for retina screens, then compress — a portfolio page should not ship a 4MB
+    PNG. <strong>Screenshots of dark-mode UI look broken on a light page</strong>
+    and vice versa; if the image has a background, prefer one with a neutral or
+    transparent backdrop.
+  </p>
+
+  <hr>
+
+  <!-- ─────────────────────────────────────────────────────────────── -->
+  <div class="section-label">§3 · Stat row</div>
+
+  <div class="stat-row">
+    <div class="stat"><strong>NAMER</strong> — 2 cities, 1 country</div>
+    <div class="stat"><strong>LATAM</strong> — 1 city, 1 country</div>
+    <div class="stat"><strong>EMEA</strong> — 8 cities, 8 countries</div>
+    <div class="stat"><strong>APAC</strong> — 5 cities, 4 countries</div>
+  </div>
+
+  <hr>
+
+  <!-- ─────────────────────────────────────────────────────────────── -->
+  <div class="section-label">§4 · Data table — Structify exports and other tabular data</div>
+  <p class="note">
+    The table below is <strong>generated from a JS array</strong> at the bottom
+    of this file rather than hand-written as HTML. That's the same pattern
+    <code>pages.js</code> uses, and the same one Global Reach uses for its city
+    list: paste the export once, and the table re-renders. Editing 40 rows of
+    <code>&lt;td&gt;</code> by hand is where mistakes come from.
+  </p>
+  <p class="note">
+    <strong>Getting Structify output in:</strong> export to CSV, then convert it
+    to a JS array of objects — any AI session will do that conversion in one
+    pass. Keep the array in the page. If a dataset is big enough that pasting it
+    feels wrong (say past a few hundred rows), that's the signal to save it as a
+    separate <code>.json</code> file and <code>fetch()</code> it, the way Global
+    Reach fetches its world atlas.
+  </p>
+  <p class="note">
+    Numeric columns get <code>class="num"</code>, which right-aligns them and
+    turns on tabular figures so the digits line up in a column. Leave text
+    columns alone — tabular figures make prose look loose.
+  </p>
+
+  <div class="table-wrap">
+    <table class="data" id="demo-table">
+      <thead>
+        <tr>
+          <th>Institution type</th>
+          <th>Prior systems</th>
+          <th class="num">Records migrated</th>
+          <th class="num">Weeks</th>
+        </tr>
+      </thead>
+      <tbody><!-- generated below --></tbody>
+    </table>
+  </div>
+  <p class="figure-caption">
+    Illustrative figures only — replace with real data. Long tables scroll
+    sideways inside the box rather than pushing the page wide, and the header
+    row stays put while you scroll.
+  </p>
+
+  <hr>
+
+  <!-- ─────────────────────────────────────────────────────────────── -->
+  <div class="section-label">§5 · Charts — color rules</div>
+
+  <p class="note">
+    Series colors are defined once as <code>--series-1</code> through
+    <code>--series-5</code> at the top of the file, with separate steps for dark
+    mode. <strong>Assign them in order, top down.</strong> Don't pick by taste
+    and don't invent a sixth hue — the order is validated, and picking around it
+    is how two series end up indistinguishable.
+  </p>
+
+  <p class="note">
+    <strong>The cap depends on the chart type,</strong> because it depends on
+    whether any two series can end up touching:
+  </p>
+
+  <ul class="note" style="padding-left:1.1rem;">
+    <li><strong>Bars, stacked bars, lines</strong> — series sit in a fixed order,
+      so only neighbors need to separate. Up to 5 slots is fine.</li>
+    <li><strong>Maps, scatter, bubble</strong> — any two categories can land next
+      to each other, so <em>every</em> pair has to separate.
+      <strong>Three colors is the honest cap.</strong> Past three, either fold the
+      rest into "Other," split into small multiples, or add a second channel:
+      different marker shapes, or direct labels.</li>
+  </ul>
+
+  <div class="callout">
+    <strong>This applies to the map on Global Reach.</strong> Its four region
+    colors don't fully separate — teal against blue is close enough that some
+    readers, and most colorblind readers, can't reliably tell them apart. The
+    page gets away with it because color isn't doing the work alone: there's a
+    legend, a hover tooltip naming every city, and a full city list underneath
+    with a colored pip beside each entry. That's the "second channel" rule being
+    satisfied by accident. If you rebuild that map, either use the first three
+    slots plus a distinct marker shape for the fourth region, or keep four colors
+    and keep the city list — but don't ship four colors with no list.
+  </div>
+
+  <p class="note" style="margin-top:14px;">
+    Two more rules worth keeping: <strong>grid lines and axes are always gray</strong>
+    (<code>--chart-grid</code>, <code>--chart-axis</code>), never a series color;
+    and <strong>labels and values stay in text colors</strong> — a colored pip
+    beside a label carries the identity, the text itself doesn't need to be
+    colored. And a legend is required as soon as there are two or more series.
+  </p>
+
+  <div class="legend">
+    <div class="legend-item"><span class="legend-pip sq" style="background:var(--series-1)"></span>Discovery</div>
+    <div class="legend-item"><span class="legend-pip sq" style="background:var(--series-2)"></span>Conversion</div>
+    <div class="legend-item"><span class="legend-pip sq" style="background:var(--series-3)"></span>Go-live</div>
+  </div>
+
+  <div class="figure figure-pad">
+    <div class="bar-track" id="demo-bars"></div>
+  </div>
+  <p class="figure-caption">
+    Illustrative only. Bars use a 4px rounded end and a gray rail — the rail is
+    chart furniture, so it never takes a series color.
+  </p>
+
+  <hr>
+
+  <div class="section-label">§6 · Tooltip</div>
+  <p class="note">
+    Any chart or map should say what a mark is on hover. One
+    <code>#tooltip</code> div lives at page level and gets moved on
+    <code>mousemove</code>; <code>global-reach.html</code> has the working
+    version to copy — about eight lines.
+  </p>
+
+  <div id="tooltip"></div>
+
+</div>
+
+<script>
+// ── §4 demo table — replace DATA with a Structify export ──────────────
+const DATA = [
+  { type: "Independent K–12",      prior: "2 systems",  records: 148000,  weeks: 8  },
+  { type: "Small nonprofit",       prior: "1 system",   records: 12400,   weeks: 6  },
+  { type: "University advancement", prior: "4 systems", records: 1260000, weeks: 22 },
+  { type: "International school",  prior: "3 systems",  records: 96500,   weeks: 12 }
+];
+
+const tbody = document.querySelector('#demo-table tbody');
+tbody.innerHTML = DATA.map(function (r) {
+  return '<tr>' +
+    '<td class="row-label">' + r.type + '</td>' +
+    '<td>' + r.prior + '</td>' +
+    '<td class="num">' + r.records.toLocaleString() + '</td>' +
+    '<td class="num">' + r.weeks + '</td>' +
+  '</tr>';
+}).join('');
+
+// ── §5 demo bars ──────────────────────────────────────────────────────
+const BARS = [
+  { name: "Discovery",  value: 2, slot: 1 },
+  { name: "Conversion", value: 4, slot: 2 },
+  { name: "Go-live",    value: 1, slot: 3 }
+];
+const max = Math.max.apply(null, BARS.map(function (b) { return b.value; }));
+
+document.getElementById('demo-bars').innerHTML = BARS.map(function (b) {
+  return '<div class="bar-row">' +
+    '<div class="bar-name">' + b.name + '</div>' +
+    '<div class="bar-rail">' +
+      '<div class="bar-fill" style="width:' + (b.value / max * 100) + '%;' +
+        'background:var(--series-' + b.slot + ')"></div>' +
+    '</div>' +
+    '<div class="bar-val">' + b.value + ' wk</div>' +
+  '</div>';
+}).join('');
+</script>
+
+</body>
+</html>
