@@ -11,7 +11,6 @@ Pages:
 Credentials & Evidence
 
 • Resume — interactive skills with expandable evidence, full work history, certifications
-
 • Global Reach — onsite implementations across 4 regions, 14 countries, 16 cities
 
 Delivery Practice
