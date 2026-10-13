@@ -52,6 +52,8 @@
   body.dark .badge-ventured { background: #0c447c; color: #b5d4f4; }
   body.dark .badge-inres    { background: #085041; color: #9fe1cb; }
   body.dark .badge-adr      { background: #3c3489; color: #cecbf6; }
+  body.dark .badge-both     { background: #3a3a36; color: #dcd9d1; }
+  body.dark .badge-bio      { background: #5a3d12; color: #f3d9a8; }
 
   body {
     font-family: var(--font-sans);
@@ -59,8 +61,6 @@
     color: var(--text-primary);
     line-height: 1.5;
   }
-
-
 
   .resume {
     max-width: 720px;
@@ -88,6 +88,7 @@
   .r-contact a {
     color: var(--text-secondary);
     text-decoration: none;
+    overflow-wrap: anywhere;
   }
 
   .r-contact a:hover {
@@ -119,6 +120,35 @@
     line-height: 1.7;
   }
 
+  /* ── At a glance ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .stat {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+  }
+
+  .stat-num {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-label {
+    font-size: 11.5px;
+    color: var(--text-tertiary);
+    line-height: 1.4;
+    margin-top: 2px;
+  }
+
   .section-label {
     font-size: 10.5px;
     font-weight: 600;
@@ -148,6 +178,7 @@
     text-align: left;
     gap: 12px;
     transition: background 0.15s;
+    font-family: inherit;
   }
 
   .skill-trigger:hover { background: var(--bg-secondary); }
@@ -167,10 +198,14 @@
     font-size: 12px;
     color: var(--text-tertiary);
     margin-top: 3px;
-    display: none;
   }
 
-  .skill-trigger.open .skill-desc { display: block; }
+  .skill-count {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-left: 6px;
+    font-weight: 400;
+  }
 
   .skill-chevron {
     font-size: 16px;
@@ -183,17 +218,38 @@
 
   .skill-evidence {
     display: none;
-    padding: 14px;
+    padding: 6px 14px 14px;
     background: var(--bg);
   }
 
   .skill-evidence.open { display: block; }
 
+  .sub-skill {
+    padding-top: 12px;
+    margin-top: 12px;
+    border-top: 0.5px solid var(--border);
+  }
+
+  .sub-skill:first-child { border-top: none; margin-top: 0; }
+
+  .sub-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .sub-desc {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin: 2px 0 9px;
+    line-height: 1.5;
+  }
+
   .evidence-item {
     display: flex;
     gap: 10px;
     align-items: flex-start;
-    margin-bottom: 11px;
+    margin-bottom: 9px;
   }
 
   .evidence-item:last-child { margin-bottom: 0; }
@@ -212,12 +268,31 @@
   .badge-ventured { background: #E6F1FB; color: #0C447C; }
   .badge-inres    { background: #E1F5EE; color: #085041; }
   .badge-adr      { background: #EEEDFE; color: #3C3489; }
+  .badge-both     { background: #EFEEEA; color: #3d3d39; }
+  .badge-bio      { background: #FBF0DD; color: #6B4A12; }
 
   .evidence-text {
     font-size: 13px;
     color: var(--text-secondary);
     line-height: 1.65;
   }
+
+  .evidence-text a, .exp-bullets a { color: var(--accent); text-decoration: none; }
+  .evidence-text a:hover, .exp-bullets a:hover { text-decoration: underline; }
+
+  .expand-all {
+    background: none;
+    border: none;
+    font: inherit;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 0;
+    margin: -4px 0 10px;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .expand-all:hover { color: var(--text-primary); }
 
   /* ── Experience ── */
   .exp-role { margin-bottom: 22px; }
@@ -289,11 +364,16 @@
     clip: rect(0,0,0,0); white-space: nowrap; border: 0;
   }
 
+  @media (max-width: 560px) {
+    .resume { padding: 2rem 1rem 4rem; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .evidence-item { flex-direction: column; gap: 4px; }
+  }
+
   @media print {
     body { padding: 1.5rem; }
     .skill-evidence { display: block !important; }
-    .skill-desc { display: block !important; }
-    .skill-chevron { display: none; }
+    .skill-chevron, .expand-all { display: none; }
     .skill-trigger { background: none !important; border-bottom: 0.5px solid #ccc; }
   }
 </style>
@@ -323,15 +403,23 @@
     <a href="https://linkedin.com/in/cathy-rudolph-450225370" target="_blank">linkedin.com/in/cathy-rudolph-450225370</a>
   </div>
   <div class="r-title">Implementation Manager</div>
-  <div class="r-subtitle">End-to-End SaaS Implementation &nbsp;&middot;&nbsp; Workflow Translation &nbsp;&middot;&nbsp; Onboarding &nbsp;&middot;&nbsp; API Integrations &nbsp;&middot;&nbsp; Change Management</div>
+  <div class="r-subtitle">Implementation Team Leadership &nbsp;&middot;&nbsp; End-to-End SaaS Implementation &nbsp;&middot;&nbsp; Workflow Translation &nbsp;&middot;&nbsp; Data Migration &amp; API Integrations &nbsp;&middot;&nbsp; Change Management</div>
 
   <hr>
 
-  <p class="r-summary">180+ implementations across B2B SaaS and low-code platforms. 72,000+ users. $2B in annual client revenue protected. From kickoff through go-live through sustained adoption — building the playbooks, enablement assets, and stakeholder frameworks that make onboarding repeatable and scalable.</p>
+  <p class="r-summary">Implementation Manager — 180+ implementations across B2B SaaS and low-code platforms, 72,000+ users, ~$2B in client revenue. From kickoff through go-live to sustained adoption, I lead implementation teams and build the playbooks, enablement assets, and stakeholder frameworks that make onboarding repeatable and scalable.</p>
+
+  <div class="stats" aria-label="At a glance">
+    <div class="stat"><div class="stat-num">180+</div><div class="stat-label">go-lives: 30+ SaaS, 150+ low-code</div></div>
+    <div class="stat"><div class="stat-num">72,000+</div><div class="stat-label">users supported</div></div>
+    <div class="stat"><div class="stat-num">14</div><div class="stat-label">countries, on-site implementations</div></div>
+    <div class="stat"><div class="stat-num">3–4</div><div class="stat-label">specialists led, seven years</div></div>
+  </div>
 
   <hr>
 
   <div class="section-label">Click any skill down arrow to show/hide the evidence</div>
+  <button class="expand-all" id="expand-all" type="button">Expand all</button>
   <div id="skills-list"></div>
 
   <hr>
@@ -339,28 +427,44 @@
   <div class="section-label">Professional experience</div>
 
   <div class="exp-role">
+    <div class="exp-org">Independent Practice</div>
+    <div class="exp-org-meta">AI-Enabled Implementation Delivery &nbsp;&middot;&nbsp; 2025–present</div>
+    <div class="exp-jobtitle">Implementation Consultant</div>
+    <ul class="exp-bullets">
+      <li>Prototyped ETL pipelines using Structify.ai — organizing complex operational datasets into analysis-ready structures for non-technical stakeholders.</li>
+      <li>Investigated implementation delivery models across SMB-to-enterprise SaaS clients — surfacing best-practice patterns around time-to-value, onboarding frameworks, and conversion timelines.</li>
+      <li>Used generative AI tools to analyze implementation variables, model engagement risk scenarios, and develop repeatable scope and timeline frameworks for enterprise SaaS deployments — including AI-feature activation sequencing.</li>
+      <li>Designed and built a multi-agent workflow (Claude Cowork) — deciding which steps run as agents and which stay with a human, and sequencing agent handoffs and validation steps.</li>
+      <li>Built a two-stage Claude workflow: a rubric-based screening artifact that ends at a structured handoff, and a packaged skill that turns a job description and resume into an instrumented interactive comparison page without intervention (<a href="built-jd-comparison.html">see the demo</a>).</li>
+    </ul>
+  </div>
+
+  <div class="exp-role">
     <div class="exp-org">VenturEd Solutions</div>
     <div class="exp-org-meta">K-12 Education Technology &nbsp;&middot;&nbsp; 2018–2025</div>
     <div class="exp-jobtitle">Implementation Manager</div>
     <ul class="exp-bullets">
-      <li>Owned end-to-end onboarding for 30+ enterprise SaaS implementations, managing 6+ simultaneously — discovery, account setup, configuration, data migration, training, and go-live — supporting ~12,000 users and $300M+ in annual client revenue.</li>
-      <li>Built and drove mutual action plans tailored to each client's readiness, constraints, and activation goals, cutting time-to-activation by ~one-third through documented, repeatable onboarding practices.</li>
-      <li>Partnered cross-functionally with Product, Sales, and Customer Success — turning implementation feedback into statistical reporting, playbooks, and roadmap input.</li>
+      <li>Owned end-to-end onboarding for 30+ enterprise SaaS implementations for independent K-12 schools and consortia, managing ~6 simultaneously (10–12 at peak) — discovery, data conversion, configuration, user acceptance testing, training, and go-live — supporting ~12,000 users and $300M+ in annual client revenue.</li>
+      <li>About 80% of those implementations moved clients off the acquired legacy low-code platform onto the SaaS product; built a migration routine to replace the platform’s basic Excel import and rebuilt client workflows on the new platform.</li>
+      <li>Led a stable team of 3–4 Implementation Specialists for seven years — directed new hires day to day, reviewed their work, and gave established members more autonomy as they grew.</li>
+      <li>Built and drove mutual action plans tailored to each client’s readiness, constraints, and activation goals, cutting time-to-activation by ~one-third through documented, repeatable onboarding practices.</li>
       <li>Led API integrations and ETL automations between SaaS and legacy systems, resolving data mapping errors, field mismatches, and duplication through post-migration QA — cutting manual data work ~80% with 100% continuity.</li>
       <li>Maintained implementation velocity across concurrent client engagements by building repeatable delivery structures — status frameworks, escalation triggers, and cross-functional communication protocols — that reduced dependency on heroics and created predictable go-live outcomes.</li>
+      <li>Scoped 60–90 days of post-go-live hypercare where complexity warranted it, then stayed the go-to client contact after handoff to Account Management.</li>
     </ul>
   </div>
 
   <div class="exp-role">
     <div class="exp-org">inRESONANCE</div>
-    <div class="exp-org-meta">Education Nonprofit Technology &nbsp;&middot;&nbsp; 2009–2018</div>
+    <div class="exp-org-meta">Education Technology &nbsp;&middot;&nbsp; 2009–2018</div>
     <div class="exp-jobtitle">Senior Implementation Specialist</div>
     <ul class="exp-bullets">
-      <li>Managed full implementation lifecycle for 150+ institutions from discovery through go-live — 60,000+ users, $1.5B in annual revenue, 400-school portfolio.</li>
+      <li>Managed full implementation lifecycle for 150+ institutions across PORTAL, GENERATIONS, and RavennaCONNECT, from discovery through go-live — 60,000+ users, $1.5B in annual revenue, 400-school portfolio.</li>
       <li>Managed mid-implementation scope expansion at a UK independent school consortium — single campus grew to three sites with cross-placement complexity not in the original plan — rebuilt the implementation framework mid-engagement and delivered all sites on the original go-live schedule.</li>
       <li>Led on-site and remote working sessions capturing process requirements and institutional knowledge, cutting time-to-value by ~20%.</li>
-      <li>Conducted onsite and remote training for client teams across diverse technical environments, guiding non-technical end users and administrators through new workflows.</li>
-      <li>Designed post-installation support framework — playbooks, live training, and targeted follow-up — that raised user proficiency rates and reduced escalations across a 400-school portfolio.</li>
+      <li>Delivered on-site implementations and training in 14 countries across North America, Latin America, Europe, the Middle East, and Asia.</li>
+      <li>Taught inRESONANCE University curriculum on a train-the-trainer model, preparing client administrators to train their own staff.</li>
+      <li>Ran a standard 60–90 day hypercare period after go-live as part of the Support team — documentation, live training, and targeted follow-up — while management handled account close-out and expansion conversations.</li>
       <li>Turned recurring issues and feature requests into playbooks, configuration guidelines, and product enhancements — in collaboration with Product and Support.</li>
     </ul>
   </div>
@@ -370,20 +474,8 @@
     <div class="exp-org-meta">Biotechnology Research &nbsp;&middot;&nbsp; 1980–1991</div>
     <div class="exp-jobtitle">Senior Research Associate</div>
     <ul class="exp-bullets">
-      <li>Cloning and expression systems for human interferons, human serum albumin, and bovine growth hormone in a zero-defect, protocol-driven laboratory environment, executed with precise workflow process and rigorous documentation.</li>
+      <li>Cloning and expression systems for human interferons, human serum albumin, and bovine growth hormone in a protocol-driven laboratory environment, executed with precise workflow process and rigorous documentation.</li>
       <li>Co-authored scientific publications and contributed to patent filing documentation for protein expression research.</li>
-    </ul>
-  </div>
-
-  <div class="exp-role">
-    <div class="exp-org">Independent Practice</div>
-    <div class="exp-org-meta">2025–present</div>
-    <div class="exp-jobtitle">Implementation Consultant</div>
-    <ul class="exp-bullets">
-      <li>Prototyped ETL pipelines using Structify.ai — organizing complex operational datasets into analysis-ready structures for non-technical stakeholders.</li>
-      <li>Investigated implementation delivery models across SMB-to-enterprise SaaS clients — surfacing best-practice patterns around time-to-value, onboarding frameworks, and conversion timelines.</li>
-      <li>Delivery planning frameworks — used generative AI tools to analyze implementation variables, model engagement risk scenarios, and develop repeatable scope and timeline frameworks for enterprise SaaS deployments.</li>
-      <li>Developed AI-assisted prompt frameworks for change management scenarios — prototyping tools that implementation teams could use to support stakeholder adoption during workflow transitions.</li>
     </ul>
   </div>
 
@@ -395,7 +487,7 @@
   <hr>
 
   <div class="section-label">Technical proficiencies</div>
-  <p class="tech-row">Jira &middot; Teamwork &middot; Trello &middot; SQL &middot; Excel &middot; ETL &middot; API integrations &middot; Salesforce &middot; data migration &middot; CSV data handling &middot; workflow automation &middot; agile delivery methods &middot; Structify &middot; Perplexity &middot; Gemini &middot; Claude</p>
+  <p class="tech-row">Jira &middot; Teamwork &middot; Trello &middot; Basecamp &middot; Salesforce &middot; Microsoft Office (Excel, Word, PowerPoint) &middot; SQL &middot; ETL &middot; API integrations &middot; REST (endpoint testing) &middot; JSON (field mapping) &middot; XML &middot; SSO (Azure) &middot; SFTP &middot; data migration &middot; CSV data handling &middot; workflow automation &middot; agile delivery methods &middot; user stories &middot; sprint planning &middot; UAT &middot; process flow diagrams &middot; wireframes &middot; FileMaker &middot; scripting &middot; Fathom &middot; Structify &middot; Perplexity &middot; Gemini &middot; Claude</p>
 
   <hr>
 
@@ -404,116 +496,224 @@
     <li>AI-Powered Project Management — Maven, Jul 2026</li>
     <li>Introduction to Data Analysis Using Excel — Rice University, Nov 2025</li>
     <li>What is Generative AI? — LinkedIn Learning, Sep 2025</li>
-    <li>SQL Essential Training — LinkedIn, Sep 2025</li>
+    <li>SQL Essential Training — LinkedIn Learning, Sep 2025</li>
+    <li>Data Analysis &amp; Visualization Foundations — IBM, Aug 2025</li>
+    <li>Excel Essentials for Data Analytics — Coursera, Jul 2025</li>
   </ul>
 </div>
 
 <script>
-const skills = [
+const V = { co: "VenturEd", cls: "badge-ventured" };
+const R = { co: "inRESONANCE", cls: "badge-inres" };
+const A = { co: "Independent Practice", cls: "badge-adr" };
+const B = { co: "Both employers", cls: "badge-both" };
+const C = { co: "Across roles", cls: "badge-both" };
+const S = { co: "Biotech", cls: "badge-bio" };
+const ev = (src, text) => ({ co: src.co, cls: src.cls, text });
+
+const groups = [
   {
-    label: "End-to-end implementation ownership",
-    desc: "180+ go-lives across B2B SaaS and low-code platforms — sales handoff through account management handoff",
-    evidence: [
-      { co: "VenturEd", cls: "badge-ventured", text: "Owned end-to-end onboarding for 30+ enterprise SaaS implementations, managing 6+ simultaneously — discovery, account setup, configuration, data migration, training, and go-live — supporting ~12,000 users and $300M+ in annual client revenue." },
-      { co: "inRESONANCE", cls: "badge-inres", text: "Managed full implementation lifecycle for 150+ institutions from discovery through go-live — 60,000+ users, $1.5B in annual revenue, 400-school portfolio." }
+    label: "Leadership & mentoring",
+    desc: "Leads by teaching the work — a stable implementation team, every new specialist, and peers’ hardest cases",
+    skills: [
+      { name: "Implementation team leadership", desc: "Day-to-day direction for new hires; more autonomy for established members as they grew",
+        evidence: [ ev(V, "Led a stable team of 3–4 Implementation Specialists for seven years — directed new hires day to day, reviewed their work, and gave established members more autonomy, including through group working sessions.") ] },
+      { name: "Specialist onboarding & coaching", desc: "6–10 incoming specialists walked through their first implementations",
+        evidence: [ ev(B, "Walked 6–10 incoming Implementation Specialists across VenturEd and inRESONANCE through their first implementations, reviewed their work, and gave feedback."),
+                    ev(V, "Taught new specialists implementation phases and client-interaction structure on live legacy-to-SaaS migrations, using the legacy low-code platform to explain new-platform data migration.") ] },
+      { name: "Peer escalation point", desc: "The go-to for hard legacy-platform cases",
+        evidence: [ ev(V, "Served as go-to for peers’ hardest legacy-migration cases — other implementers brought their difficult client and delivery situations for the legacy work.") ] }
     ]
   },
   {
-    label: "Concurrent project management",
-    desc: "Detailed plans, milestone trackers, and risk logs across 6+ simultaneous implementations",
-    evidence: [
-      { co: "VenturEd", cls: "badge-ventured", text: "Owned end-to-end onboarding for 30+ enterprise SaaS implementations, managing 6+ simultaneously — discovery, account setup, configuration, data migration, training, and go-live." },
-      { co: "VenturEd", cls: "badge-ventured", text: "Built and drove mutual action plans tailored to each client's readiness, constraints, and activation goals, cutting time-to-activation by ~one-third through documented, repeatable onboarding practices." },
-      { co: "VenturEd", cls: "badge-ventured", text: "Maintained implementation velocity across concurrent client engagements by building repeatable delivery structures — status frameworks, escalation triggers, and cross-functional communication protocols — that reduced dependency on heroics and created predictable go-live outcomes." }
+    label: "End-to-end delivery",
+    desc: "180+ go-lives, ~6 at a time and 10–12 at peak — from sales handoff through hypercare and account handoff",
+    skills: [
+      { name: "End-to-end implementation ownership", desc: "Sales handoff through go-live, hypercare, and account handoff",
+        evidence: [ ev(V, "Owned end-to-end onboarding for 30+ enterprise SaaS implementations — discovery, data conversion, configuration, user acceptance testing, training, and go-live — supporting ~12,000 users and $300M+ in annual client revenue."),
+                    ev(R, "Managed full implementation lifecycle for 150+ institutions across PORTAL, GENERATIONS, and RavennaCONNECT — 60,000+ users, $1.5B in annual revenue, 400-school portfolio.") ] },
+      { name: "Concurrent project management", desc: "Plans, milestone trackers, status reporting, and risk logs across ~6 concurrent implementations (10–12 at peak)",
+        evidence: [ ev(V, "Built and drove mutual action plans tailored to each client’s readiness, constraints, and activation goals, cutting time-to-activation by ~one-third through documented, repeatable onboarding practices."),
+                    ev(V, "Maintained implementation velocity across concurrent client engagements by building repeatable delivery structures — status frameworks, escalation triggers, and cross-functional communication protocols — that reduced dependency on heroics and created predictable go-live outcomes.") ] },
+      { name: "Scope management & replanning", desc: "Rebuilds the plan when scope, sites, or complexity expand mid-engagement — without moving the go-live date",
+        evidence: [ ev(R, "Managed mid-implementation scope expansion at a UK independent school consortium — single campus grew to three sites with cross-placement complexity not in the original plan — rebuilt the implementation framework mid-engagement and delivered all sites on the original go-live schedule.") ] },
+      { name: "Complex, multi-site implementations", desc: "Consortia, multiple campuses, multiple modules",
+        evidence: [ ev(B, "Consortium deployments spanning 5–25 independent schools, many with multiple campuses, across admissions, enrollment, and fundraising modules — installed in the US and internationally.") ] },
+      { name: "Risk management & escalation", desc: "Surfaces risk early; escalates when warranted",
+        evidence: [ ev(C, "Surfaces implementation risks and blockers early, builds mitigation plans, holds clients to deadlines, and escalates critical issues when warranted, keeping relationships intact through delays.") ] },
+      { name: "New-product onboarding", desc: "Onboarding for product lines with no existing playbook",
+        evidence: [ ev(C, "Owns onboarding for new product lines with no existing playbook, building the process from scratch.") ] },
+      { name: "Hypercare", desc: "A 60–90 day post-go-live support window at both employers",
+        evidence: [ ev(V, "Scoped 60–90 days of post-go-live hypercare for clients whose complexity warranted it, resolving early issues before handing accounts to Account Management."),
+                    ev(R, "Ran a standard 60–90 day hypercare period as part of the Support team — documentation, live training, and targeted follow-up — while management handled account close-out and expansion conversations.") ] }
     ]
   },
   {
-    label: "Scope management & replanning",
-    desc: "Rebuilds the implementation plan when scope, sites, or complexity expand mid-engagement — without moving the go-live date",
-    evidence: [
-      { co: "inRESONANCE", cls: "badge-inres", text: "Managed mid-implementation scope expansion at a UK independent school consortium — single campus grew to three sites with cross-placement complexity not in the original plan — rebuilt the implementation framework mid-engagement and delivered all sites on the original go-live schedule." }
+    label: "Workflow translation, scope & configuration",
+    desc: "Turns how a client actually works into a scoped, configured, and tested system",
+    skills: [
+      { name: "Workflow translation", desc: "Captures real-world processes, maps them to configuration, validates against client goals",
+        evidence: [ ev(R, "Led on-site and remote working sessions capturing process requirements and institutional knowledge across admissions, enrollment, and fundraising offices, cutting time-to-value by ~20%."),
+                    ev(C, "Leads post-sale discovery and business-requirements sessions, maps as-is client workflows to to-be configurations, and identifies process and functionality gaps.") ] },
+      { name: "Scoping, SOWs & scope control", desc: "Post-sales scopes of work, acceptance criteria, and change requests",
+        evidence: [ ev(C, "Prepared and negotiated post-sales scopes of work, responsibilities, and knock-on timelines with clients."),
+                    ev(C, "Confirms scope, requirements, and acceptance criteria at kickoff; manages change requests through go-live and sign-off — with reluctant clients, the kickoff acceptance criteria are the basis for sign-off.") ] },
+      { name: "Configuration & technical problem-solving", desc: "Resolves gaps between client workflows and platform design with technical fixes",
+        evidence: [ ev(R, "Configured the low-code platform to each institution’s workflows, with scripted automations as appropriate."),
+                    ev(V, "Reconfigured an existing RavennaCONNECT XML connection to the SaaS platform, delivering the reporting process a legacy client required before it would migrate."),
+                    ev(B, "Runs configuration in parallel with data work from week one, so clients learn the system before their data arrives and workflow questions surface early, not under go-live pressure.") ] },
+      { name: "UAT & client sign-off", desc: "Testing with client teams before go-live",
+        evidence: [ ev(C, "Coordinates user acceptance testing with client teams and secures sign-off before go-live.") ] }
     ]
   },
   {
-    label: "Workflow translation",
-    desc: "Captures real-world operational processes, maps them to system configuration, validates against client goals",
-    evidence: [
-      { co: "inRESONANCE", cls: "badge-inres", text: "Led on-site and remote working sessions capturing process requirements and institutional knowledge, cutting time-to-value by ~20%." },
-      { co: "VenturEd", cls: "badge-ventured", text: "Built and drove mutual action plans tailored to each client's readiness, constraints, and activation goals, cutting time-to-activation by ~one-third through documented, repeatable onboarding practices." }
+    label: "Data migration & integrations",
+    desc: "Legacy-to-SaaS migrations, integrations, and the QA that keeps data whole",
+    skills: [
+      { name: "Legacy-to-SaaS migration", desc: "~80% of VenturEd implementations, on a migration routine built for the purpose",
+        evidence: [ ev(V, "About 80% of VenturEd implementations moved clients off the acquired legacy low-code platform onto the SaaS product; built a migration routine to replace the platform’s basic Excel import, documented gaps honestly, and rebuilt client workflows on the new platform."),
+                    ev(V, "Reconciled historical student records clients brought forward after go-live, along with data from competitor systems."),
+                    ev(B, "Sequesters the client’s original export as a chain-of-custody baseline, gates every production load behind validation, and defines purge-and-reload trigger criteria at kickoff rather than under pressure.") ] },
+      { name: "API integrations & ETL", desc: "Mapping errors, mismatches, and duplication resolved through post-migration QA",
+        evidence: [ ev(V, "Led API integrations and ETL automations between SaaS and legacy systems, resolving data mapping errors, field mismatches, and duplication through post-migration QA — cutting manual data work ~80% with 100% continuity.") ] },
+      { name: "Integration configuration & troubleshooting", desc: "SSO, SFTP, XML, JSON, REST, and log review",
+        evidence: [ ev(V, "Configured Azure SSO for two clients, handling vendor-side setup and coordination with client IT; mapped JSON fields, tested REST endpoints, and read integration logs."),
+                    ev(R, "Executed scheduled and manual secure FTP transfers to and from client systems, troubleshooting flat-file structures and key generation for institutions early in data-organization maturity.") ] }
     ]
   },
   {
-    label: "Change management",
-    desc: "Drives adoption in resistant organizations; structured stakeholder communication and direct conversations",
-    evidence: [
-      { co: "VenturEd", cls: "badge-ventured", text: "Partnered cross-functionally with Product, Sales, and Customer Success — turning implementation feedback into statistical reporting, playbooks, and roadmap input." },
-      { co: "inRESONANCE", cls: "badge-inres", text: "Turned recurring issues and feature requests into playbooks, configuration guidelines, and product enhancements — in collaboration with Product and Support." }
+    label: "Training, adoption & change",
+    desc: "Gets people using the system — and keeps them using it",
+    skills: [
+      { name: "Training & enablement", desc: "Kickoff demos, role-specific training, and Train-the-Trainer for administrators and end users",
+        evidence: [ ev(V, "Delivered post-sale kickoff demos, platform training, and Train-the-Trainer sessions for client administrators and end users."),
+                    ev(R, "Taught inRESONANCE University curriculum on a train-the-trainer model — preparing client administrators to train their own staff on data management, admissions, and development/fundraising tool adoption.") ] },
+      { name: "Change management", desc: "A posture, not a phase — runs from discovery through handoff",
+        evidence: [ ev(B, "Runs change management in parallel with delivery from discovery through handoff — every support request is treated as a change management moment (see the <a href=\"implementation-framework.html\">implementation framework</a>)."),
+                    ev(B, "Reframes resistance in every conversation, not just in training: “the tool is too hard” becomes a better home for the client’s data; familiar isn’t the same as good; training isn’t a punishment."),
+                    ev(B, "Plans for the month-two dip — clients enthusiastic at kickoff lose momentum when the work gets hard, so active re-engagement is built into the delivery plan, not treated as a surprise."),
+                    ev(V, "Identified internal champions at kickoff and paired role-specific training with scheduled working sessions to accelerate time-to-value."),
+                    ev(B, "Treats internal client politics as outside the implementer’s fix: surface the question, document the owner, move on.") ] },
+      { name: "International on-site delivery", desc: "14 countries across four regions",
+        evidence: [ ev(R, "Delivered on-site implementations and trained client teams in 14 countries across North America, Latin America, Europe, the Middle East, and Asia — including China, Jordan, and the UAE.") ] },
+      { name: "Post-go-live continuity & renewals", desc: "The go-to contact long after go-live",
+        evidence: [ ev(V, "Remained the go-to client contact after go-live — structured check-ins and reviews with executive and operational stakeholders, adoption tracked through login/activity data and module usage by office."),
+                    ev(B, "Supported renewals, upgrades, and expansions from the implementation side.") ] }
     ]
   },
   {
-    label: "Data migration & QA",
-    desc: "CSV mapping, error resolution, and post-migration validation coordinated with engineering",
-    evidence: [
-      { co: "VenturEd", cls: "badge-ventured", text: "Led API integrations and ETL automations between SaaS and legacy systems, resolving data mapping errors, field mismatches, and duplication through post-migration QA — cutting manual data work ~80% with 100% continuity." }
+    label: "Client & stakeholder partnership",
+    desc: "Single point of contact, honest guidance, and a straight line back to Product",
+    skills: [
+      { name: "Client relationship ownership", desc: "Trusted contact across technical and business teams",
+        evidence: [ ev(R, "Served as primary client contact across 150+ institutions through go-live and beyond, navigating multi-campus and consortium complexity."),
+                    ev(C, "Coordinates client-side IT and finance contacts on every account, keeping implementation moving across departmental lines.") ] },
+      { name: "Candid client guidance", desc: "Explains trade-offs — including when the fix is the process, not the product",
+        evidence: [ ev(C, "Walks clients through trade-offs when steering configuration decisions, including when the fix is a process change rather than a product change.") ] },
+      { name: "Stakeholder communication", desc: "Status, timelines, and accountability — up to the executive level",
+        evidence: [ ev(C, "Aligns Product, Engineering, Customer Success, Sales, Support, and client contacts on status, timelines, and accountability; builds agendas and facilitates meetings to decisions and named owners.") ] },
+      { name: "Product & Engineering collaboration", desc: "User stories, sprint planning, and a feedback loop into the roadmap",
+        evidence: [ ev(V, "Worked directly with developers and Product — writing user stories from client needs and challenges, running sprint planning for implementation work, and resetting client timelines when delivery dates moved."),
+                    ev(V, "Partnered cross-functionally with Product, Engineering, Sales, Support, and Customer Success — turning implementation feedback into statistical reporting, playbooks, and roadmap input."),
+                    ev(R, "Turned recurring issues and feature requests into playbooks, configuration guidelines, and product enhancements — in collaboration with Product and Support.") ] }
     ]
   },
   {
-    label: "AI-enabled delivery analysis",
-    desc: "Applied AI tooling to surface repeatable patterns; time-to-value frameworks for enterprise SaaS",
-    evidence: [
-      { co: "Independent Practice", cls: "badge-adr", text: "Prototyped ETL pipelines using Structify.ai — organizing complex operational datasets into analysis-ready structures for non-technical stakeholders." },
-      { co: "Independent Practice", cls: "badge-adr", text: "Investigated implementation delivery models across SMB-to-enterprise SaaS clients — surfacing best-practice patterns around time-to-value, onboarding frameworks, and conversion timelines." },
-      { co: "Independent Practice", cls: "badge-adr", text: "Used generative AI tools to analyze implementation variables, model engagement risk scenarios, and develop repeatable scope and timeline frameworks for enterprise SaaS deployments." },
-      { co: "Independent Practice", cls: "badge-adr", text: "Developed AI-assisted prompt frameworks for change management scenarios — prototyping tools that implementation teams could use to support stakeholder adoption during workflow transitions." }
+    label: "Playbooks, documentation & metrics",
+    desc: "Every playbook built from scratch, documented, and measured",
+    skills: [
+      { name: "Playbook & methodology development", desc: "Repeatable onboarding frameworks, delivery standards, and enablement assets",
+        evidence: [ ev(V, "Built VenturEd’s implementation playbooks — repeatable onboarding frameworks, templates, and enablement assets that turned implementation feedback into structured process improvement.") ] },
+      { name: "Documentation & product SME", desc: "SOWs, requirements, process flows, wireframes, and product documentation",
+        evidence: [ ev(V, "Served as product SME for Ravenna Student Management (admissions, enrollment, and fundraising modules), authoring product documentation for implementation and internal enablement."),
+                    ev(R, "Served as product SME for PORTAL, GENERATIONS, and RavennaCONNECT, authoring documentation used across the implementation team."),
+                    ev(C, "Statements of work, business and functional requirements, process flow diagrams, wireframes, and configuration documentation.") ] },
+      { name: "Delivery metrics", desc: "KPIs, time-to-activation, utilization, and project costs",
+        evidence: [ ev(C, "Defines, tracks, and reports implementation KPIs to show program ROI."),
+                    ev(V, "Tracked time-to-activation, billable utilization, and project costs in Teamwork; logged and tracked client issues in Jira.") ] }
     ]
   },
   {
-    label: "Training & enablement",
-    desc: "Role-specific workshops for technical and non-technical audiences; go-live readiness",
-    evidence: [
-      { co: "inRESONANCE", cls: "badge-inres", text: "Conducted onsite and remote training for client teams across diverse technical environments, guiding non-technical end users and administrators through new workflows." },
-      { co: "inRESONANCE", cls: "badge-inres", text: "Designed post-installation support framework — playbooks, live training, and targeted follow-up — that raised user proficiency rates and reduced escalations across a 400-school portfolio." },
-      { co: "VenturEd", cls: "badge-ventured", text: "Owned end-to-end onboarding for 30+ enterprise SaaS implementations — supporting ~12,000 users across discovery, configuration, data migration, training, and go-live." }
+    label: "AI-enabled delivery",
+    desc: "AI built into the delivery workflow — with validation steps and human review kept in the loop",
+    skills: [
+      { name: "Agentic workflow design", desc: "Deciding what runs as an agent and what stays with a human",
+        evidence: [ ev(A, "Designed and built a multi-agent workflow (Claude Cowork) — deciding which steps run as agents and which stay with a human, and sequencing agent handoffs and validation steps."),
+                    ev(A, "Built a two-stage Claude workflow: a rubric-based screening artifact that ends at a structured handoff, and a packaged skill that turns a job description and resume into an instrumented interactive comparison page without intervention (<a href=\"built-jd-comparison.html\">see the demo</a>).") ] },
+      { name: "AI-assisted delivery analysis", desc: "Patterns, risk, and time-to-value frameworks",
+        evidence: [ ev(A, "Prototyped ETL pipelines using Structify.ai — organizing complex operational datasets into analysis-ready structures for non-technical stakeholders."),
+                    ev(A, "Investigated implementation delivery models across SMB-to-enterprise SaaS clients — surfacing best-practice patterns around time-to-value, onboarding frameworks, and conversion timelines."),
+                    ev(A, "Used generative AI tools to analyze implementation variables, model engagement risk scenarios, and develop repeatable scope and timeline frameworks for enterprise SaaS deployments.") ] },
+      { name: "AI for adoption", desc: "Prompt-driven tools for stakeholder change",
+        evidence: [ ev(A, "Developed AI-assisted prompt frameworks for change management scenarios — prototyping tools that implementation teams could use to support stakeholder adoption during workflow transitions.") ] }
+    ]
+  },
+  {
+    label: "Scientific foundation",
+    desc: "A decade of protocol-driven bench science behind the delivery discipline",
+    skills: [
+      { name: "Scientific domain fluency", desc: "Researcher workflows and vocabulary, first-hand",
+        evidence: [ ev(S, "Cloning and expression systems for human interferons, human serum albumin, and bovine growth hormone in a protocol-driven laboratory environment, executed with precise workflow process and rigorous documentation."),
+                    ev(S, "Co-authored scientific publications and contributed to patent filing documentation for protein expression research.") ] }
     ]
   }
 ];
 
 const container = document.getElementById('skills-list');
+const rows = [];
 
-skills.forEach(skill => {
+groups.forEach((group, gi) => {
   const row = document.createElement('div');
   row.className = 'skill-row';
 
+  const panelId = 'skill-panel-' + gi;
   const btn = document.createElement('button');
   btn.className = 'skill-trigger';
+  btn.type = 'button';
   btn.setAttribute('aria-expanded', 'false');
+  btn.setAttribute('aria-controls', panelId);
   btn.innerHTML = `
     <div>
-      <div class="skill-name">${skill.label}</div>
-      <div class="skill-desc">${skill.desc}</div>
+      <div class="skill-name">${group.label}<span class="skill-count">${group.skills.length} skills</span></div>
+      <div class="skill-desc">${group.desc}</div>
     </div>
     <i class="ti ti-chevron-down skill-chevron" aria-hidden="true"></i>
   `;
 
   const panel = document.createElement('div');
   panel.className = 'skill-evidence';
-  panel.innerHTML = skill.evidence.map(e => `
-    <div class="evidence-item">
-      <span class="badge ${e.cls}">${e.co}</span>
-      <span class="evidence-text">${e.text}</span>
+  panel.id = panelId;
+  panel.innerHTML = group.skills.map(s => `
+    <div class="sub-skill">
+      <div class="sub-name">${s.name}</div>
+      <div class="sub-desc">${s.desc}</div>
+      ${s.evidence.map(e => `
+        <div class="evidence-item">
+          <span class="badge ${e.cls}">${e.co}</span>
+          <span class="evidence-text">${e.text}</span>
+        </div>`).join('')}
     </div>
   `).join('');
 
-  btn.addEventListener('click', () => {
-    const isOpen = btn.classList.contains('open');
-    btn.classList.toggle('open', !isOpen);
-    panel.classList.toggle('open', !isOpen);
-    btn.setAttribute('aria-expanded', String(!isOpen));
-  });
+  const setOpen = (open) => {
+    btn.classList.toggle('open', open);
+    panel.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', String(open));
+  };
+  btn.addEventListener('click', () => setOpen(!btn.classList.contains('open')));
+  rows.push(setOpen);
 
   row.appendChild(btn);
   row.appendChild(panel);
   container.appendChild(row);
+});
+
+const expandBtn = document.getElementById('expand-all');
+let allOpen = false;
+expandBtn.addEventListener('click', () => {
+  allOpen = !allOpen;
+  rows.forEach(fn => fn(allOpen));
+  expandBtn.textContent = allOpen ? 'Collapse all' : 'Expand all';
 });
 </script>
 
