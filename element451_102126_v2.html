@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cathy Rudolph — Element451 Implementation Lead</title>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QVZ0K1D563"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-QVZ0K1D563');
+  // ---- Outreach attribution -------------------------------------------------
+  // ?ref= identifies the recipient. Automated fetchers (LinkedIn link preview,
+  // corporate mail and security scanners) WILL trigger a page_view; they will
+  // not click a requirement and will not linger. So page_view is not treated as
+  // a read signal. The real signals are jd_interaction and real_read.
+  (function () {
+    var ref = new URLSearchParams(window.location.search).get('ref') || '(none)';
+    window.CR_REF = ref;
+
+    // Tag the visit WITHOUT firing a second page_view. A second page_view makes
+    // GA4 count the session as "engaged" on 2+ views alone, which is what was
+    // inflating engaged-session counts on crawler hits.
+    if (ref !== '(none)') {
+      gtag('event', 'ref_visit', { ref_source: ref, non_interaction: true });
+    }
+
+    var fired = {};
+    window.crTrack = function (name, params) {
+      if (fired[name]) return;            // once per session per event
+      fired[name] = true;
+      var p = params || {};
+      p.ref_source = window.CR_REF;
+      gtag('event', name, p);
+    };
+
+    // real_read: 20 cumulative seconds with the tab actually visible.
+    // Background tabs and headless fetches do not accumulate.
+    var visibleMs = 0, last = null;
+    var timer = setInterval(function () {
+      if (document.visibilityState === 'visible') {
+        var now = Date.now();
+        if (last !== null) visibleMs += now - last;
+        last = now;
+        if (visibleMs >= 20000) {
+          window.crTrack('real_read', { seconds: 20 });
+          clearInterval(timer);
+        }
+      } else {
+        last = null;
+      }
+    }, 1000);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState !== 'visible') last = null;
+    });
+  })();
+</script>
+<!-- Cathy Rudolph, October 25, 2026 -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal-50: #E1F5EE;
+    --teal-100: #9FE1CB;
+    --teal-400: #1D9E75;
+    --teal-600: #0F6E56;
+    --teal-800: #085041;
+    --gray-50: #F8F7F4;
+    --gray-100: #EEECEA;
+    --gray-200: #D3D1C7;
+    --gray-400: #888780;
+    --gray-600: #5F5E5A;
+    --gray-800: #2C2C2A;
+    --text-primary: #1a1a18;
+    --text-secondary: #5F5E5A;
+    --text-tertiary: #888780;
+    --border: #D3D1C7;
+    --font-sans: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --bloom: 0.35s;
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --pop-w: 440px;
+  }
+
+  html { font-size: 15px; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--gray-50);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 48px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  nav a {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    padding: 4px 0;
+    border-bottom: 1.5px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+
+  nav a:hover { color: var(--teal-600); border-bottom-color: var(--teal-400); }
+
+  nav a.current {
+    color: var(--text-primary);
+    border-bottom-color: var(--teal-400);
+    font-weight: 500;
+  }
+
+  nav .nav-sep { color: var(--gray-200); font-family: var(--font-mono); font-size: 12px; }
+
+  /* PAGE HEADER */
+  .page-header {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+  }
+
+  .page-header p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    max-width: 880px;
+  }
+
+  .page-header p strong { color: var(--text-primary); font-weight: 500; }
+
+  .kbd {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    padding: 0 4px;
+    background-color: var(--gray-50);
+  }
+
+  /* TOOLBAR — sticky under the nav so the toggle is always in reach */
+  .toolbar {
+    position: sticky;
+    top: 48px;
+    z-index: 90;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 0.6rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: var(--text-primary);
+    padding: 4px 2px;
+    border-radius: 4px;
+  }
+
+  .switch:focus-visible { outline: 2px solid var(--teal-600); outline-offset: 3px; }
+
+  .switch-track {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    border-radius: 10px;
+    background-color: var(--gray-200);
+    transition: background-color 0.2s var(--ease);
+    flex-shrink: 0;
+  }
+
+  .switch-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    transition: transform 0.2s var(--ease);
+  }
+
+  .switch[aria-checked="true"] .switch-track { background-color: var(--teal-400); }
+  .switch[aria-checked="true"] .switch-thumb { transform: translateX(16px); }
+
+  /* Nudge — a requirement was clicked while matches were off */
+  @keyframes nudge {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(29,158,117,0); }
+    40%      { box-shadow: 0 0 0 6px rgba(29,158,117,0.28); }
+  }
+  .switch.nudge .switch-track { animation: nudge 0.7s var(--ease) 2; }
+
+  .toolbar-hint {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  .legend {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    margin-left: auto;
+  }
+
+  .legend-swatch {
+    width: 28px;
+    height: 10px;
+    background-color: var(--teal-50);
+    border-left: 3px solid var(--teal-400);
+    border-radius: 1px;
+  }
+
+  /* LAYOUT — wide windows: requirements on the left, a reserved space on the
+     right where the resume-match popup opens, so it never covers the list.
+     Below 1240px: one centered column; the popup anchors to the requirement. */
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 760px) 1fr;
+    max-width: 1240px;
+    margin: 0 auto;
+    align-items: start;
+  }
+
+  @media (max-width: 1239px) {
+    .layout { grid-template-columns: minmax(0, 1fr); max-width: 780px; }
+    .gutter { display: none; }
+  }
+
+  .jd-col {
+    background: #fff;
+    border-right: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    min-height: calc(100vh - 48px);
+  }
+
+  .col-header { padding: 1.75rem 2rem 1.5rem; }
+
+  .col-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 0.6rem;
+  }
+
+  .jd-company {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+
+  .jd-role {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--teal-600);
+    margin-bottom: 0.75rem;
+  }
+
+  .jd-synopsis {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  .col-body { padding: 0 2rem 2.5rem; }
+
+  .jd-section-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin: 1.25rem 0 0.6rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .jd-section-title.first { margin-top: 0; }
+
+  /* JD items — resting state. Safari-safe: longhand background-color only. */
+  .jd-item {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 6px 10px 6px 12px;
+    margin-bottom: 3px;
+    border-radius: 3px;
+    border-left: 3px solid transparent;
+    background-color: transparent;
+    cursor: pointer;
+    line-height: 1.55;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: background-color var(--bloom) var(--ease) var(--d, 0ms),
+                border-color var(--bloom) var(--ease) var(--d, 0ms),
+                color var(--bloom) var(--ease) var(--d, 0ms),
+                box-shadow 0.15s var(--ease);
+  }
+
+  .jd-item:hover { background-color: var(--gray-100); }
+
+  .jd-item.no-match { opacity: 0.55; cursor: default; }
+  .jd-item.no-match:hover { background-color: transparent; }
+
+  /* MATCHES ON — every covered requirement fades in, staggered top to bottom */
+  .matches-on .jd-item[data-targets] {
+    background-color: var(--teal-50);
+    border-left-color: var(--teal-400);
+    color: var(--teal-800);
+  }
+
+  .matches-on .jd-item[data-targets]:hover {
+    border-left-color: var(--teal-600);
+    box-shadow: inset 0 0 0 1px var(--teal-100);
+  }
+
+  .matches-on .jd-item[data-targets]:focus-visible {
+    outline: 2px solid var(--teal-600);
+    outline-offset: 2px;
+  }
+
+  .matches-on .jd-item.active {
+    background-color: #CDEEE1;
+    border-left-color: var(--teal-600);
+    box-shadow: inset 0 0 0 1px var(--teal-400);
+  }
+
+  /* RESUME LINK — the full resume lives on its own portfolio page */
+  .resume-link {
+    margin: 0 2rem 2rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background-color: var(--gray-50);
+  }
+
+  .resume-link .col-eyebrow { margin-bottom: 0.35rem; }
+
+  .resume-link-a {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--teal-600);
+    text-decoration: none;
+  }
+
+  .resume-link-a:hover { text-decoration: underline; }
+
+  .resume-link-url {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+    word-break: break-all;
+  }
+
+  /* POPUP — anchored beside the requirement on wide screens, bottom sheet on narrow */
+  .pop {
+    position: fixed;
+    z-index: 120;
+    width: var(--pop-w);
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: 0 12px 32px rgba(26,26,24,0.12), 0 2px 6px rgba(26,26,24,0.06);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-6px);
+    pointer-events: none;
+    transition: opacity 0.22s var(--ease), transform 0.22s var(--ease), visibility 0s linear 0.22s;
+  }
+
+  .pop.open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+    transition: opacity 0.22s var(--ease), transform 0.22s var(--ease), visibility 0s;
+  }
+
+  /* pointer toward the requirement */
+  .pop::before {
+    content: "";
+    position: absolute;
+    left: -7px;
+    top: var(--arrow-y, 22px);
+    width: 12px;
+    height: 12px;
+    background-color: #fff;
+    border-left: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    transform: rotate(45deg);
+  }
+
+  .pop.arrow-off::before, .pop.sheet::before { display: none; }
+
+  /* Medium windows: anchored directly under (or over) the requirement */
+  .pop.drop { transform: translateY(-6px); }
+  .pop.drop.open { transform: none; }
+  .pop.drop::before {
+    left: var(--arrow-x, 28px);
+    top: -7px;
+    border-left: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+    border-bottom: 0;
+  }
+  .pop.drop.above::before {
+    top: auto;
+    bottom: -7px;
+    border-left: 0;
+    border-top: 0;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pop.sheet {
+    left: 0 !important;
+    right: 0;
+    bottom: 0;
+    top: auto !important;
+    width: auto;
+    max-height: 68vh !important;
+    border-radius: 10px 10px 0 0;
+    border-bottom: 0;
+    transform: translateY(14px);
+    box-shadow: 0 -8px 28px rgba(26,26,24,0.14);
+  }
+
+  .pop.sheet.open { transform: none; }
+
+  .pop-head {
+    position: relative;
+    padding: 14px 44px 12px 16px;
+    border-bottom: 1px solid var(--gray-100);
+    flex-shrink: 0;
+  }
+
+  .pop-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 4px;
+  }
+
+  .pop-req {
+    font-size: 13.5px;
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
+
+  .pop-req strong { font-weight: 500; }
+
+  .pop-close {
+    position: absolute;
+    top: 9px;
+    right: 9px;
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 4px;
+    background-color: transparent;
+    color: var(--text-tertiary);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .pop-close:hover { background-color: var(--gray-100); color: var(--text-primary); }
+  .pop-close:focus-visible, .pop-nav button:focus-visible { outline: 2px solid var(--teal-600); outline-offset: 1px; }
+
+  .pop-body {
+    overflow-y: auto;
+    padding: 4px 16px 14px;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .ex-group {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin: 12px 0 6px;
+  }
+
+  .ex {
+    padding: 8px 10px 8px 12px;
+    margin-bottom: 6px;
+    border-left: 3px solid var(--gray-200);
+    border-radius: 3px;
+    background-color: var(--gray-50);
+    opacity: 0;
+    animation: ex-fade 0.45s var(--ease) forwards;
+    animation-delay: var(--d, 0ms);
+  }
+
+  @keyframes ex-fade {
+    from { opacity: 0; background-color: #fff; }
+    to   { opacity: 1; background-color: var(--gray-50); }
+  }
+
+  .ex-src {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--text-tertiary);
+    margin-bottom: 2px;
+  }
+
+  .ex-text {
+    font-size: 13px;
+    color: var(--gray-800);
+    line-height: 1.55;
+  }
+
+  .ex-text strong { font-weight: 500; }
+
+  .pop-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 12px 9px 16px;
+    border-top: 1px solid var(--gray-100);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+  }
+
+  .pop-nav { display: flex; gap: 6px; }
+
+  .pop-nav button {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+    background-color: #fff;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 3px 9px;
+    cursor: pointer;
+  }
+
+  .pop-nav button:hover:not(:disabled) { color: var(--teal-600); border-color: var(--teal-400); }
+  .pop-nav button:disabled { opacity: 0.4; cursor: default; }
+
+  /* FOOTER */
+  footer {
+    background: #fff;
+    border-top: 1px solid var(--border);
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  footer a { color: var(--teal-600); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  footer .sep { color: var(--gray-200); }
+
+  @media (max-width: 640px) {
+    nav, .page-header, .toolbar, footer { padding-left: 1rem; padding-right: 1rem; }
+    nav { gap: 0.75rem; overflow-x: auto; }
+    footer { flex-direction: column; align-items: flex-start; gap: 0.35rem; }
+    footer .sep { display: none; }
+    .col-header { padding: 1.25rem 1rem 1rem; }
+    .col-body { padding: 0 1rem 2rem; }
+    .resume-link { margin: 0 1rem 1.5rem; }
+    .legend, .toolbar-hint { display: none; }
+    .jd-col { border-left: 0; border-right: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .jd-item, .pop, .switch-track, .switch-thumb { transition: none !important; }
+    .ex, .switch.nudge .switch-track { animation: none !important; opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://askadmin-web.github.io/ubiquitous-memory">Portfolio</a>
+  <span class="nav-sep">/</span>
+  <a href="#" class="current">Element451 · Implementation Lead</a>
+</nav>
+
+<div class="page-header">
+  <p>This page was prepared for the Implementation Lead position at Element451. Below: the role requirements, trimmed to signal. The resume matches are highlighted by default to show every requirement my submitted resume covers &mdash; <strong>select a highlighted requirement</strong> to see the resume lines that match it &mdash; they appear on the right side of the window (on smaller screens, just below or above the requirement). Keyboard: <span class="kbd">Tab</span> to a requirement, <span class="kbd">↑</span> <span class="kbd">↓</span> to move, <span class="kbd">Enter</span> to open, <span class="kbd">Esc</span> to close. To turn off the resume matches, <strong>click the toggle off</strong>.</p>
+</div>
+
+<div class="toolbar">
+  <button type="button" class="switch" id="match-toggle" role="switch" aria-checked="false" aria-controls="jd-list">
+    <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+    <span id="toggle-label">Resume matches: OFF &mdash; click to turn on</span>
+  </button>
+  <span class="toolbar-hint" id="toolbar-hint">Requirements shown plain.</span>
+  <div class="legend">
+    <div class="legend-swatch"></div>
+    covered by the resume
+  </div>
+</div>
+
+<div class="layout">
+
+  <main class="jd-col" id="jd-list">
+
+    <div class="col-header">
+      <div class="col-eyebrow">Role · Element451</div>
+      <div class="jd-company">Element451</div>
+      <div class="jd-role">Implementation Lead · Professional Services · Remote, United States</div>
+      <div class="jd-synopsis">AI-native CRM and agent platform for higher education &mdash; recruitment, enrollment, and student success. The Implementation Lead is the delivery owner for every customer implementation: project plan, timeline, stakeholder alignment, and launch readiness, accountable for adoption against the customer&rsquo;s defined goals at handoff to Customer Success.</div>
+    </div>
+
+    <div class="col-body">
+
+      <div class="jd-section-title first">Go-Live Delivery Ownership</div>
+
+      <div class="jd-item" data-targets="bullet-v1 bullet-v5 bullet-ir1 skill-e2e"><strong>Own implementation delivery</strong> &mdash; from kickoff through go-live and transition to Customer Success</div>
+      <div class="jd-item" data-targets="bullet-v3 bullet-v1 skill-pm"><strong>Build and manage the project plan</strong> &mdash; milestones, dependencies, decisions, and weekly execution rhythm</div>
+      <div class="jd-item" data-targets="bullet-ir3 bullet-v3 skill-stake"><strong>Drive accountability</strong> across internal teams and customer stakeholders to keep timelines on track</div>
+
+      <div class="jd-section-title">Discovery, Solution Direction &amp; Decision-Making</div>
+
+      <div class="jd-item" data-targets="bullet-ir2 bullet-v1 bullet-v3"><strong>Lead structured discovery</strong> &mdash; goals, workflows, stakeholders, constraints, and measurable success criteria tied to customer outcomes</div>
+      <div class="jd-item" data-targets="bullet-v3 adr1 skill-pm"><strong>Translate requirements</strong> into a phased implementation approach and realistic timeline</div>
+      <div class="jd-item" data-targets="bullet-v4 bullet-v6 skill-data"><strong>Partner with the Integrations Architect and Product</strong> on complex design decisions</div>
+
+      <div class="jd-section-title">Launch Readiness &amp; Risk Management</div>
+
+      <div class="jd-item" data-targets="bullet-v1 bullet-v4 bullet-ir1 skill-uat"><strong>Maintain a clear go-live checklist</strong> &mdash; UAT completion, data readiness, approvals, training coordination, and communications</div>
+      <div class="jd-item" data-targets="bullet-ir3 adr1 skill-scope"><strong>Identify risks early</strong> &mdash; scope creep, stakeholder misalignment, data delays &mdash; and implement mitigation plans</div>
+      <div class="jd-item" data-targets="bullet-v3 bullet-ir3 skill-scope"><strong>Control scope</strong> and make tradeoffs transparently when needed</div>
+      <div class="jd-item" data-targets="bullet-v1 bullet-v3 skill-uat"><strong>Set go-live criteria</strong> that include both technical readiness and alignment to intended customer outcomes</div>
+
+      <div class="jd-section-title">Outcome Validation &amp; Value Alignment</div>
+
+      <div class="jd-item" data-targets="bullet-v2 bullet-v1 bullet-ir1"><strong>Ensure the configured product</strong> supports the customer&rsquo;s primary use cases and defined success criteria</div>
+      <div class="jd-item" data-targets="bullet-v5 bullet-ir4 skill-value"><strong>Validate with the customer</strong> that key workflows and capabilities are live, usable, and aligned to their goals</div>
+      <div class="jd-item" data-targets="bullet-ir4 bullet-v5 bullet-v3 skill-value"><strong>Confirm readiness</strong> not just for go-live, but for value realization post-launch</div>
+
+      <div class="jd-section-title">Cross-Functional Coordination &amp; Customer Experience</div>
+
+      <div class="jd-item" data-targets="bullet-v3 bullet-v5 bullet-ir2 skill-stake skill-change"><strong>Lead customer working sessions</strong> and executive updates with confidence and clarity</div>
+      <div class="jd-item" data-targets="bullet-v6 bullet-v4 skill-stake skill-change"><strong>Coordinate with Adoption &amp; Enablement and Integrations</strong> so all workstreams land cleanly</div>
+      <div class="jd-item" data-targets="bullet-v2 bullet-v5"><strong>Provide clear validation</strong> of how the implementation supports the customer&rsquo;s goals, including gaps, risks, or dependencies</div>
+
+      <div class="jd-section-title">What You Bring</div>
+
+      <div class="jd-item" data-targets="bullet-v1 employer-ventured skill-e2e">4&ndash;8 years in SaaS implementation, project delivery, or customer onboarding</div>
+      <div class="jd-item" data-targets="bullet-ir2 bullet-v1 skill-pm skill-stake">Proven ability to run multiple implementations at once with strong stakeholder management</div>
+      <div class="jd-item" data-targets="bullet-v5 bullet-ir2 skill-stake skill-data">Comfort working with technical and non-technical audiences (Enrollment Ops, IT, leadership)</div>
+      <div class="jd-item" data-targets="bullet-ir3 bullet-v5 skill-pm skill-scope">Excellent project discipline: timelines, risks, communication, and follow-through</div>
+      <div class="jd-item" data-targets="bullet-v1 bullet-ir1 skill-crm">Familiarity with CRM/marketing automation implementations (higher ed experience a strong plus)</div>
+      <div class="jd-item no-match">Experience in a scaling environment is a plus</div>
+
+      <div class="jd-section-title">How Success Is Measured</div>
+
+      <div class="jd-item" data-targets="bullet-v5 bullet-ir4 bullet-v3 skill-value">Early value realization signals &mdash; initial usage, workflow adoption, or goal alignment within the first 30&ndash;60 days</div>
+      <div class="jd-item" data-targets="bullet-ir3 bullet-v3 skill-e2e">On-time go-live rate and predictable delivery outcomes</div>
+      <div class="jd-item" data-targets="bullet-v3 bullet-ir2 bullet-v4">Implementation cycle time without quality tradeoffs</div>
+      <div class="jd-item" data-targets="bullet-ir3 adr1 skill-scope">Risk management quality: fewer avoidable delays and escalations</div>
+      <div class="jd-item" data-targets="bullet-v5 skill-value skill-e2e">Handoff quality: Customer Success confirms the implementation is positioned to achieve stated customer goals</div>
+      <div class="jd-item" data-targets="bullet-ir2 bullet-v5">Customer experience: post-implementation CSAT and stakeholder confidence</div>
+
+    </div>
+
+    <section class="resume-link" aria-label="Full resume">
+      <div class="col-eyebrow">Resume as submitted &middot; October 21, 2026</div>
+      <a class="resume-link-a" href="https://askadmin-web.github.io/ubiquitous-memory/element451_102126_resume.html">View the full resume &rarr;</a>
+      <div class="resume-link-url">askadmin-web.github.io/ubiquitous-memory/element451_102126_resume.html</div>
+    </section>
+
+  </main>
+
+  <div class="gutter" aria-hidden="true"></div>
+
+</div>
+
+<div class="pop" id="match-pop" role="dialog" aria-modal="false" aria-labelledby="pop-req" aria-hidden="true">
+  <div class="pop-head">
+    <div class="pop-eyebrow">Requirement</div>
+    <div class="pop-req" id="pop-req"></div>
+    <button type="button" class="pop-close" aria-label="Close">&times;</button>
+  </div>
+  <div class="pop-body" aria-live="polite"></div>
+  <div class="pop-foot">
+    <span class="pop-count"></span>
+    <span class="pop-nav">
+      <button type="button" data-nav="prev" aria-label="Previous requirement">&uarr; Prev</button>
+      <button type="button" data-nav="next" aria-label="Next requirement">Next &darr;</button>
+    </span>
+  </div>
+</div>
+
+<!-- Resume as submitted, October 21, 2026 — verbatim source for the popups.
+     Inert until read: <template> content is not rendered and its IDs do not
+     collide with the live document. -->
+<template id="resume-source">
+      <div class="resume-section">
+        <div class="resume-section-label">Key Skills</div>
+        <div class="resume-bullet" id="skill-e2e"><strong>End-to-end implementation ownership</strong> &mdash; 180+ go-lives across B2B SaaS (30+) and low-code platforms (150+), from sales handoff through go-live, hypercare, and account handoff</div>
+        <div class="resume-bullet" id="skill-pm"><strong>Concurrent project management</strong> &mdash; project plans, milestone trackers, status reporting, and risk logs across ~6 concurrent implementations (10&ndash;12 at peak)</div>
+        <div class="resume-bullet" id="skill-crm"><strong>CRM implementation</strong> &mdash; eight admissions, enrollment, and fundraising CRMs, including consortium deployments spanning 5&ndash;25 independent schools and multiple campuses</div>
+        <div class="resume-bullet" id="skill-scope"><strong>Scope and risk control</strong> &mdash; confirms scope, requirements, and acceptance criteria at kickoff; manages change requests through sign-off; surfaces risks early, builds mitigation plans, and resets timelines when dates move</div>
+        <div class="resume-bullet" id="skill-uat"><strong>UAT and launch readiness</strong> &mdash; coordinates user acceptance testing with client teams, secures sign-off before go-live, and times go-lives around each school&rsquo;s calendar</div>
+        <div class="resume-bullet" id="skill-data"><strong>Data migration and integrations</strong> &mdash; legacy-to-SaaS and competitor-system conversion with field mapping, deduplication, reconciliation, and post-migration QA; led API integrations and Azure SSO setup with client IT</div>
+        <div class="resume-bullet" id="skill-change"><strong>Change management and adoption</strong> &mdash; internal champions identified at kickoff, role-specific training, Train-the-Trainer knowledge transfer, and scheduled working sessions to accelerate time-to-value</div>
+        <div class="resume-bullet" id="skill-value"><strong>Value realization and handoff</strong> &mdash; 60&ndash;90 day post-go-live hypercare, adoption tracked through usage, login, and module data, and structured reviews with executive and operational stakeholders</div>
+        <div class="resume-bullet" id="skill-stake"><strong>Stakeholder communication</strong> &mdash; aligns Product, Engineering, Customer Success, Sales, Support, and client IT, finance, and executive contacts on status and timelines; facilitates meetings to decisions and named owners</div>
+        <div class="resume-bullet" id="skill-ai"><strong>AI-enabled delivery</strong> &mdash; agentic AI workflow design and AI project management training applied to onboarding sequencing and early adoption-risk signals, with human review built in</div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-label">Professional Experience</div>
+
+        <div class="resume-employer">
+          <div class="employer-header">
+            <span class="employer-name" id="employer-independent">Independent Practice</span>
+            <span class="employer-dates">2025&ndash;Present</span>
+          </div>
+          <div class="employer-sector">AI-Enabled Implementation Delivery</div>
+          <div class="employer-role">Implementation Consultant</div>
+          <div class="resume-bullet" id="adr1">Applied generative AI to analyze implementation variables, surface risk factors, and develop repeatable scope and timeline frameworks for enterprise SaaS deployments &mdash; including AI-feature activation sequencing.</div>
+          <div class="resume-bullet" id="adr2">Designed and built a multi-agent workflow (Claude Cowork) as part of AI Project Management coursework &mdash; deciding which steps run as agents and which stay with a human, and where human review stays in the loop.</div>
+        </div>
+
+        <div class="resume-employer">
+          <div class="employer-header">
+            <span class="employer-name" id="employer-ventured">VenturEd Solutions</span>
+            <span class="employer-dates">2018&ndash;2025</span>
+          </div>
+          <div class="employer-sector">Education Technology</div>
+          <div class="employer-role">Implementation Manager</div>
+          <div class="resume-bullet" id="bullet-v1">Owned end-to-end onboarding for 30+ B2B SaaS implementations for independent K-12 schools and consortia, including multi-campus schools, managing ~6 simultaneously (10&ndash;12 at peak) &mdash; discovery, current-state data conversion and admissions/enrollment rostering, fundraising and account setup, configuration, user acceptance testing, training, and go-live &mdash; supporting ~12,000 users and $300M+ in annual client revenue.</div>
+          <div class="resume-bullet" id="bullet-v2">About 80% of those implementations moved clients off the acquired legacy low-code platform onto the SaaS product; built a migration routine to replace the platform&rsquo;s basic Excel import, documented gaps honestly, and rebuilt client workflows on the new platform.</div>
+          <div class="resume-bullet" id="bullet-v3">Built and drove mutual action plans and post-sales scopes of work tailored to each client&rsquo;s readiness, constraints, and activation goals &mdash; internal champions identified at kickoff, role-specific training paired with scheduled working sessions &mdash; cutting time-to-activation by ~one-third through documented, repeatable onboarding practices.</div>
+          <div class="resume-bullet" id="bullet-v4">Led API integrations and ETL automations between SaaS and legacy systems &mdash; including historical student records and competitor-system data &mdash; resolving mapping errors, field mismatches, and duplication through post-migration QA, cutting manual data work ~80% with 100% continuity.</div>
+          <div class="resume-bullet" id="bullet-v5">Scoped 60&ndash;90 days of post-go-live hypercare where complexity warranted it, then remained the go-to client contact after handoff to Account Management &mdash; structured reviews with executive and operational stakeholders, adoption tracked through login/activity data and module usage by office.</div>
+          <div class="resume-bullet" id="bullet-v6">Built the admissions and enrollment statistics client schools needed for accreditation, and turned implementation feedback into reporting, playbooks, and roadmap input with Product, Engineering, Sales, Support, and Customer Success.</div>
+          <div class="resume-bullet" id="bullet-v7">Led a team of Implementation Specialists, typically 3&ndash;4 depending on company assignment &mdash; directed new hires day-to-day, walked them through their first legacy-to-SaaS migrations, reviewed their work, and gave established members more autonomy as they grew.</div>
+        </div>
+
+        <div class="resume-employer">
+          <div class="employer-header">
+            <span class="employer-name" id="employer-inresonance">inRESONANCE</span>
+            <span class="employer-dates">2009&ndash;2018</span>
+          </div>
+          <div class="employer-sector">Education Technology</div>
+          <div class="employer-role">Senior Implementation Specialist</div>
+          <div class="resume-bullet" id="bullet-ir1">Managed full implementation lifecycle for 150+ institutions across PORTAL, GENERATIONS, and RavennaCONNECT, from discovery through configuration, user acceptance testing, training, and go-live &mdash; 60,000+ users, $1.5B in annual revenue, 400-school portfolio.</div>
+          <div class="resume-bullet" id="bullet-ir2">Served as primary client contact across 150+ institutions through go-live and beyond &mdash; leading on-site and remote requirements sessions across admissions, enrollment, and fundraising offices, navigating multi-campus and consortium complexity, supporting renewal and upgrade discussions, and cutting time-to-value by ~20%.</div>
+          <div class="resume-bullet" id="bullet-ir3">Managed mid-implementation scope expansion at a UK independent school consortium &mdash; single campus grew to three sites with cross-placement complexity not in the original plan &mdash; rebuilt the implementation framework mid-engagement and delivered all sites on the original go-live schedule.</div>
+          <div class="resume-bullet" id="bullet-ir4">Ran a standard 60&ndash;90 day hypercare period after go-live as part of the Support team &mdash; documentation, live training, and targeted follow-up &mdash; while management handled account close-out and expansion conversations; tracked adoption through Basecamp and FileMaker.</div>
+        </div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-label">Education</div>
+        <div class="resume-inline" id="edu-line">University of Iowa &ndash; MS Microbiology &nbsp;&middot;&nbsp; Rice University &ndash; BA Biology</div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-label">Technical Proficiencies</div>
+        <div class="resume-inline" id="tech-prof">Jira, Teamwork, Trello, Basecamp, Salesforce, Microsoft Office (Excel, Word, PowerPoint), SQL, ETL, API integrations, REST (endpoint testing), JSON (field mapping), XML, SSO (Azure), SFTP, data migration, workflow automation, user stories, sprint planning, UAT, process flow diagrams, wireframes, FileMaker, Fathom, Structify, Perplexity, Gemini, Claude</div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-label">Certifications</div>
+        <div class="resume-inline" id="cert-line">AI-Powered Project Management (Maven, Jul 2026) &nbsp;&middot;&nbsp; Introduction to Data Analysis Using Excel (Rice University, Nov 2025) &nbsp;&middot;&nbsp; Generative AI (LinkedIn Learning, Sept 2025) &nbsp;&middot;&nbsp; SQL Essential Training (LinkedIn Learning, Sept 2025) &nbsp;&middot;&nbsp; Data Analysis &amp; Visualization Foundations (IBM, Aug 2025) &nbsp;&middot;&nbsp; Excel Essentials for Data Analytics (Coursera, July 2025)</div>
+      </div>
+</template>
+
+<footer>
+  <span>Cathy Rudolph</span>
+  <span class="sep">·</span>
+  <a href="mailto:cathy.rudolph@academicskills.net">cathy.rudolph@academicskills.net</a>
+  <span class="sep">·</span>
+  <a href="https://linkedin.com/in/cathy-rudolph-450225370">linkedin.com/in/cathy-rudolph-450225370</a>
+</footer>
+
+<script>
+(function () {
+  var src      = document.getElementById('resume-source').content;
+  var toggle   = document.getElementById('match-toggle');
+  var hint     = document.getElementById('toolbar-hint');
+  var label    = document.getElementById('toggle-label');
+  var toolbar  = document.querySelector('.toolbar');
+  var jdCol    = document.querySelector('.jd-col');
+  var pop      = document.getElementById('match-pop');
+  var popReq   = document.getElementById('pop-req');
+  var popBody  = pop.querySelector('.pop-body');
+  var popCount = pop.querySelector('.pop-count');
+  var prevBtn  = pop.querySelector('[data-nav="prev"]');
+  var nextBtn  = pop.querySelector('[data-nav="next"]');
+  var closeBtn = pop.querySelector('.pop-close');
+
+  var items = Array.prototype.filter.call(
+    document.querySelectorAll('.jd-item[data-targets]'),
+    function (el) { return !el.classList.contains('no-match'); }
+  );
+
+  var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var STAGGER = 22;       // ms between requirements as the highlight sweeps down
+  var on = false;
+  var active = null;
+  var raf = null;
+
+  // ---- Resume lookup -------------------------------------------------------
+  // Each data-targets ID resolves against the verbatim resume in #resume-source.
+  // Experience lines carry their employer + title; everything else carries its
+  // resume section label (e.g. Key Skills).
+  function txt(root, sel) {
+    var n = root && root.querySelector(sel);
+    return n ? n.textContent.trim() : '';
+  }
+
+  function describe(id) {
+    var el = src.getElementById(id);
+    if (!el) return null;
+    var emp = el.closest('.resume-employer');
+    if (el.classList.contains('employer-name')) {
+      return { exp: true, src: el.textContent.trim(),
+               html: txt(emp, '.employer-role') + ' &middot; ' + txt(emp, '.employer-dates') };
+    }
+    if (emp) {
+      return { exp: true, src: txt(emp, '.employer-name') + ' · ' + txt(emp, '.employer-role'),
+               html: el.innerHTML };
+    }
+    var sec = el.closest('.resume-section');
+    return { exp: false, src: txt(sec, '.resume-section-label') || 'Resume', html: el.innerHTML };
+  }
+
+  function render(item) {
+    var ids = item.dataset.targets.trim().split(/\s+/);
+    var parts = ids.map(describe).filter(Boolean);
+    // Group: experience first (in data-targets order), then other sections.
+    var groups = [], byName = {};
+    parts.forEach(function (p) {
+      var g = p.exp ? 'Professional Experience' : p.src;
+      if (!byName[g]) { byName[g] = []; groups.push(g); }
+      byName[g].push(p);
+    });
+    groups.sort(function (a, b) {
+      return (a === 'Professional Experience' ? 0 : 1) - (b === 'Professional Experience' ? 0 : 1);
+    });
+    var html = '', n = 0;
+    groups.forEach(function (g) {
+      html += '<div class="ex-group">' + g + '</div>';
+      byName[g].forEach(function (p) {
+        var d = reduce ? 0 : 60 + n * 70; n++;
+        html += '<div class="ex" style="--d:' + d + 'ms">' +
+                (p.exp ? '<div class="ex-src">' + p.src + '</div>' : '') +
+                '<div class="ex-text">' + p.html + '</div></div>';
+      });
+    });
+    popBody.innerHTML = html;
+    popBody.scrollTop = 0;
+    popReq.innerHTML = item.innerHTML;
+    var i = items.indexOf(item);
+    popCount.textContent = (i + 1) + ' / ' + items.length;
+    prevBtn.disabled = i === 0;
+    nextBtn.disabled = i === items.length - 1;
+  }
+
+  // ---- Placement -----------------------------------------------------------
+  function barBottom() { return toolbar.getBoundingClientRect().bottom; }
+
+  // Three placements, chosen by the room the window actually has:
+  //   side  — beside the column, when there is room to its right (wide windows)
+  //   drop  — anchored under or over the requirement, inside the column (medium)
+  //   sheet — bottom sheet (phones)
+  var SIDE_MIN = 360, SIDE_MAX = 440;
+
+  function mode() {
+    var c = jdCol.getBoundingClientRect();
+    var room = window.innerWidth - c.right - 20 - 16;
+    if (room >= SIDE_MIN) return { m: 'side', w: Math.min(SIDE_MAX, room) };
+    if (window.innerWidth >= 700) return { m: 'drop' };
+    return { m: 'sheet' };
+  }
+
+  function minTop() { return barBottom() + 12; }
+
+  function place() {
+    raf = null;
+    if (!active) return;
+    var md = mode();
+    pop.classList.remove('sheet', 'drop', 'above', 'arrow-off');
+    pop.style.width = ''; pop.style.left = ''; pop.style.top = ''; pop.style.maxHeight = '';
+    if (md.m === 'sheet') { pop.classList.add('sheet'); return; }
+
+    var c = jdCol.getBoundingClientRect();
+    var r = active.getBoundingClientRect();
+    var mt = minTop();
+
+    if (md.m === 'side') {
+      pop.style.width = md.w + 'px';
+      pop.style.maxHeight = Math.max(240, window.innerHeight - mt - 16) + 'px';
+      var h = pop.offsetHeight;
+      var top = r.top + r.height / 2 - 28;
+      top = Math.max(mt, Math.min(top, window.innerHeight - h - 16));
+      pop.style.left = (c.right + 20) + 'px';
+      pop.style.top = top + 'px';
+      var ay = r.top + r.height / 2 - top - 6;
+      pop.style.setProperty('--arrow-y', Math.max(14, Math.min(ay, h - 26)) + 'px');
+      pop.classList.toggle('arrow-off', r.bottom < mt || r.top > window.innerHeight || ay < 8 || ay > h - 20);
+      return;
+    }
+
+    // drop: same left edge as the requirement text, width of the column
+    pop.classList.add('drop');
+    var left = c.left + 16;
+    var width = Math.min(620, c.width - 32);
+    pop.style.left = left + 'px';
+    pop.style.width = width + 'px';
+    pop.style.setProperty('--arrow-x', Math.max(16, Math.min(r.left + 40 - left, width - 28)) + 'px');
+    var below = window.innerHeight - r.bottom - 10 - 16;
+    var above = r.top - 10 - mt;
+    if (below >= 300 || below >= above) {
+      pop.style.maxHeight = Math.max(160, below) + 'px';
+      pop.style.top = (r.bottom + 10) + 'px';
+    } else {
+      pop.classList.add('above');
+      pop.style.maxHeight = Math.max(160, above) + 'px';
+      pop.style.top = (r.top - 10 - pop.offsetHeight) + 'px';
+    }
+    pop.classList.toggle('arrow-off', r.bottom < mt || r.top > window.innerHeight);
+  }
+
+  function schedule() { if (active && !raf) raf = requestAnimationFrame(place); }
+
+  // Bring a requirement into view: below the toolbar, and above the sheet on narrow screens.
+  function ensureVisible(item) {
+    var r = item.getBoundingClientRect();
+    // Where the toolbar will sit once it pins under the nav, not where it is now.
+    var navH = document.querySelector('nav').offsetHeight;
+    var topLimit = navH + toolbar.offsetHeight + 12;
+    var sheetH = (active && pop.classList.contains('sheet')) ? pop.offsetHeight : 0;
+    var bottomLimit = window.innerHeight - sheetH - 12;
+    var dy = 0;
+    if (r.top < topLimit) dy = r.top - topLimit - 24;
+    else if (r.bottom > bottomLimit) dy = r.bottom - bottomLimit + 24;
+    if (sheetH && dy) dy = r.top - topLimit - 16;
+    // Anchored popup with too little room under or over the requirement:
+    // lift the requirement toward the top so the popup can open beneath it.
+    if (active && pop.classList.contains('drop')) {
+      var roomBelow = window.innerHeight - r.bottom - 26;
+      var roomAbove = r.top - topLimit - 10;
+      if (roomBelow < 300 && roomAbove < 300) dy = r.top - topLimit - 16;
+    }
+    if (dy) window.scrollBy({ top: dy, behavior: reduce ? 'auto' : 'smooth' });
+  }
+
+  // ---- Open / close --------------------------------------------------------
+  function open(item, opts) {
+    opts = opts || {};
+    if (!on) return;
+    if (active === item && !opts.force) { close(); return; }
+    // Primary human signal: a crawler never opens a requirement. Once per session.
+    if (window.crTrack) window.crTrack('jd_interaction');
+    if (active) { active.classList.remove('active'); active.setAttribute('aria-expanded', 'false'); }
+    active = item;
+    item.classList.add('active');
+    item.setAttribute('aria-expanded', 'true');
+    render(item);
+    pop.setAttribute('aria-hidden', 'false');
+    pop.classList.add('open');
+    place();
+    // On narrow screens the sheet covers the lower page, so always lift the requirement above it.
+    if (opts.scroll || pop.classList.contains('sheet') || pop.classList.contains('drop')) ensureVisible(item);
+  }
+
+  function close(returnFocus) {
+    if (!active) return;
+    var was = active;
+    active.classList.remove('active');
+    active.setAttribute('aria-expanded', 'false');
+    active = null;
+    pop.classList.remove('open');
+    pop.setAttribute('aria-hidden', 'true');
+    if (returnFocus) was.focus({ preventScroll: true });
+  }
+
+  function step(dir) {
+    var cur = active || (items.indexOf(document.activeElement) > -1 ? document.activeElement : null);
+    var i = cur ? items.indexOf(cur) + dir : (dir > 0 ? 0 : items.length - 1);
+    i = Math.max(0, Math.min(items.length - 1, i));
+    var next = items[i];
+    next.focus({ preventScroll: true });
+    if (active) open(next, { force: true, scroll: true });
+    else ensureVisible(next);
+  }
+
+  // ---- Toggle --------------------------------------------------------------
+  var settleTimer = null;
+  function setOn(v) {
+    on = v;
+    toggle.setAttribute('aria-checked', v ? 'true' : 'false');
+    label.textContent = v ? 'Resume matches: ON \u2014 click to turn off'
+                          : 'Resume matches: OFF \u2014 click to turn on';
+    hint.textContent = v ? 'Teal = covered by my resume. Select one to see the matching lines.'
+                         : 'Requirements shown plain.';
+    clearTimeout(settleTimer);
+    items.forEach(function (el, i) {
+      if (v) {
+        el.tabIndex = 0;
+        el.setAttribute('role', 'button');
+        el.setAttribute('aria-expanded', 'false');
+        el.style.setProperty('--d', reduce ? '0ms' : (i * STAGGER) + 'ms');
+      } else {
+        el.removeAttribute('tabindex');
+        el.removeAttribute('role');
+        el.removeAttribute('aria-expanded');
+        el.style.setProperty('--d', '0ms');
+      }
+    });
+    document.body.classList.toggle('matches-on', v);
+    // After the sweep finishes, drop the delays so hover and selection respond instantly.
+    if (v) settleTimer = setTimeout(function () {
+      items.forEach(function (el) { el.style.setProperty('--d', '0ms'); });
+    }, items.length * STAGGER + 400);
+    if (!v) close();
+  }
+
+  function nudge() {
+    toggle.classList.remove('nudge');
+    void toggle.offsetWidth;          // reflow so the animation replays every time
+    toggle.classList.add('nudge');
+  }
+
+  toggle.addEventListener('click', function () {
+    // Visitor used the toggle (either direction) — a human signal. Once per session.
+    if (window.crTrack) window.crTrack('match_toggle');
+    setOn(!on);
+  });
+
+  // Matches are ON by default. Turned on just after first paint so the
+  // highlight sweep plays as the page arrives (instant with reduced motion).
+  requestAnimationFrame(function () { requestAnimationFrame(function () { setOn(true); }); });
+
+  items.forEach(function (el) {
+    el.addEventListener('click', function () {
+      if (!on) { nudge(); return; }
+      open(el);
+    });
+  });
+
+  prevBtn.addEventListener('click', function () { step(-1); });
+  nextBtn.addEventListener('click', function () { step(1); });
+  closeBtn.addEventListener('click', function () { close(true); });
+
+  // Click anywhere else closes the popup.
+  document.addEventListener('click', function (e) {
+    if (!active) return;
+    if (e.target.closest('.jd-item, #match-pop, #match-toggle')) return;
+    close();
+  });
+
+  // Keyboard: arrows move between highlighted requirements (only once focus is
+  // on a requirement, the toggle, or the popup is open — plain page scrolling
+  // with the arrow keys is left alone otherwise).
+  document.addEventListener('keydown', function (e) {
+    if (!on) return;
+    var k = e.key;
+    var onItem = items.indexOf(document.activeElement) > -1;
+    if (k === 'Escape' && active) { e.preventDefault(); close(true); return; }
+    if ((k === 'ArrowDown' || k === 'ArrowUp') && (onItem || active || document.activeElement === toggle)) {
+      e.preventDefault();
+      step(k === 'ArrowDown' ? 1 : -1);
+      return;
+    }
+    if ((k === 'Enter' || k === ' ') && onItem) {
+      e.preventDefault();
+      open(document.activeElement, { scroll: true });
+    }
+  });
+
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule);
+})();
+
+// ---- Ref forwarding -------------------------------------------------------
+// Carry ?ref= onto every portfolio link so attribution survives a click through:
+// the nav breadcrumb and the full-resume link at the bottom of the page.
+(function () {
+  var ref = window.CR_REF;
+  if (!ref || ref === '(none)') return;
+  document.querySelectorAll('a[href*="askadmin-web.github.io/ubiquitous-memory"]').forEach(function (a) {
+    var u = new URL(a.getAttribute('href'), window.location.href);
+    u.searchParams.set('ref', ref);
+    a.setAttribute('href', u.toString());
+  });
+})();
+</script>
+</body>
+</html>
