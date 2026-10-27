@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cathy Rudolph — CertifyOS Implementation Leader · Resume</title>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QVZ0K1D563"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-QVZ0K1D563');
+  // ---- Outreach attribution -------------------------------------------------
+  // ?ref= identifies the recipient. Automated fetchers (LinkedIn link preview,
+  // corporate mail and security scanners) WILL trigger a page_view; they will
+  // not click a requirement and will not linger. So page_view is not treated as
+  // a read signal. The real signals are jd_interaction and real_read.
+  (function () {
+    var ref = new URLSearchParams(window.location.search).get('ref') || '(none)';
+    window.CR_REF = ref;
+
+    // Tag the visit WITHOUT firing a second page_view. A second page_view makes
+    // GA4 count the session as "engaged" on 2+ views alone, which is what was
+    // inflating engaged-session counts on crawler hits.
+    if (ref !== '(none)') {
+      gtag('event', 'ref_visit', { ref_source: ref, non_interaction: true });
+    }
+
+    var fired = {};
+    window.crTrack = function (name, params) {
+      if (fired[name]) return;            // once per session per event
+      fired[name] = true;
+      var p = params || {};
+      p.ref_source = window.CR_REF;
+      gtag('event', name, p);
+    };
+
+    // real_read: 20 cumulative seconds with the tab actually visible.
+    // Background tabs and headless fetches do not accumulate.
+    var visibleMs = 0, last = null;
+    var timer = setInterval(function () {
+      if (document.visibilityState === 'visible') {
+        var now = Date.now();
+        if (last !== null) visibleMs += now - last;
+        last = now;
+        if (visibleMs >= 20000) {
+          window.crTrack('real_read', { seconds: 20 });
+          clearInterval(timer);
+        }
+      } else {
+        last = null;
+      }
+    }, 1000);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState !== 'visible') last = null;
+    });
+  })();
+</script>
+<!-- Cathy Rudolph, October 26, 2026 -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal-600: #0F6E56;
+    --teal-400: #1D9E75;
+    --gray-50: #F8F7F4;
+    --gray-200: #D3D1C7;
+    --text-primary: #1a1a18;
+    --text-secondary: #5F5E5A;
+    --text-tertiary: #888780;
+    --border: #D3D1C7;
+    --font-sans: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+
+  html { font-size: 15px; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--gray-50);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  nav {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 48px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  nav a {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    padding: 4px 0;
+    border-bottom: 1.5px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+
+  nav a:hover { color: var(--teal-600); border-bottom-color: var(--teal-400); }
+  nav a.current { color: var(--text-primary); border-bottom-color: var(--teal-400); font-weight: 500; }
+  nav .nav-sep { color: var(--gray-200); font-family: var(--font-mono); font-size: 12px; }
+
+  .sheet {
+    max-width: 820px;
+    margin: 0 auto;
+    background: #fff;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    min-height: calc(100vh - 48px);
+  }
+
+  .col-header { padding: 1.75rem 2rem 1.5rem; }
+  .col-body { padding: 0 2rem 2.5rem; }
+
+  .col-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 0.6rem;
+  }
+
+  .resume-name { font-size: 18px; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 3px; }
+
+  .resume-contact {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-bottom: 1px;
+  }
+
+  .resume-contact a { color: var(--teal-600); text-decoration: none; }
+  .resume-contact a:hover { text-decoration: underline; }
+
+  .resume-role-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal-600);
+    margin: 0.75rem 0 0.4rem;
+  }
+
+  .resume-subtitle { font-size: 12px; color: var(--text-tertiary); line-height: 1.5; margin-bottom: 0.75rem; }
+  .resume-summary { font-size: 13px; color: var(--text-secondary); line-height: 1.6; font-style: italic; }
+
+  .resume-section { margin-bottom: 1.25rem; }
+
+  .resume-section-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .resume-employer { margin-bottom: 1rem; }
+
+  .employer-header { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 1px; }
+  .employer-name { font-size: 13.5px; font-weight: 500; padding-left: 13px; }
+  .employer-dates { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); white-space: nowrap; }
+  .employer-sector { font-size: 12px; color: var(--text-tertiary); margin-bottom: 4px; font-style: italic; padding-left: 13px; }
+  .employer-role { font-size: 12.5px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; padding-left: 13px; }
+
+  .resume-bullet, .resume-inline {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 5px 8px 5px 13px;
+    margin-bottom: 3px;
+    line-height: 1.55;
+  }
+
+  .resume-bullet strong { color: var(--text-primary); font-weight: 500; }
+
+  footer {
+    background: #fff;
+    border-top: 1px solid var(--border);
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  footer a { color: var(--teal-600); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  footer .sep { color: var(--gray-200); }
+
+  @media (max-width: 640px) {
+    nav, footer { padding-left: 1rem; padding-right: 1rem; }
+    nav { gap: 0.75rem; overflow-x: auto; }
+    footer { flex-direction: column; align-items: flex-start; gap: 0.35rem; }
+    footer .sep { display: none; }
+    .col-header { padding: 1.25rem 1rem 1rem; }
+    .col-body { padding: 0 1rem 2rem; }
+    .sheet { border: 0; }
+  }
+
+  @media print {
+    nav, footer { display: none; }
+    body, .sheet { background: #fff; border: 0; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://askadmin-web.github.io/ubiquitous-memory">Portfolio</a>
+  <span class="nav-sep">/</span>
+  <a href="https://askadmin-web.github.io/ubiquitous-memory/certifyos_102126_v2.html">CertifyOS · Implementation Leader</a>
+  <span class="nav-sep">/</span>
+  <a href="#" class="current">Resume</a>
+</nav>
+
+<main class="sheet">
+  <div class="col-header">
+      <div class="col-eyebrow">Resume as submitted &middot; October 21, 2026</div>
+      <div class="resume-name">Cathy Rudolph</div>
+      <div class="resume-contact">Stoughton, MA &nbsp;&middot;&nbsp; cathy.rudolph@academicskills.net &nbsp;&middot;&nbsp; <a href="https://linkedin.com/in/cathy-rudolph-450225370">linkedin.com/in/cathy-rudolph-450225370</a></div>
+      <div class="resume-contact"><a href="https://askadmin-web.github.io/ubiquitous-memory">askadmin-web.github.io/ubiquitous-memory</a></div>
+      <div class="resume-role-title">Implementation Leader</div>
+      <div class="resume-subtitle">End-to-End Client Onboarding &nbsp;|&nbsp; Data Migration &amp; API Integration &nbsp;|&nbsp; Change Management &nbsp;|&nbsp; Training &amp; Enablement &nbsp;|&nbsp; Client Relationship Ownership</div>
+      <div class="resume-summary">Implementation Manager &mdash; 180+ implementations across B2B SaaS and low-code platforms, 72,000+ users, including consortium deployments that brought 5&ndash;25 independent schools onto one platform. I bring organization after organization onto one shared platform, each configured to its own workflows, with clean data at intake and go-live dates held.</div>
+  </div>
+  <div class="col-body">
+      <div class="resume-section">
+        <div class="resume-section-label">Key Skills</div>
+        <div class="resume-bullet" id="skill-e2e"><strong>End-to-end implementation ownership</strong> &mdash; 180+ go-lives across B2B SaaS (30+) and low-code platforms (150+), from sales handoff through go-live, hypercare, and account handoff</div>
+        <div class="resume-bullet" id="skill-concurrent"><strong>Concurrent project management</strong> &mdash; project plans, milestone trackers, status reporting, and risk logs across ~6 concurrent implementations (10&ndash;12 at peak)</div>
+        <div class="resume-bullet" id="skill-multiorg"><strong>Multi-organization implementations</strong> &mdash; consortium deployments spanning 5&ndash;25 independent schools and multiple campuses, each configured to its own workflows</div>
+        <div class="resume-bullet" id="skill-datamig"><strong>Data migration</strong> &mdash; legacy-to-SaaS conversion for ~80% of VenturEd implementations, plus data from competitor systems &mdash; field mapping, rostering, reconciliation, deduplication, and post-migration QA</div>
+        <div class="resume-bullet" id="skill-integration"><strong>Integration configuration and troubleshooting</strong> &mdash; led API integrations and ETL automations between SaaS, legacy, and competitor systems, working with client IT on authentication, secure file transfer, and data-exchange issues</div>
+        <div class="resume-bullet" id="skill-xfunc"><strong>Cross-functional collaboration</strong> &mdash; works directly with Product, Engineering, Sales, Support, and Customer Success; facilitates meetings to decisions and named owners</div>
+        <div class="resume-bullet" id="skill-relationship"><strong>Client relationship ownership</strong> &mdash; trusted single point of contact for client stakeholders across technical and business teams, coordinating client-side IT and finance contacts on every account; structured check-ins with executive and operational stakeholders long after go-live</div>
+        <div class="resume-bullet" id="skill-change"><strong>Change management and client enablement</strong> &mdash; internal champions identified at kickoff, role-specific training and Train-the-Trainer for administrators and end users, office hours and scheduled working sessions; reframes resistance and re-engages clients when momentum drops</div>
+        <div class="resume-bullet" id="skill-playbook"><strong>Playbook development</strong> &mdash; builds repeatable onboarding frameworks, templates, and delivery standards from scratch</div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-label">Professional Experience</div>
+
+        <div class="resume-employer">
+          <div class="employer-header">
+            <span class="employer-name" id="employer-ventured">VenturEd Solutions</span>
+            <span class="employer-dates">2018&ndash;2025</span>
+          </div>
+          <div class="employer-sector">Education Technology</div>
+          <div class="employer-role">Implementation Manager</div>
+          <div class="resume-bullet" id="bullet-v1">Owned end-to-end onboarding for 30+ B2B SaaS implementations for independent K-12 schools and consortia, managing ~6 simultaneously (10&ndash;12 at peak) &mdash; discovery, data conversion and rostering, configuration, user acceptance testing, training, and go-live &mdash; supporting ~12,000 users.</div>
+          <div class="resume-bullet" id="bullet-v2">Moved ~80% of those clients off the acquired legacy low-code platform onto the SaaS product; built a migration routine to replace the platform&rsquo;s basic Excel import and rebuilt client workflows on the new platform.</div>
+          <div class="resume-bullet" id="bullet-v3">Led API integrations and ETL automations between SaaS, legacy, and competitor systems, resolving mapping errors, field mismatches, and duplication through post-migration QA &mdash; cutting manual data work ~80% with 100% continuity.</div>
+          <div class="resume-bullet" id="bullet-v4">Built and drove mutual action plans tailored to each client&rsquo;s readiness, constraints, and activation goals &mdash; internal champions identified at kickoff, role-specific training paired with scheduled working sessions, change management running from discovery through handoff &mdash; cutting time-to-activation by ~one-third.</div>
+          <div class="resume-bullet" id="bullet-v5">Led a team of Implementation Specialists, typically 3&ndash;4 &mdash; directed new hires day-to-day, walked them through their first migrations, and reviewed their work.</div>
+          <div class="resume-bullet" id="bullet-v6">Worked directly with Product and Engineering &mdash; writing user stories from client needs, running sprint planning for implementation work, and resetting client timelines when delivery dates moved.</div>
+          <div class="resume-bullet" id="bullet-v7">Remained the go-to client contact after handoff to Account Management &mdash; structured check-ins and reviews with executive and operational stakeholders, with adoption tracked through login/activity data and module usage by office.</div>
+        </div>
+
+        <div class="resume-employer">
+          <div class="employer-header">
+            <span class="employer-name" id="employer-inresonance">inRESONANCE</span>
+            <span class="employer-dates">2009&ndash;2018</span>
+          </div>
+          <div class="employer-sector">Education Technology</div>
+          <div class="employer-role">Senior Implementation Specialist</div>
+          <div class="resume-bullet" id="bullet-ir1">Managed full implementation lifecycle for 150+ institutions across PORTAL, GENERATIONS, and RavennaCONNECT &mdash; discovery, configuration, user acceptance testing, training, and go-live &mdash; 60,000+ users across a 400-school portfolio.</div>
+          <div class="resume-bullet" id="bullet-ir2">Served as primary client contact across 150+ institutions through go-live and beyond &mdash; leading on-site and remote requirements sessions across admissions, enrollment, and fundraising offices, navigating multi-campus and consortium complexity, and cutting time-to-value by ~20%.</div>
+          <div class="resume-bullet" id="bullet-ir3">Managed mid-implementation scope expansion at a UK independent school consortium &mdash; single campus grew to three sites with cross-placement complexity &mdash; rebuilt the implementation framework and delivered all sites on the original go-live schedule.</div>
+          <div class="resume-bullet" id="bullet-ir4">Taught inRESONANCE University curriculum on a train-the-trainer model, preparing client administrators to train their own staff on data management and new workflows.</div>
+        </div>
+
+        <div class="resume-employer">
+          <div class="employer-header">
+            <span class="employer-name">Independent Practice</span>
+            <span class="employer-dates">2025&ndash;Present</span>
+          </div>
+          <div class="employer-sector">AI-Enabled Implementation Delivery</div>
+          <div class="employer-role">Implementation Consultant</div>
+          <div class="resume-bullet" id="adr1">Designed and built a multi-agent workflow (Claude Cowork) &mdash; deciding which steps run as agents and which stay with a human, with validation steps and human review in the loop.</div>
+          <div class="resume-bullet" id="adr2">Published implementation-practice analyses on my portfolio site &mdash; <a href="https://askadmin-web.github.io/ubiquitous-memory/delivery-at-scale.html"><strong>What Breaks When Delivery Scales</strong></a> (contingency, service tiers, escalation thresholds, and capacity modeled by phase), <a href="https://askadmin-web.github.io/ubiquitous-memory/institutional-complexity.html"><strong>The Same Picture, Five Thousand Pieces</strong></a> (discovery when data ownership is split across functions), and an end-to-end <a href="https://askadmin-web.github.io/ubiquitous-memory/implementation-framework.html"><strong>Implementation Framework</strong></a>.</div>
+        </div>
+
+        <div class="resume-employer">
+          <div class="employer-header">
+            <span class="employer-name" id="employer-biotech">BioTechnica Intl / Genex Corporation</span>
+            <span class="employer-dates">1980&ndash;1991</span>
+          </div>
+          <div class="employer-sector">Biotechnology Research &middot; Cambridge, MA / Gaithersburg, MD</div>
+          <div class="employer-role">Senior Research Associate</div>
+          <div class="resume-bullet" id="bullet-bt1">Cloning and expression systems for human interferons, human serum albumin, and bovine growth hormone in a protocol-driven lab; co-authored publications and contributed to patent filings.</div>
+        </div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-label">Education</div>
+        <div class="resume-inline" id="edu-line">University of Iowa &ndash; MS Microbiology &nbsp;&middot;&nbsp; Rice University &ndash; BA Biology</div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-label">Technical Proficiencies</div>
+        <div class="resume-inline" id="tech-prof">Jira, Salesforce, Google Workspace, Monday.com, Teamwork, Trello, Basecamp, Microsoft Office (Excel, Word, PowerPoint), SQL, ETL, API integrations, REST, JSON, XML, SSO (Azure), SFTP, data migration, CSV data handling, UAT, process flow diagrams, Structify, Perplexity, Gemini, Claude</div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-label">Certifications</div>
+        <div class="resume-inline" id="cert-line">AI-Powered Project Management (Maven, Jul 2026) &nbsp;&middot;&nbsp; Introduction to Data Analysis Using Excel (Rice University, Nov 2025) &nbsp;&middot;&nbsp; SQL Essential Training (LinkedIn Learning, Sept 2025) &nbsp;&middot;&nbsp; Generative AI (LinkedIn Learning, Sept 2025)</div>
+      </div>
+  </div>
+</main>
+
+<footer>
+  <span>Cathy Rudolph</span>
+  <span class="sep">·</span>
+  <a href="mailto:cathy.rudolph@academicskills.net">cathy.rudolph@academicskills.net</a>
+  <span class="sep">·</span>
+  <a href="https://linkedin.com/in/cathy-rudolph-450225370">linkedin.com/in/cathy-rudolph-450225370</a>
+</footer>
+
+<script>
+// ---- Ref forwarding -------------------------------------------------------
+// Carry ?ref= onto every portfolio link: nav breadcrumbs and the resume-contact link.
+(function () {
+  var ref = window.CR_REF;
+  if (!ref || ref === '(none)') return;
+  document.querySelectorAll('a[href*="askadmin-web.github.io/ubiquitous-memory"]').forEach(function (a) {
+    var u = new URL(a.getAttribute('href'), window.location.href);
+    u.searchParams.set('ref', ref);
+    a.setAttribute('href', u.toString());
+  });
+})();
+</script>
+</body>
+</html>
