@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QVZ0K1D563"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-QVZ0K1D563');
+  // Outreach attribution: tag the visit without a second page_view.
+  (function () {
+    var ref = new URLSearchParams(window.location.search).get('ref') || '(none)';
+    window.CR_REF = ref;
+    if (ref !== '(none)') {
+      gtag('event', 'ref_visit', { ref_source: ref, non_interaction: true });
+    }
+    var fired = {};
+    window.crTrack = function (name, params) {
+      if (fired[name]) return;
+      fired[name] = true;
+      var p = params || {};
+      p.ref_source = window.CR_REF;
+      gtag('event', name, p);
+    };
+    var visibleMs = 0, last = null;
+    var timer = setInterval(function () {
+      if (document.visibilityState === 'visible') {
+        var now = Date.now();
+        if (last !== null) visibleMs += now - last;
+        last = now;
+        if (visibleMs >= 20000) { window.crTrack('real_read', { seconds: 20 }); clearInterval(timer); }
+      } else { last = null; }
+    }, 1000);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState !== 'visible') last = null;
+    });
+  })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cathy Rudolph — Implementation Scenario</title>
+<link rel="stylesheet" href="nav.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f7f6f3;
+    --text-primary: #1a1a18;
+    --text-secondary: #4a4a46;
+    --text-tertiary: #888780;
+    --border: rgba(0,0,0,0.12);
+    --radius-md: 8px;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --accent: #0D9488;
+    --accent-bg: rgba(13, 148, 136, 0.08);
+    --date: #B7791F;
+    --date-bg: rgba(183, 121, 31, 0.10);
+  }
+
+  body.dark {
+    --bg: #1e1e1c;
+    --bg-secondary: #2a2a27;
+    --text-primary: #f0ede6;
+    --text-secondary: #b0ada5;
+    --text-tertiary: #6e6c67;
+    --border: rgba(255,255,255,0.1);
+    --accent: #C084FC;
+    --accent-bg: rgba(192, 132, 252, 0.12);
+    --date: #E0A458;
+    --date-bg: rgba(224, 164, 88, 0.14);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
+
+  .page { max-width: 720px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+
+  hr { border: none; border-top: 0.5px solid var(--border); margin: 22px 0; }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+
+  .section-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 12px;
+  }
+
+  .page-name { font-size: 30px; font-weight: 600; letter-spacing: -0.5px; }
+  .page-tagline { font-size: 15px; color: var(--text-tertiary); margin-top: 6px; font-style: italic; }
+  .page-intro { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-top: 14px; }
+  .fiction-note { font-size: 12px; color: var(--text-tertiary); margin-top: 10px; }
+
+  p.body { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+  p.body + p.body { margin-top: 10px; }
+  p.body a, .page-intro a { color: var(--accent); text-decoration: none; }
+  p.body a:hover, .page-intro a:hover { text-decoration: underline; }
+
+  /* Hard dates */
+  .dates-label { font-size: 11px; font-weight: 600; color: var(--text-tertiary); margin: 16px 0 8px; }
+  .dates { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .date-card {
+    border: 0.5px solid var(--border);
+    border-left: 3px solid var(--date);
+    background: var(--date-bg);
+    border-radius: var(--radius-md);
+    padding: 10px 14px;
+    font-size: 12.5px;
+    color: var(--text-secondary);
+  }
+  .date-card b { display: block; font-size: 14px; color: var(--text-primary); margin-bottom: 2px; }
+
+  /* Discovery */
+  .questions { list-style: none; counter-reset: q; }
+  .questions li {
+    counter-increment: q;
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    padding: 8px 0 8px 28px;
+    position: relative;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .questions li:last-child { border-bottom: 0; }
+  .questions li::before {
+    content: counter(q);
+    position: absolute; left: 0; top: 9px;
+    font-size: 11px; font-weight: 700; color: var(--accent);
+    width: 18px; text-align: right;
+  }
+
+  /* Gantt */
+  .gantt-wrap {
+    overflow-x: auto;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+  }
+  .gantt-note { font-size: 11px; color: var(--text-tertiary); margin-bottom: 12px; font-style: italic; }
+  .gantt-table { width: 100%; min-width: 600px; border-collapse: collapse; }
+  .gantt-table th {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-tertiary); padding: 0 0 8px; text-align: center;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .gantt-table th.label-col { text-align: left; width: 180px; }
+  .gantt-table td { padding: 4px 0; vertical-align: middle; }
+  .gantt-table td.label-col { font-size: 12px; color: var(--text-secondary); padding-right: 12px; white-space: nowrap; }
+  .gantt-table td.label-col .tag { font-size: 10px; color: var(--text-tertiary); display: block; }
+  .gantt-table td.m { padding: 2px 1px; }
+  .bar { height: 18px; border-radius: 3px; }
+  .bar.primary  { background: var(--accent); opacity: 0.85; }
+  .bar.parallel { background: var(--accent); opacity: 0.35; }
+  .bar[data-tip] { position: relative; cursor: default; }
+  .bar[data-tip]::after {
+    content: attr(data-tip);
+    position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+    background: var(--text-primary); color: var(--bg);
+    font-size: 11px; padding: 5px 10px; border-radius: 4px; white-space: nowrap;
+    pointer-events: none; opacity: 0; transition: opacity 0.15s; z-index: 10;
+  }
+  .bar[data-tip]:hover::after { opacity: 1; }
+  .gate { text-align: center; font-size: 11px; color: var(--date); font-weight: 700; line-height: 1.2; }
+  .gate small { display: block; font-size: 9.5px; font-weight: 500; color: var(--text-tertiary); }
+  .gantt-legend { display: flex; gap: 1.5rem; margin-top: 12px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-tertiary); }
+  .swatch { width: 12px; height: 12px; border-radius: 2px; }
+  .swatch.primary  { background: var(--accent); opacity: 0.85; }
+  .swatch.parallel { background: var(--accent); opacity: 0.35; }
+  .swatch.date { background: var(--date); }
+
+  /* Go-live criteria */
+  .criteria { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .crit { border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 14px 16px; }
+  .crit h3 { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+  .crit ul { list-style: none; }
+  .crit li { font-size: 12.5px; color: var(--text-secondary); padding-left: 14px; position: relative; margin-bottom: 6px; line-height: 1.55; }
+  .crit li::before { content: "–"; position: absolute; left: 0; color: var(--text-tertiary); }
+
+  /* Risks */
+  .risks { list-style: none; counter-reset: r; }
+  .risks li {
+    counter-increment: r;
+    display: flex; align-items: baseline; gap: 10px;
+    font-size: 13.5px; color: var(--text-secondary);
+    padding: 7px 0; border-bottom: 0.5px solid var(--border);
+  }
+  .risks li:last-child { border-bottom: 0; }
+  .risks li::before { content: counter(r); font-size: 11px; font-weight: 700; color: var(--accent); width: 14px; text-align: right; flex-shrink: 0; }
+  .lvl {
+    margin-left: auto; flex-shrink: 0;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+    padding: 1px 7px; border-radius: 10px; border: 0.5px solid var(--border); color: var(--text-tertiary);
+  }
+  .lvl.high { color: var(--date); border-color: var(--date); }
+
+  .closing {
+    border-left: 3px solid var(--accent);
+    background: var(--accent-bg);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 520px) {
+    .dates, .criteria { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bar[data-tip]::after { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<script>
+(function () {
+  var saved = null;
+  try { saved = localStorage.getItem('theme'); } catch (e) {}
+  var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  document.body.classList.toggle('dark', saved ? saved === 'dark' : prefersDark);
+})();
+</script>
+
+<div id="nav-placeholder"></div>
+<script src="pages.js"></script>
+<script src="nav-inject.js"></script>
+
+<div class="page">
+
+  <h1 class="sr-only">Implementation Scenario — Cathy Rudolph</h1>
+
+  <div class="page-name">Tesseract College</div>
+  <div class="page-tagline">Undergraduate admissions live by August 15.</div>
+  <p class="page-intro">How I'd approach a CRM implementation with a hard launch date, sparse sales notes, and client leaders who don't agree on what success means. The method behind it is on <a href="implementation-framework.html">How I Run Implementations</a>.</p>
+  <p class="fiction-note">Tesseract College and everyone in it are invented. The pressures are the ones real implementations bring.</p>
+
+  <hr>
+
+  <div class="section-label">The situation</div>
+  <p class="body">A private nonprofit college has just signed. Phase 1 is undergraduate admissions: CRM, application management, and events, plus a knowledge-base assistant for routine family questions. Its Vocational division, in a second city, is in the contract as a "next phase," with no date.</p>
+  <p class="body">The college's SIS vendor also sponsors the Vocational division, and it's upgrading the SIS this spring. Once that upgrade lands, the SIS fields are locked, and the CRM has to fit them. The one IT contact is split across in-house work, the upgrade, and this project.</p>
+
+  <div class="dates-label">Hard dates</div>
+  <div class="dates">
+    <div class="date-card"><b>June 30</b>Legacy CRM shuts off. Data migrated and validated before then.</div>
+    <div class="date-card"><b>August 15</b>Fall applications open.</div>
+  </div>
+
+  <hr>
+
+  <div class="section-label">Where it gets hard</div>
+  <p class="body">The executive sponsor, the undergraduate director, and the Vocational director each define success differently, and the SIS vendor has its own stake in the timing. None of that is in the sales notes. Discovery is where it surfaces.</p>
+
+  <hr>
+
+  <div class="section-label">Discovery — the questions that change the plan</div>
+  <ol class="questions">
+    <li>What does success look like a year from now, in numbers?</li>
+    <li>Who decides when the admissions offices disagree?</li>
+    <li>What has Vocational been told about timing?</li>
+    <li>How clean is the legacy data, and who owns it?</li>
+    <li>What else does IT have on its plate before August?</li>
+    <li>Which workflows must work on day one, and which can wait?</li>
+    <li>Who uses the system daily, and how were they trained last time?</li>
+    <li>What should the assistant answer, and who approves its content?</li>
+  </ol>
+
+  <hr>
+
+  <div class="section-label">The plan — November to August</div>
+  <div class="gantt-wrap">
+    <p class="gantt-note">Configuration and change management run from kickoff, alongside the data work.</p>
+    <table class="gantt-table">
+      <thead>
+        <tr>
+          <th class="label-col">Phase</th>
+          <th>Nov</th><th>Dec</th><th>Jan</th><th>Feb</th><th>Mar</th>
+          <th>Apr</th><th>May</th><th>Jun</th><th>Jul</th><th>Aug</th>
+        </tr>
+      </thead>
+      <tbody id="gantt-body"></tbody>
+    </table>
+    <div class="gantt-legend">
+      <div class="legend-item"><div class="swatch primary"></div>Primary sequence</div>
+      <div class="legend-item"><div class="swatch parallel"></div>Parallel track</div>
+      <div class="legend-item"><div class="swatch date"></div>Hard date</div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="section-label">Go-live criteria</div>
+  <div class="criteria">
+    <div class="crit">
+      <h3>Technical readiness</h3>
+      <ul>
+        <li>Intake, decisions, and the SIS feed tested end to end</li>
+        <li>Migration validated and signed off</li>
+      </ul>
+    </div>
+    <div class="crit">
+      <h3>Outcome alignment</h3>
+      <ul>
+        <li>A measured baseline, so the success goal can be tracked</li>
+        <li>A trained champion in each office</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="section-label">Top risks, ranked</div>
+  <ol class="risks">
+    <li>The SIS upgrade locks fields before the CRM mapping is final <span class="lvl high">High</span></li>
+    <li>Duplicate data delays the June 30 cutover <span class="lvl high">High</span></li>
+    <li>The IT contact is stretched across three commitments <span class="lvl high">High</span></li>
+    <li>The assistant is promised for launch with no content owner <span class="lvl high">High</span></li>
+    <li>Vocational expects to be in phase 1 <span class="lvl">Medium</span></li>
+    <li>Adoption repeats the last rollout <span class="lvl">Medium</span></li>
+  </ol>
+
+  <hr>
+
+  <div class="section-label">How it closes</div>
+  <div class="closing">Every open item leaves the room with an owner and a date.</div>
+
+</div>
+
+<script>
+(function () {
+  var months = 10; // Nov..Aug
+  var rows = [
+    { label: "Kickoff & Discovery",       type: "primary",  s: 1, e: 2,  tip: "Purchase review, success criteria, decision rights" },
+    { label: "Data Receipt & Design",     type: "primary",  s: 2, e: 3,  tip: "Baseline captured; mapped to the upgraded SIS" },
+    { label: "Conversion & Test Loads",   type: "primary",  s: 4, e: 6,  tip: "Every test load passes a validation gate" },
+    { label: "Contingency",               type: "primary",  s: 7, e: 7,  tip: "Buffer before cutover" },
+    { label: "Final Migration & UAT",     type: "primary",  s: 8, e: 8,  tip: "Cutover before June 30" },
+    { label: "Training & Readiness",      type: "primary",  s: 9, e: 10, tip: "New system is the source of truth from July 1" },
+    { label: "Configuration & Setup",     tag: "parallel", type: "parallel", s: 1, e: 9,  tip: "Starts at kickoff; a demo database opens in November" },
+    { label: "Change Management",         tag: "parallel", type: "parallel", s: 1, e: 10, tip: "Runs throughout, not a phase" }
+  ];
+  var body = document.getElementById('gantt-body');
+
+  rows.forEach(function (row, idx) {
+    if (idx === 6) {
+      var sp = document.createElement('tr');
+      sp.innerHTML = '<td colspan="' + (months + 1) + '" style="padding:4px 0;"><div style="border-top:0.5px solid var(--border);"></div></td>';
+      body.appendChild(sp);
+    }
+    var tr = document.createElement('tr');
+    var td = document.createElement('td');
+    td.className = 'label-col';
+    td.innerHTML = row.label + (row.tag ? '<span class="tag">' + row.tag + '</span>' : '');
+    tr.appendChild(td);
+    for (var m = 1; m <= months; m++) {
+      var c = document.createElement('td');
+      c.className = 'm';
+      var d = document.createElement('div');
+      if (m >= row.s && m <= row.e) {
+        d.className = 'bar ' + row.type;
+        d.setAttribute('data-tip', row.tip);
+        d.addEventListener('mouseenter', function () { if (window.crTrack) window.crTrack('scenario_interaction'); });
+      } else {
+        d.className = 'bar';
+      }
+      c.appendChild(d);
+      tr.appendChild(c);
+    }
+    body.appendChild(tr);
+  });
+
+  // Hard-date markers: June 30 (col 8) and August 15 (col 10)
+  var gates = document.createElement('tr');
+  var g0 = document.createElement('td');
+  g0.className = 'label-col';
+  g0.textContent = 'Hard dates';
+  gates.appendChild(g0);
+  for (var m2 = 1; m2 <= months; m2++) {
+    var gc = document.createElement('td');
+    gc.className = 'm';
+    if (m2 === 8) gc.innerHTML = '<div class="gate">&#9670;<small>Jun 30</small></div>';
+    if (m2 === 10) gc.innerHTML = '<div class="gate">&#9670;<small>Aug 15</small></div>';
+    gates.appendChild(gc);
+  }
+  body.appendChild(gates);
+})();
+
+// Forward ?ref= to internal links so attribution survives navigation
+(function () {
+  var ref = window.CR_REF;
+  if (!ref || ref === '(none)') return;
+  document.querySelectorAll('a[href]').forEach(function (a) {
+    var href = a.getAttribute('href');
+    if (!href || /^(https?:|mailto:|#)/.test(href)) return;
+    if (a.closest('#nav-placeholder')) return;
+    a.setAttribute('href', href + (href.indexOf('?') > -1 ? '&' : '?') + 'ref=' + encodeURIComponent(ref));
+  });
+})();
+</script>
+</body>
+</html>
