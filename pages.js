@@ -77,6 +77,15 @@ window.PORTFOLIO = {
           date: "2026-06-01"
         },
         {
+          file: "implementation-scenario.html",
+          title: "Implementation Scenario: Tesseract College",
+          nav: "Implementation Scenario",
+          desc: "An invented college with a hard launch date, a legacy shutoff, and an SIS upgrade that locks the fields. The questions that change the plan, a November-to-August timeline, and the risks ranked.",
+          icon: "route",
+          status: "live",
+          date: "2026-11-02"
+        },
+        {
           file: "institutional-complexity.html",
           title: "The Same Picture, Five Thousand Pieces",
           nav: "Institutional Complexity",
