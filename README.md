@@ -6,7 +6,7 @@ full-lifecycle delivery experience across B2B SaaS and low-code platforms.
 
 Pages:
 
-- Welcome — landing page, links to all eight pieces
+- Welcome — landing page, links to all nine pieces
 
 Credentials & Evidence
 
@@ -16,6 +16,7 @@ Credentials & Evidence
 Delivery Practice
 
 - Implementation Framework — how I run implementations, two delivery shapes, six-phase framework, 8-week timeline
+- Implementation Scenario: Tesseract College — an invented college with a hard August 15 launch, a June 30 legacy CRM shutoff, and an SIS upgrade that locks the fields; the discovery questions that change the plan, a November-to-August timeline, go-live criteria, and the top risks ranked
 - The Same Picture, Five Thousand Pieces — five delivery variables under two institutional conditions, concentrated functions versus separated ones; what changes most is not delivery, it is discovery
 - What Breaks When Delivery Scales — five mechanisms that work at six concurrent implementations and stop working at forty, the point each one fails, what replaces it, what the replacement costs
 - Same Stage, Different Room — two post-sales role-play setups that look identical on a calendar invite, one with a client across the table, one with colleagues; what can be asked in each room and what it costs to confuse them
