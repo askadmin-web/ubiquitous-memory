@@ -14,13 +14,14 @@
   // ---- Outreach attribution -------------------------------------------------
   // ?ref= identifies the recipient. page_view alone is not a read signal
   // (link previews and mail scanners fetch pages). The real signals here are
-  // rcv_interaction (cast a ballot or ran the count), rcv_complete (stepped
-  // through to the winner) and real_read (20 visible seconds).
+  // jd_interaction (shared name across portfolio pages; interaction param says
+  // which control), rcv_complete (stepped through to the winner) and real_read.
   (function () {
+    var PAGE_FILE = 'ranked-choice-coffee.html';
     var ref = new URLSearchParams(window.location.search).get('ref') || '(none)';
     window.CR_REF = ref;
     if (ref !== '(none)') {
-      gtag('event', 'ref_visit', { ref_source: ref, non_interaction: true });
+      gtag('event', 'ref_visit', { ref_source: ref, page_file: PAGE_FILE, non_interaction: true });
     }
     var fired = {};
     window.crTrack = function (name, params) {
@@ -28,6 +29,7 @@
       fired[name] = true;
       var p = params || {};
       p.ref_source = window.CR_REF;
+      p.page_file = PAGE_FILE;
       gtag('event', name, p);
     };
     var visibleMs = 0, last = null;
@@ -423,7 +425,7 @@ $("box-note").textContent = boxNoteText();
 let ballots = [], rounds = [], cur = 0, myIndex = -1, altWinner = null, lastWidths = {};
 
 function startCount(withVisitor) {
-  if (window.crTrack) window.crTrack('rcv_interaction', { cast_ballot: withVisitor });
+  if (window.crTrack) window.crTrack('jd_interaction', { interaction: withVisitor ? 'cast_ballot' : 'watch_count' });
   ballots = expandBallots(withVisitor);
   rounds = tally(ballots);
   myIndex = withVisitor ? ballots.length - 1 : -1;
