@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cathy Rudolph — Ranked Choice, by the Cup</title>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QVZ0K1D563"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-QVZ0K1D563');
+  // ---- Outreach attribution -------------------------------------------------
+  // ?ref= identifies the recipient. page_view alone is not a read signal
+  // (link previews and mail scanners fetch pages). The real signals here are
+  // rcv_interaction (cast a ballot or ran the count), rcv_complete (stepped
+  // through to the winner) and real_read (20 visible seconds).
+  (function () {
+    var ref = new URLSearchParams(window.location.search).get('ref') || '(none)';
+    window.CR_REF = ref;
+    if (ref !== '(none)') {
+      gtag('event', 'ref_visit', { ref_source: ref, non_interaction: true });
+    }
+    var fired = {};
+    window.crTrack = function (name, params) {
+      if (fired[name]) return;            // once per session per event
+      fired[name] = true;
+      var p = params || {};
+      p.ref_source = window.CR_REF;
+      gtag('event', name, p);
+    };
+    var visibleMs = 0, last = null;
+    var timer = setInterval(function () {
+      if (document.visibilityState === 'visible') {
+        var now = Date.now();
+        if (last !== null) visibleMs += now - last;
+        last = now;
+        if (visibleMs >= 20000) {
+          window.crTrack('real_read', { seconds: 20 });
+          clearInterval(timer);
+        }
+      } else {
+        last = null;
+      }
+    }, 1000);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState !== 'visible') last = null;
+    });
+  })();
+</script>
+<!-- Cathy Rudolph, November 4, 2026 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f7f3ee; --surface:#fffdf9; --ink:#2a211b; --muted:#6f625a; --line:#e6ddd3;
+    --accent:#7a4a2e; --accent-ink:#fff; --track:#efe7de; --good:#2f7d4f; --warn:#b5523b;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#1a1613; --surface:#241f1b; --ink:#f1e9e1; --muted:#b3a59a; --line:#3a322c;
+      --accent:#d9a273; --accent-ink:#1a1613; --track:#332b25; --good:#6fcf97; --warn:#f08a6e;
+    }
+  }
+  *{box-sizing:border-box}
+
+  /* SITE NAV + FOOTER (shared with portfolio pages) */
+  :root{ --site-bg:#fff; --site-border:#D3D1C7; --site-text:#5F5E5A; --site-strong:#1a1a18; --site-sep:#D3D1C7; --site-teal:#1D9E75; --site-teal-dark:#0F6E56; --site-faint:#888780; }
+  @media (prefers-color-scheme: dark){
+    :root{ --site-bg:#241f1b; --site-border:#3a322c; --site-text:#b3a59a; --site-strong:#f1e9e1; --site-sep:#4a413a; --site-teal:#5DCAA5; --site-teal-dark:#5DCAA5; --site-faint:#8f8177; }
+  }
+  .site-nav{background:var(--site-bg);border-bottom:1px solid var(--site-border);padding:0 2rem;display:flex;align-items:center;gap:2rem;height:48px;position:sticky;top:0;z-index:100;overflow-x:auto;white-space:nowrap}
+  .site-nav a{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--site-text);text-decoration:none;letter-spacing:.03em;padding:4px 0;border-bottom:1.5px solid transparent;transition:color .15s,border-color .15s}
+  .site-nav a:hover{color:var(--site-teal-dark);border-bottom-color:var(--site-teal)}
+  .site-nav a.current{color:var(--site-strong);border-bottom-color:var(--site-teal);font-weight:500}
+  .site-nav .nav-sep{color:var(--site-sep);font-family:'IBM Plex Mono',monospace;font-size:12px}
+  .site-footer{background:var(--site-bg);border-top:1px solid var(--site-border);padding:1.25rem 2rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--site-faint)}
+  .site-footer a{color:var(--site-teal-dark);text-decoration:none}
+  .site-footer a:hover{text-decoration:underline}
+  .site-footer .sep{color:var(--site-sep)}
+  @media (max-width:480px){ .site-nav{padding:0 16px;gap:1rem} .site-footer{padding:1.25rem 16px;gap:.5rem;flex-direction:column;align-items:flex-start} .site-footer .sep{display:none} }
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:720px;margin:0 auto;padding:36px 16px 64px}
+  h1,h2{font-family:"Fraunces",Georgia,serif;font-weight:600;line-height:1.15}
+  h1{font-size:clamp(2rem,6vw,2.8rem);margin:.25em 0 .3em}
+  .eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.75rem;color:var(--accent);font-weight:700;margin:0}
+  .lede{color:var(--muted);font-size:1.1rem;margin:0}
+
+  .steps{list-style:none;padding:0;margin:28px 0 8px;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));counter-reset:s}
+  .steps li{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;counter-increment:s}
+  .steps li::before{content:counter(s);display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:.85rem;margin-bottom:8px}
+  .steps strong{display:block;margin-bottom:2px}
+  .steps span{color:var(--muted);font-size:.92rem}
+
+  .card{scroll-margin-top:64px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px 20px;margin-top:20px}
+  .card h2{margin:0 0 .3em;font-size:1.5rem}
+  .hint{color:var(--muted);margin:0 0 14px}
+
+  .picks{display:grid;gap:8px}
+  .pick{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer;transition:border-color .15s,background .15s}
+  .pick:hover{border-color:var(--muted)}
+  .pick.ranked{border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent)}
+  .pick .rank{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.9rem;border:1.5px dashed var(--line);color:var(--muted)}
+  .pick.ranked .rank{background:var(--c);border:none;color:#fff}
+  .pick .name{flex:1;font-weight:500}
+  .pick .sw{width:10px;height:10px;border-radius:50%;background:var(--c);flex:none}
+
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .btn{font:inherit;font-weight:600;border-radius:999px;padding:11px 20px;cursor:pointer;border:1.5px solid var(--accent)}
+  .btn.primary{background:var(--accent);color:var(--accent-ink)}
+  .btn.primary:disabled{opacity:.4;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--accent)}
+  .btn.ghost:disabled{opacity:.35;cursor:not-allowed}
+  .yours-label{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:2px}
+  .one-vote{margin:0 0 14px;padding:12px 14px;border-left:4px solid var(--accent);border-radius:0 12px 12px 0;background:color-mix(in srgb,var(--accent) 10%,transparent);font-size:.95rem}
+  .vote-preview{margin:12px 0 0;font-size:.92rem;color:var(--muted)}
+  .vote-preview strong{color:var(--ink)}
+  .box-note{margin:18px 0 0;padding:12px 14px;border-radius:12px;background:var(--track);font-size:.92rem;color:var(--muted)}
+  .box-note strong{color:var(--ink)}
+  .link{display:block;background:none;border:none;color:var(--muted);text-decoration:underline;font:inherit;font-size:.92rem;padding:0;margin-top:14px;cursor:pointer}
+
+  .round-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .round-head h2{margin:0}
+  .dots{display:flex;gap:6px}
+  .dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+  .dots i.on{background:var(--accent)}
+  .need{color:var(--muted);font-size:.95rem;margin:6px 0 20px}
+  .need strong{color:var(--ink)}
+
+  .bars{display:grid;gap:14px}
+  .bar-row{display:grid;grid-template-columns:100px 1fr 52px;align-items:center;gap:10px;transition:opacity .3s}
+  .bar-name{font-weight:600;font-size:.92rem;line-height:1.2}
+  .bar-name small{display:block;font-weight:500;color:var(--muted);font-size:.75rem;margin-top:2px}
+  .track{position:relative;height:28px;background:var(--track);border-radius:8px}
+  .fill{height:100%;border-radius:8px;background:var(--c);transition:width .7s ease}
+  .majority{position:absolute;top:-5px;bottom:-5px;border-left:2px dashed var(--ink);opacity:.5}
+  .bar-count{font-variant-numeric:tabular-nums;font-weight:700;text-align:right;line-height:1.1}
+  .delta{display:block;font-size:.75rem;color:var(--good);font-weight:600}
+  .bar-row.out{opacity:.35}
+  .bar-row.losing .fill{background:repeating-linear-gradient(135deg,var(--c) 0 6px,color-mix(in srgb,var(--c) 55%,transparent) 6px 12px)}
+  .bar-row.winning .track{box-shadow:0 0 0 2px var(--c)}
+  .tag{display:inline-block;margin-top:3px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:1px 7px;border-radius:999px}
+  .tag.you{background:var(--accent);color:var(--accent-ink)}
+  .tag.cut{background:var(--warn);color:#fff}
+  .tag.win{background:var(--good);color:#fff}
+  .legend{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--muted);margin-top:14px}
+  .legend b{width:16px;border-top:2px dashed var(--ink);opacity:.5}
+
+  .story{margin:20px 0 0;padding:14px 16px;border-radius:12px;background:var(--track)}
+  .yours{margin:0 0 20px;padding:12px 16px;border-left:4px solid var(--accent);border-radius:0 12px 12px 0;background:color-mix(in srgb,var(--accent) 10%,transparent)}
+  .insights{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+  .insights li{padding:12px 16px;border:1px solid var(--line);border-radius:12px;font-size:.95rem}
+  .nav{display:flex;justify-content:space-between;gap:10px;margin-top:22px;flex-wrap:wrap}
+
+  details{margin-top:22px;border-top:1px solid var(--line);padding-top:14px}
+  summary{cursor:pointer;font-weight:600;color:var(--accent)}
+  .ballot-row{display:flex;gap:10px;align-items:baseline;padding:9px 6px;border-top:1px solid var(--line);font-size:.9rem}
+  .ballot-row:first-of-type{border-top:none;margin-top:8px}
+  .ballot-row .n{flex:none;width:40px;font-weight:700;font-variant-numeric:tabular-nums}
+  .ballot-row.me{background:color-mix(in srgb,var(--accent) 10%,transparent);border-radius:8px}
+  .chain{display:flex;flex-wrap:wrap;gap:4px}
+  .chip{padding:2px 9px;border-radius:999px;background:color-mix(in srgb,var(--c) 20%,transparent);font-size:.8rem}
+
+  @media (max-width:480px){
+    .card{padding:18px 16px}
+    .bar-row{grid-template-columns:84px 1fr 44px;gap:8px}
+  }
+</style>
+</head>
+<body>
+<nav class="site-nav">
+  <a href="https://askadmin-web.github.io/ubiquitous-memory">Portfolio</a>
+  <span class="nav-sep">/</span>
+  <a href="#" class="current">Ranked Choice Voting Demo</a>
+</nav>
+
+<main class="wrap">
+  <header>
+    <p class="eyebrow">A ranked choice voting demo</p>
+    <h1 id="title"></h1>
+    <p id="subtitle" class="lede"></p>
+  </header>
+
+  <ol id="steps" class="steps"></ol>
+
+  <section id="ballot" class="card">
+    <h2>Your ballot</h2>
+    <p id="ballot-hint" class="hint"></p>
+    <p class="one-vote"><strong>Your ballot is one vote.</strong> It counts for your #1 and moves down your list only if that choice is eliminated.</p>
+    <div id="picks" class="picks"></div>
+    <p id="vote-preview" class="vote-preview" hidden></p>
+    <div class="actions">
+      <button id="cast" class="btn primary" disabled>Cast my ballot and count</button>
+      <button id="clear" class="btn ghost" disabled>Clear</button>
+    </div>
+    <p id="box-note" class="box-note"></p>
+    <button id="skip" class="link">Or just watch the sample ballots get counted</button>
+    <button id="redeal" class="link">Deal a new set of sample voters</button>
+  </section>
+
+  <section id="results" class="card" hidden aria-live="polite"></section>
+</main>
+
+<footer class="site-footer">
+  <span>Cathy Rudolph</span>
+  <span class="sep">·</span>
+  <a href="mailto:cathy.rudolph@academicskills.net">cathy.rudolph@academicskills.net</a>
+  <span class="sep">·</span>
+  <a href="https://linkedin.com/in/cathy-rudolph-450225370">linkedin.com/in/cathy-rudolph-450225370</a>
+</footer>
+
+<script>
+/* ==========================================================================
+   CONFIG: edit this block to change the topic.
+   - options: the choices. "id" is a short code used in ballots, "short" is
+     the label on the bar chart, "color" is any CSS color.
+   - sampleVoters: how many sample voters are already "in the ballot box".
+     Their ballots are generated fresh on every visit, filtered so the count
+     always takes at least three rounds. About two times in three, the
+     first-round leader ends up losing.
+   - fixedBallots: optional. Leave it [] for random sample voters, or list
+     ballots like { count: 3, ranking: ["SM","GA","CR","TP","JE"] } to use
+     the same sample every time.
+   For pie flavors or Halloween candy, just swap the names and nouns.
+   ========================================================================== */
+const CONFIG = {
+  title: "Ranked Choice, by the Cup",
+  subtitle: "Five Northcoast Coffee origins, one winner. Rank your favorites and watch how ranked choice voting picks it.",
+  noun: "coffee",
+  nounPlural: "coffees",
+  options: [
+    { id: "TP", name: "Tanzanian Peaberry",      short: "Tanzanian",   color: "#c0843d" },
+    { id: "GA", name: "Guatemalan Antigua",      short: "Guatemalan",  color: "#8a5a44" },
+    { id: "JE", name: "Java Estate",             short: "Java",        color: "#5e7d4f" },
+    { id: "CR", name: "Costa Rican SHB Tarrazu", short: "Costa Rican", color: "#b5523b" },
+    { id: "SM", name: "Sumatran Mandheling",     short: "Sumatran",    color: "#4b5d7a" }
+  ],
+  sampleVoters: 25,
+  fixedBallots: []
+};
+/* ======================= end of CONFIG ======================= */
+
+const OPTS = CONFIG.options;
+const BY_ID = Object.fromEntries(OPTS.map(o => [o.id, o]));
+const N = CONFIG.noun, NP = CONFIG.nounPlural;
+const $ = id => document.getElementById(id);
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+const ordinal = n => n + (["th","st","nd","rd"][(n % 100 - 20) % 10] || ["th","st","nd","rd"][n % 100] || "th");
+
+/* ---------- Static text ---------- */
+document.title = "Cathy Rudolph — " + CONFIG.title;
+$("title").textContent = CONFIG.title;
+$("subtitle").textContent = CONFIG.subtitle;
+$("ballot-hint").textContent = `Tap the ${NP} in order of preference: your favorite first. Rank as many as you like; tap again to undo.`;
+$("steps").innerHTML = `
+  <li><strong>Rank your choices</strong><span>Put the ${NP} in order: 1st, 2nd, 3rd, and so on.</span></li>
+  <li><strong>Count first choices</strong><span>If one ${N} gets more than half the votes, it wins.</span></li>
+  <li><strong>Eliminate and transfer</strong><span>If not, last place is out and its ballots move to each voter's next choice. Repeat until one has a majority.</span></li>`;
+
+/* ---------- The count ---------- */
+function expandBallots(includeVisitor) {
+  const out = [];
+  electorate.forEach(b => { for (let i = 0; i < b.count; i++) out.push({ ranking: b.ranking }); });
+  if (includeVisitor) out.push({ ranking: [...myRanking], visitor: true });
+  return out;
+}
+
+function tally(ballots) {
+  const active = new Set(OPTS.map(o => o.id));
+  const top = b => b.ranking.find(id => active.has(id)) || null;
+  const rounds = [];
+  let firstCounts = null;
+
+  while (true) {
+    const counts = {};
+    active.forEach(id => counts[id] = 0);
+    let exhausted = 0;
+    const assign = ballots.map(b => { const t = top(b); t ? counts[t]++ : exhausted++; return t; });
+    const continuing = ballots.length - exhausted;
+    const threshold = Math.floor(continuing / 2) + 1;
+    if (!firstCounts) firstCounts = { ...counts };
+
+    const ids = [...active];
+    const max = Math.max(...ids.map(i => counts[i]));
+    const leaders = ids.filter(i => counts[i] === max);
+    const round = { n: rounds.length + 1, counts, assign, exhausted, continuing, threshold, active: new Set(active) };
+    rounds.push(round);
+
+    if (ids.length === 1) { round.winner = ids[0]; break; }
+    if (leaders.length === 1 && max >= threshold) { round.winner = leaders[0]; break; }
+
+    // Eliminate last place, with a tiebreak if needed
+    const min = Math.min(...ids.map(i => counts[i]));
+    let tied = ids.filter(i => counts[i] === min);
+    if (tied.length > 1) {
+      const names = tied.map(i => BY_ID[i].short).join(" and ");
+      const fmin = Math.min(...tied.map(i => firstCounts[i]));
+      const t2 = tied.filter(i => firstCounts[i] === fmin);
+      if (t2.length === 1) {
+        round.tieNote = `${names} tied for last with ${min} each. The tie goes to first-round votes, and ${BY_ID[t2[0]].short} had fewer.`;
+        tied = t2;
+      } else {
+        const pick = t2[Math.floor(Math.random() * t2.length)];
+        round.tieNote = `${names} tied for last, and also tied in first-round votes, so one was drawn by lot (a common real-world tiebreaker).`;
+        tied = [pick];
+      }
+    }
+    const elim = tied[0];
+    round.eliminated = elim;
+    active.delete(elim);
+
+    round.transfers = {};
+    round.toExhausted = 0;
+    ballots.forEach((b, i) => {
+      if (assign[i] !== elim) return;
+      const next = top(b);
+      next ? round.transfers[next] = (round.transfers[next] || 0) + 1 : round.toExhausted++;
+    });
+  }
+  return rounds;
+}
+
+/* ---------- Sample voters ----------
+   Voters fall into 2–3 "taste camps", each with its own ranking, and
+   individuals drift a little from their camp. Some voters rank at random
+   and a few rank only part of the list. Each electorate is re-dealt until
+   the count is a good teaching example: at least three rounds, no ties,
+   and (usually) a first-round leader who doesn't win. */
+const rand = n => Math.floor(Math.random() * n);
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = rand(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+function makeVoter(camp) {
+  const r = [...camp];
+  for (let k = rand(3); k > 0; k--) { const i = rand(r.length - 1); [r[i], r[i + 1]] = [r[i + 1], r[i]]; }
+  if (Math.random() < 0.12) r.length = Math.max(2, r.length - 2);
+  return r;
+}
+
+function groupBallots(rankings) {
+  const m = new Map();
+  rankings.forEach(r => { const k = r.join(","); m.set(k, (m.get(k) || 0) + 1); });
+  return [...m].map(([k, count]) => ({ count, ranking: k.split(",") })).sort((a, b) => b.count - a.count);
+}
+
+function dealElectorate() {
+  if (CONFIG.fixedBallots && CONFIG.fixedBallots.length) return CONFIG.fixedBallots;
+  const ids = OPTS.map(o => o.id), n = CONFIG.sampleVoters;
+  const wantUpset = Math.random() < 0.65;
+  let voters;
+  for (let attempt = 0; attempt < 4000; attempt++) {
+    const camps = Array.from({ length: 2 + rand(2) }, () => shuffle([...ids]));
+    const weights = camps.map(() => 0.5 + Math.random());
+    const sum = weights.reduce((a, b) => a + b);
+    voters = Array.from({ length: n }, () => {
+      if (Math.random() < 0.15) return shuffle([...ids]);
+      let x = Math.random() * sum, c = 0;
+      while (x > weights[c]) x -= weights[c++];
+      return makeVoter(camps[c]);
+    });
+    const rs = tally(voters.map(ranking => ({ ranking })));
+    const r1 = rs[0].counts, max = Math.max(...Object.values(r1));
+    if (Object.values(r1).some(c => c < 2)) continue;   // every option needs real first-choice support
+    if (rs.length < 3 || rs.some(r => r.tieNote)) continue;
+    const leads = Object.keys(r1).filter(i => r1[i] === max);
+    const upset = leads.length === 1 && leads[0] !== rs.at(-1).winner;
+    if (attempt < 3000 && upset !== wantUpset) continue;
+    return groupBallots(voters);
+  }
+  return groupBallots(voters);
+}
+
+let electorate = dealElectorate();
+
+/* ---------- Ballot picker ---------- */
+let myRanking = [];
+
+function renderPicks() {
+  $("picks").innerHTML = OPTS.map(o => {
+    const r = myRanking.indexOf(o.id);
+    return `<button class="pick ${r >= 0 ? "ranked" : ""}" style="--c:${o.color}" data-id="${o.id}"
+              aria-pressed="${r >= 0}" aria-label="${o.name}${r >= 0 ? ", ranked " + ordinal(r + 1) : ""}">
+              <span class="rank">${r >= 0 ? r + 1 : ""}</span>
+              <span class="name">${o.name}</span>
+              <span class="sw"></span>
+            </button>`;
+  }).join("");
+  const pv = $("vote-preview");
+  pv.hidden = myRanking.length === 0;
+  if (myRanking.length) {
+    const first = BY_ID[myRanking[0]].short;
+    const backups = myRanking.slice(1).map(id => BY_ID[id].short);
+    pv.innerHTML = `Your vote starts with <strong>${first}</strong>.` +
+      (backups.length ? ` Backups, in order: ${backups.join(", ")}.` : ` With no backups, your ballot sits out if ${first} is eliminated.`);
+  }
+  $("cast").disabled = myRanking.length === 0;
+  $("clear").disabled = myRanking.length === 0;
+}
+
+$("picks").addEventListener("click", e => {
+  const btn = e.target.closest(".pick");
+  if (!btn) return;
+  const id = btn.dataset.id;
+  const i = myRanking.indexOf(id);
+  i >= 0 ? myRanking.splice(i, 1) : myRanking.push(id);
+  renderPicks();
+});
+$("clear").addEventListener("click", () => { myRanking = []; renderPicks(); });
+$("cast").addEventListener("click", () => startCount(true));
+$("skip").addEventListener("click", () => startCount(false));
+$("redeal").addEventListener("click", () => {
+  electorate = dealElectorate();
+  $("results").hidden = true;
+  $("box-note").innerHTML = `<strong>New voters dealt.</strong> ` + boxNoteText();
+});
+const boxNoteText = () => (CONFIG.fixedBallots && CONFIG.fixedBallots.length)
+  ? `Your ballot joins ${electorate.reduce((a, b) => a + b.count, 0)} sample ballots already in the box.`
+  : `Your ballot joins ${CONFIG.sampleVoters} sample voters already in the box. They're different every visit, so there's no sure way to back a winner.`;
+$("box-note").textContent = boxNoteText();
+
+/* ---------- Results ---------- */
+let ballots = [], rounds = [], cur = 0, myIndex = -1, altWinner = null, lastWidths = {};
+
+function startCount(withVisitor) {
+  if (window.crTrack) window.crTrack('rcv_interaction', { cast_ballot: withVisitor });
+  ballots = expandBallots(withVisitor);
+  rounds = tally(ballots);
+  myIndex = withVisitor ? ballots.length - 1 : -1;
+  altWinner = withVisitor ? tally(expandBallots(false)).at(-1).winner : null;
+  cur = 0;
+  lastWidths = {};
+  $("results").hidden = false;
+  renderRound();
+  $("results").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function renderRound() {
+  const r = rounds[cur], prev = rounds[cur - 1], total = ballots.length, isLast = cur === rounds.length - 1;
+  const outIn = {};
+  rounds.forEach(x => { if (x.eliminated) outIn[x.eliminated] = x.n; });
+  const mine = myIndex >= 0 ? r.assign[myIndex] : undefined;
+
+  const bars = OPTS.map(o => {
+    const inRace = r.active.has(o.id);
+    if (!inRace) {
+      return `<div class="bar-row out" style="--c:${o.color}">
+        <div class="bar-name">${o.short}<small>Out in round ${outIn[o.id]}</small></div>
+        <div class="track"><div class="fill" data-id="${o.id}" style="width:${lastWidths[o.id] || 0}%" data-w="0"></div></div>
+        <div class="bar-count">–</div></div>`;
+    }
+    const c = r.counts[o.id];
+    const delta = prev && prev.transfers[o.id] ? `<span class="delta">+${prev.transfers[o.id]}</span>` : "";
+    const cls = r.winner === o.id ? "winning" : r.eliminated === o.id ? "losing" : "";
+    const tags = [
+      r.winner === o.id ? `<span class="tag win">Winner</span>` : "",
+      r.eliminated === o.id ? `<span class="tag cut">Eliminated</span>` : "",
+      mine === o.id ? `<span class="tag you">Your vote</span>` : ""
+    ].join(" ");
+    return `<div class="bar-row ${cls}" style="--c:${o.color}">
+      <div class="bar-name">${o.short}${tags ? "<br>" + tags : ""}</div>
+      <div class="track">
+        <div class="fill" data-id="${o.id}" style="width:${lastWidths[o.id] ?? 0}%" data-w="${(c / total) * 100}"></div>
+        <div class="majority" style="left:${(r.threshold / total) * 100}%"></div>
+      </div>
+      <div class="bar-count">${c}${delta}</div></div>`;
+  }).join("");
+
+  // What happened this round
+  let story;
+  if (r.winner) {
+    const w = BY_ID[r.winner], c = r.counts[r.winner];
+    story = rounds.length === 1
+      ? `<strong>${w.name}</strong> has ${c} of ${r.continuing} votes, more than half, so it wins in the first round. No eliminations needed.`
+      : `<strong>${w.name}</strong> now has ${c} of ${r.continuing} votes, more than half. <strong>It wins.</strong>`;
+  } else {
+    const e = BY_ID[r.eliminated], c = r.counts[r.eliminated];
+    const moves = Object.entries(r.transfers).sort((a, b) => b[1] - a[1]).map(([id, n]) => `${BY_ID[id].short} +${n}`);
+    if (r.toExhausted) moves.push(`${r.toExhausted} with no choices left (exhausted)`);
+    story = `No ${N} has more than half yet. <strong>${e.name}</strong> has the fewest votes (${c}) and is eliminated. `;
+    if (r.tieNote) story += r.tieNote + " ";
+    story += c === 0 ? `It had no votes, so no ballots move.`
+      : `Its ${plural(c, "ballot moves", "ballots move")} to each voter's next choice still in the race: ${moves.join(", ")}.`;
+  }
+
+  // Where the visitor's ballot is
+  let yours = "";
+  if (myIndex >= 0) {
+    const rank = mine ? myRanking.indexOf(mine) + 1 : 0;
+    const fallback = rank > 1 ? ` That's your ${ordinal(rank)} choice, because your higher picks are out.` : "";
+    if (!mine) {
+      yours = `Every ${N} you ranked is out, so your ballot is <strong>exhausted</strong> and sits out the rest of the count. Ranking more choices keeps a ballot in play longer.`;
+    } else if (r.winner === mine) {
+      yours = `Your ballot is counting for <strong>${BY_ID[mine].short}</strong>, the winner.${fallback}`;
+    } else if (r.eliminated === mine) {
+      const next = rounds[cur + 1].assign[myIndex];
+      yours = `Your ballot is counting for <strong>${BY_ID[mine].short}</strong>, which is eliminated this round. ` +
+        (next ? `Next round it moves to your next choice still in the race, <strong>${BY_ID[next].short}</strong>. Your vote isn't wasted.`
+              : `You didn't rank any other ${N} still in the race, so your ballot will be exhausted.`);
+    } else {
+      yours = `Your ballot is counting for <strong>${BY_ID[mine].short}</strong> this round.${fallback}`;
+    }
+  }
+
+  // Takeaways on the final round
+  let insights = "";
+  if (isLast) {
+    if (window.crTrack) window.crTrack('rcv_complete', { rounds: rounds.length });
+    const items = [];
+    const r1 = rounds[0].counts, max1 = Math.max(...Object.values(r1));
+    const lead1 = Object.keys(r1).filter(id => r1[id] === max1);
+    if (rounds.length > 1 && lead1.length === 1 && lead1[0] !== r.winner) {
+      items.push(`<strong>${BY_ID[lead1[0]].short}</strong> led the first round with ${max1} votes but didn't win. Once later choices were counted, <strong>${BY_ID[r.winner].short}</strong> had broader support. Under a single-choice vote, ${BY_ID[lead1[0]].short} would have won with less than half.`);
+    }
+    if (myIndex >= 0 && altWinner) {
+      items.push(altWinner === r.winner
+        ? `Without your ballot, ${BY_ID[altWinner].short} would still have won.`
+        : `<strong>Your ballot changed the outcome.</strong> Without it, ${BY_ID[altWinner].short} would have won.`);
+    }
+    if (items.length) insights = `<ul class="insights">${items.map(i => `<li>${i}</li>`).join("")}</ul>`;
+  }
+
+  const ballotList = renderBallotList();
+
+  $("results").innerHTML = `
+    <div class="round-head">
+      <h2>Round ${r.n} <span style="color:var(--muted);font-weight:400">of ${rounds.length}</span></h2>
+      <div class="dots">${rounds.map((_, i) => `<i class="${i <= cur ? "on" : ""}"></i>`).join("")}</div>
+    </div>
+    <p class="need">${r.n === 1 ? `Round 1 counts only each ballot's <strong>first</strong> choice. ` : `Each ballot counts for its highest-ranked ${N} still in the race. `}${plural(r.continuing, "ballot", "ballots")} in play, so a ${N} needs <strong>${r.threshold}</strong> to win (more than half).${r.exhausted ? ` ${r.exhausted} exhausted.` : ""}</p>
+    ${yours ? `<p class="yours"><span class="yours-label">Where your vote is</span>${yours}</p>` : ""}
+    <div class="bars">${bars}</div>
+    <div class="legend"><b></b> Majority line</div>
+    <p class="story">${story}</p>
+    ${insights}
+    <div class="nav">
+      <button class="btn ghost" id="back" ${cur === 0 ? "disabled" : ""}>Back</button>
+      ${isLast
+        ? `<button class="btn primary" id="again">Try a different ballot</button>`
+        : `<button class="btn primary" id="next">${cur === rounds.length - 2 ? "See the result" : "Next round"}</button>`}
+    </div>
+    ${ballotList}`;
+
+  // Animate bars from their previous widths
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.querySelectorAll(".fill").forEach(f => {
+      f.style.width = f.dataset.w + "%";
+      lastWidths[f.dataset.id] = +f.dataset.w;
+    });
+  }));
+
+  $("back").onclick = () => { cur--; renderRound(); };
+  if ($("next")) $("next").onclick = () => { cur++; renderRound(); };
+  if ($("again")) $("again").onclick = () => {
+    $("results").hidden = true;
+    $("ballot").scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+}
+
+function renderBallotList() {
+  const chain = ranking => `<span class="chain">${ranking.map((id, i) =>
+    `<span class="chip" style="--c:${BY_ID[id].color}">${i + 1}. ${BY_ID[id].short}</span>`).join("")}</span>`;
+  const rows = electorate.map(b =>
+    `<div class="ballot-row"><span class="n">${b.count}×</span>${chain(b.ranking)}</div>`);
+  if (myIndex >= 0) rows.push(`<div class="ballot-row me"><span class="n">You</span>${chain(myRanking)}</div>`);
+  return `<details><summary>See all ${ballots.length} ballots</summary>${rows.join("")}</details>`;
+}
+
+renderPicks();
+
+/* ---- Ref forwarding: carry ?ref= onto portfolio links ---- */
+(function () {
+  var ref = window.CR_REF;
+  if (!ref || ref === '(none)') return;
+  document.querySelectorAll('a[href*="askadmin-web.github.io/ubiquitous-memory"]').forEach(function (a) {
+    var u = new URL(a.getAttribute('href'), window.location.href);
+    u.searchParams.set('ref', ref);
+    a.setAttribute('href', u.toString());
+  });
+})();
+</script>
+</body>
+</html>
