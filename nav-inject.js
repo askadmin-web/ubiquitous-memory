@@ -49,12 +49,14 @@
     html += '<a href="index.html" class="nav-link" data-page="index.html">Welcome</a>';
 
     groups.forEach(function (g) {
-      // A single-page group renders as a plain link, not a dropdown.
+      // A single-page group renders as a plain link, not a dropdown,
+      // labeled with the group's nav name so the bar reads by section.
+      // Add a second page and the group becomes a dropdown on its own.
       if (g.pages.length === 1) {
         var only = g.pages[0];
         html +=
           '<a href="' + esc(only.file) + '" class="nav-link" data-page="' + esc(only.file) + '">' +
-            esc(only.nav || only.title) +
+            esc(g.nav || g.label) +
           '</a>';
         return;
       }
