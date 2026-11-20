@@ -6,12 +6,16 @@ full-lifecycle delivery experience across B2B SaaS and low-code platforms.
 
 Pages:
 
-- Welcome — landing page, links to all nine pieces
+- Welcome — landing page, links to all ten pieces
 
 Credentials & Evidence
 
 - Resume — interactive skills with expandable evidence, full work history, certifications
 - Global Reach — onsite implementations across 4 regions, 14 countries, 16 cities
+
+Work Samples
+
+- Moving Customers to a New Platform — about 22 customers moved off an acquired legacy platform onto a SaaS product over 7 years, with 100% data continuity; what broke, the hardest case, and the repeatable method that replaced the basic import
 
 Delivery Practice
 

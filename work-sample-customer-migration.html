@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QVZ0K1D563"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-QVZ0K1D563');
+  // Outreach attribution: tag the visit without a second page_view.
+  (function () {
+    var ref = new URLSearchParams(window.location.search).get('ref') || '(none)';
+    window.CR_REF = ref;
+    if (ref !== '(none)') {
+      gtag('event', 'ref_visit', { ref_source: ref, non_interaction: true });
+    }
+    var fired = {};
+    window.crTrack = function (name, params) {
+      if (fired[name]) return;
+      fired[name] = true;
+      var p = params || {};
+      p.ref_source = window.CR_REF;
+      gtag('event', name, p);
+    };
+    // real_read: 20 cumulative seconds with the tab actually visible.
+    var visibleMs = 0, last = null;
+    var timer = setInterval(function () {
+      if (document.visibilityState === 'visible') {
+        var now = Date.now();
+        if (last !== null) visibleMs += now - last;
+        last = now;
+        if (visibleMs >= 20000) { window.crTrack('real_read', { seconds: 20 }); clearInterval(timer); }
+      } else { last = null; }
+    }, 1000);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState !== 'visible') last = null;
+    });
+  })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Work sample: moving about 22 customers off an acquired legacy platform onto a SaaS product over 7 years, with 100% data continuity.">
+<title>Cathy Rudolph — Work Sample: Customer Migration</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="nav.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f7f6f3;
+    --text-primary: #1a1a18;
+    --text-secondary: #4a4a46;
+    --text-tertiary: #888780;
+    --border: rgba(0,0,0,0.12);
+    --border-hover: rgba(0,0,0,0.22);
+    --radius-md: 8px;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --accent: #0D9488;
+    --accent-bg: rgba(13, 148, 136, 0.08);
+  }
+
+  body.dark {
+    --bg: #1e1e1c;
+    --bg-secondary: #2a2a27;
+    --text-primary: #f0ede6;
+    --text-secondary: #b0ada5;
+    --text-tertiary: #6e6c67;
+    --border: rgba(255,255,255,0.1);
+    --border-hover: rgba(255,255,255,0.2);
+    --accent: #C084FC;
+    --accent-bg: rgba(192, 132, 252, 0.12);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
+
+  .page { max-width: 720px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+
+  hr { border: none; border-top: 0.5px solid var(--border); margin: 22px 0; }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+
+  .section-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 12px;
+  }
+
+  .page-kicker { font-size: 12px; color: var(--text-tertiary); margin-bottom: 6px; }
+  .page-name { font-size: 30px; font-weight: 600; letter-spacing: -0.5px; line-height: 1.2; }
+  .page-tagline { font-size: 15px; color: var(--text-tertiary); margin-top: 6px; font-style: italic; }
+  .page-intro { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-top: 14px; }
+
+  p.body { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+  p.body + p.body, p.body + .map, .map + p.body { margin-top: 12px; }
+
+  a.inline { color: var(--accent); text-decoration: none; }
+  a.inline:hover { text-decoration: underline; }
+
+  /* Business-system translation */
+  .map {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .map-row {
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    gap: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .map-row:last-child { border-bottom: 0; }
+  .map-row dt { font-weight: 600; color: var(--text-primary); }
+  .map-row dd { color: var(--text-secondary); line-height: 1.55; }
+
+  /* Hardest case callout */
+  .callout {
+    border-left: 3px solid var(--accent);
+    background: var(--accent-bg);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.65;
+  }
+
+  /* What I did */
+  .steps { list-style: none; counter-reset: s; }
+  .steps li {
+    counter-increment: s;
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    padding: 8px 0 8px 28px;
+    position: relative;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .steps li:last-child { border-bottom: 0; }
+  .steps li::before {
+    content: counter(s);
+    position: absolute; left: 0; top: 9px;
+    font-size: 11px; font-weight: 700; color: var(--accent);
+    width: 18px; text-align: right;
+  }
+
+  /* Results */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .stat {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+  }
+  .stat-num {
+    font-size: 22px; font-weight: 600; letter-spacing: -0.3px;
+    color: var(--accent); font-variant-numeric: tabular-nums;
+  }
+  .stat-label { font-size: 12px; color: var(--text-tertiary); line-height: 1.45; margin-top: 3px; }
+
+  /* For your team */
+  .offer { list-style: none; margin-top: 12px; }
+  .offer li {
+    font-size: 13.5px; color: var(--text-secondary); line-height: 1.6;
+    padding-left: 14px; position: relative; margin-bottom: 8px;
+  }
+  .offer li:last-child { margin-bottom: 0; }
+  .offer li::before { content: "–"; position: absolute; left: 0; color: var(--text-tertiary); }
+
+  .pdf-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 500;
+    color: var(--text-primary); text-decoration: none;
+    border: 0.5px solid var(--border); border-radius: var(--radius-md);
+    padding: 8px 14px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .pdf-link:hover { background: var(--bg-secondary); border-color: var(--border-hover); }
+  .pdf-link i { font-size: 16px; color: var(--accent); }
+  .related { font-size: 13px; color: var(--text-tertiary); margin-top: 12px; }
+
+  @media (max-width: 560px) {
+    .stats { grid-template-columns: 1fr; }
+    .map-row { grid-template-columns: 1fr; gap: 2px; }
+  }
+</style>
+</head>
+<body>
+
+<script>
+(function () {
+  var saved = null;
+  try { saved = localStorage.getItem('theme'); } catch (e) {}
+  var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  document.body.classList.toggle('dark', saved ? saved === 'dark' : prefersDark);
+})();
+</script>
+
+<div id="nav-placeholder"></div>
+<script src="pages.js"></script>
+<script src="nav-inject.js"></script>
+
+<div class="page">
+
+  <h1 class="sr-only">Work sample — Moving Customers to a New Platform Without Losing Their Data or Their Business</h1>
+
+  <div class="page-kicker">Work sample &nbsp;·&nbsp; Implementation Manager</div>
+  <div class="page-name">Moving Customers to a New Platform</div>
+  <div class="page-tagline">Without losing their data or their business.</div>
+  <p class="page-intro">If your customers need to move onto your platform from an acquired product, an older version, or a competitor's system, this is the work I do. Over 7 years I moved about 22 customers, some of them multi-site, off an acquired legacy platform onto a SaaS product, with 100% data continuity.</p>
+
+  <hr>
+
+  <div class="section-label">What was at stake</div>
+  <p class="body">My company acquired an older low-code platform, and its customers had to move to our SaaS product. A failed migration would have put a customer at risk at the very start of a 3-year contract.</p>
+  <p class="body">The customers were independent schools, running the same core systems as most businesses:</p>
+  <dl class="map">
+    <div class="map-row"><dt>Admissions</dt><dd>works like a sales pipeline: inquiries, applications, conversions.</dd></div>
+    <div class="map-row"><dt>Enrollment</dt><dd>works like contracts and billing.</dd></div>
+    <div class="map-row"><dt>Fundraising</dt><dd>is donor management, a CRM with relationships, gifts, and campaigns.</dd></div>
+    <div class="map-row"><dt>Consortia of 5–25 schools, many multi-campus,</dt><dd>are multi-entity enterprise accounts.</dd></div>
+  </dl>
+  <p class="body">As Implementation Manager I owned each migration end to end, running about 6 at once (10–12 at peak).</p>
+
+  <hr>
+
+  <div class="section-label">What broke</div>
+  <p class="body">The standard path was the new platform's basic spreadsheet import, built for clean, flat data. These customers had years of customized fields, scripted workflows, and account-specific structures. The imports produced mapping errors, field mismatches, and duplicate records, which meant hours of manual cleanup on every project. Some workflows had no direct equivalent on the new platform.</p>
+
+  <hr>
+
+  <div class="section-label">The hardest case</div>
+  <div class="callout">One customer's reporting ran through a data connection to the old platform. They would not migrate until the same reports worked on the new one. I reconfigured that existing connection to feed the SaaS platform and delivered the reporting they required, and they migrated.</div>
+
+  <hr>
+
+  <div class="section-label">What I did</div>
+  <ol class="steps">
+    <li>Built a repeatable migration method to replace the basic import: field mapping, record matching, reconciliation, and a QA pass on every project.</li>
+    <li>Named the gaps up front. I walked customers through the trade-offs and rebuilt their workflows, saying so when a process change beat a product change.</li>
+    <li>Ran late-arriving data through the same method, including historical records and data from competitor systems.</li>
+    <li>Turned recurring problems into fixes as user stories and roadmap input for Product and Engineering.</li>
+    <li>Trained incoming Specialists on the method, reviewed their first migrations, and was the go-to for peers' hardest cases.</li>
+    <li>Stayed with customers after launch, with 60–90 days of hypercare where needed.</li>
+  </ol>
+
+  <hr>
+
+  <div class="section-label">Results</div>
+  <div class="stats">
+    <div class="stat"><div class="stat-num">100%</div><div class="stat-label">data continuity across about 22 migrations over 7 years</div></div>
+    <div class="stat"><div class="stat-num">~80%</div><div class="stat-label">less manual data work</div></div>
+    <div class="stat"><div class="stat-num">About ⅓</div><div class="stat-label">faster time-to-activation from repeatable onboarding practices</div></div>
+  </div>
+
+  <hr>
+
+  <div class="section-label">What I can do for your team</div>
+  <p class="body">My customers were schools, but the problem is the same in any SaaS company. If you're consolidating customers after an acquisition, bringing over customers who are leaving a competitor, or retiring an older version of your product, I can:</p>
+  <ul class="offer">
+    <li>Get your customers' data across intact, through mapping, reconciliation, and QA.</li>
+    <li>Turn your customers' workflows into configuration on your platform, and say plainly when a process change beats a product change.</li>
+    <li>Make migration repeatable, so your team runs one tested method.</li>
+  </ul>
+
+  <hr>
+
+  <a class="pdf-link" id="pdf-link" href="Cathy_Rudolph_Work_Sample_Customer_Migration.pdf" target="_blank" rel="noopener"><i class="ti ti-file-type-pdf" aria-hidden="true"></i>Download the two-page PDF</a>
+  <p class="related">The method behind it is on <a class="inline" href="implementation-framework.html">How I Run Implementations</a>.</p>
+
+</div>
+
+<script>
+// Human signal: a crawler never opens the PDF. Once per session.
+document.getElementById('pdf-link').addEventListener('click', function () {
+  if (window.crTrack) window.crTrack('work_sample_pdf');
+});
+
+// Forward ?ref= to internal links so attribution survives navigation
+(function () {
+  var ref = window.CR_REF;
+  if (!ref || ref === '(none)') return;
+  document.querySelectorAll('a[href]').forEach(function (a) {
+    var href = a.getAttribute('href');
+    if (!href || /^(https?:|mailto:|#)/.test(href)) return;
+    if (a.closest('#nav-placeholder')) return;
+    a.setAttribute('href', href + (href.indexOf('?') > -1 ? '&' : '?') + 'ref=' + encodeURIComponent(ref));
+  });
+})();
+</script>
+</body>
+</html>

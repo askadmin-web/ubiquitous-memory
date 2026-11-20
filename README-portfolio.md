@@ -46,6 +46,7 @@ the manifest but drops out of both the nav and the index.
 | Group | Holds | Index layout |
 |---|---|---|
 | Credentials & Evidence | Resume, Global Reach | 3-across cards |
+| Work Samples | Write-ups of real projects: the problem, what I did, results | full-width |
 | Delivery Practice | Frameworks, essays, interactives about the work | full-width |
 | How It Was Built | Process pieces about the artifacts themselves | full-width |
 

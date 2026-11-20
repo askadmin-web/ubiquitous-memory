@@ -61,6 +61,25 @@ window.PORTFOLIO = {
     },
 
     {
+      id: "samples",
+      label: "Work Samples",
+      nav: "Work Samples",
+      blurb: "Real projects, written up for the problem they solve.",
+      layout: "stack",
+      pages: [
+        {
+          file: "work-sample-customer-migration.html",
+          title: "Moving Customers to a New Platform",
+          nav: "Customer Migration",
+          desc: "About 22 customers moved off an acquired legacy platform onto a SaaS product over 7 years, with 100% data continuity. What broke, the hardest case, and the repeatable method that replaced the basic import.",
+          icon: "transfer",
+          status: "live",
+          date: "2026-11-19"
+        }
+      ]
+    },
+
+    {
       id: "practice",
       label: "Delivery Practice",
       nav: "Practice",
